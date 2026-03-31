@@ -37,7 +37,7 @@ export default function SearchPage() {
     <div className="max-w-3xl mx-auto px-4 py-12">
       <h1 className="text-3xl font-bold text-gray-900 mb-6">Cari Artikel</h1>
 
-      <form onSubmit={handleSearch} className="flex gap-3 mb-8">
+      <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3 mb-8">
         <input
           type="text"
           value={query}
