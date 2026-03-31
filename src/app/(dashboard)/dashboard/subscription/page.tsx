@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
 import Script from 'next/script';
+import { Sparkles, Zap, Crown, Check, CheckCircle, Calendar } from 'lucide-react';
 
 interface Plan {
   id: number;
@@ -24,6 +25,20 @@ declare global {
     };
   }
 }
+
+const planStyles = [
+  { icon: Sparkles, gradient: 'from-blue-500 to-cyan-500', button: 'bg-blue-600 hover:bg-blue-700 hover:shadow-blue-500/25', border: 'border-blue-200 hover:border-blue-400' },
+  { icon: Zap, gradient: 'from-indigo-500 to-purple-600', button: 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:shadow-indigo-500/25', border: 'border-indigo-300 ring-2 ring-indigo-500/20' },
+  { icon: Crown, gradient: 'from-amber-500 to-orange-500', button: 'bg-amber-600 hover:bg-amber-700 hover:shadow-amber-500/25', border: 'border-amber-200 hover:border-amber-400' },
+];
+
+const badges = [null, 'Paling Populer', 'Hemat'];
+
+const benefits = [
+  'Akses semua artikel premium',
+  'Baca tanpa batas',
+  'Dukung penulis SASMITA',
+];
 
 export default function SubscriptionDashboardPage() {
   const [subscription, setSubscription] = useState<{ has_active: boolean; subscription: { status: string; expiredAt?: string } | null } | null>(null);
@@ -58,34 +73,79 @@ export default function SubscriptionDashboardPage() {
   return (
     <div>
       <Script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || ''} strategy="lazyOnload" />
+
       <h1 className="text-2xl font-bold text-gray-900 mb-6">Status Langganan</h1>
+
       {subscription === null ? (
         <p className="text-gray-500">Memuat...</p>
       ) : subscription.has_active ? (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-8">
-          <p className="text-green-700 font-semibold text-lg">Langganan Aktif</p>
-          <p className="text-green-600 text-sm mt-2">
-            Berakhir: {subscription.subscription?.expiredAt ? new Date(subscription.subscription.expiredAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'}
-          </p>
+        <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-8 mb-8">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+              <CheckCircle className="w-5 h-5 text-green-600" />
+            </div>
+            <p className="text-green-700 font-bold text-xl">Langganan Aktif</p>
+          </div>
+          <div className="flex items-center gap-2 text-green-600 text-sm">
+            <Calendar className="w-4 h-4" />
+            Berakhir: {subscription.subscription?.expiredAt
+              ? new Date(subscription.subscription.expiredAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
+              : '-'}
+          </div>
         </div>
       ) : (
         <>
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-8">
+          <div className="bg-gradient-to-r from-gray-50 to-slate-50 border border-gray-200 rounded-2xl p-6 mb-8">
             <p className="text-gray-700 font-semibold">Tidak ada langganan aktif</p>
-            <p className="text-gray-500 text-sm mt-2">Pilih paket di bawah untuk berlangganan.</p>
+            <p className="text-gray-500 text-sm mt-1">Pilih paket di bawah untuk berlangganan dan akses artikel premium.</p>
           </div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Pilih Paket</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {plans.map((plan) => (
-              <div key={plan.id} className="bg-white border border-gray-200 rounded-lg p-6 text-center">
-                <h3 className="text-lg font-bold text-gray-900 mb-1">{plan.name}</h3>
-                <p className="text-2xl font-bold text-indigo-600 mb-1">Rp{plan.price.toLocaleString('id-ID')}</p>
-                <p className="text-gray-500 text-sm mb-4">{plan.durationDays} hari</p>
-                <button onClick={() => handleSubscribe(plan.id)} disabled={loading === plan.id} className="w-full bg-indigo-600 text-white py-2 rounded-lg font-medium hover:bg-indigo-700 disabled:opacity-50">
-                  {loading === plan.id ? 'Memproses...' : 'Pilih'}
-                </button>
-              </div>
-            ))}
+
+          <h2 className="text-lg font-semibold text-gray-900 mb-5">Pilih Paket</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 stagger-children">
+            {plans.map((plan, index) => {
+              const style = planStyles[index] || planStyles[0];
+              const badge = badges[index];
+              const Icon = style.icon;
+
+              return (
+                <div key={plan.id} className={`card-hover relative bg-white border-2 rounded-2xl p-5 text-center flex flex-col ${style.border}`}>
+                  {badge && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                      <span className={`bg-gradient-to-r ${style.gradient} text-white text-xs px-4 py-1.5 rounded-full font-semibold shadow-lg`}>
+                        {badge}
+                      </span>
+                    </div>
+                  )}
+
+                  <div className={`w-12 h-12 mx-auto rounded-2xl bg-gradient-to-br ${style.gradient} flex items-center justify-center mb-4 mt-2`}>
+                    <Icon className="w-6 h-6 text-white" />
+                  </div>
+
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">{plan.name}</h3>
+                  <div className="mb-3">
+                    <span className="text-2xl font-bold text-gray-900">Rp{plan.price.toLocaleString('id-ID')}</span>
+                    <span className="text-gray-400 text-sm ml-1">/ {plan.durationDays} hari</span>
+                  </div>
+
+                  <ul className="space-y-2 mb-6 text-left flex-1">
+                    {benefits.map((b) => (
+                      <li key={b} className="flex items-center gap-2 text-sm text-gray-600">
+                        <Check className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
+                        {b}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <button
+                    onClick={() => handleSubscribe(plan.id)}
+                    disabled={loading === plan.id}
+                    className={`w-full text-white py-3 rounded-xl font-semibold transition-all hover:shadow-lg disabled:opacity-50 ${style.button}`}
+                  >
+                    {loading === plan.id ? 'Memproses...' : `Pilih ${plan.name}`}
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </>
       )}

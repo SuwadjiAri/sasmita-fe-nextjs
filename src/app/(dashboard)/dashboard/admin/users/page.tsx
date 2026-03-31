@@ -18,7 +18,9 @@ export default function AdminUsersPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-gray-900 mb-6">Kelola Pengguna</h1>
-      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+
+      {/* Desktop Table */}
+      <div className="hidden md:block bg-white border border-gray-200 rounded-xl overflow-hidden">
         <table className="w-full">
           <thead className="bg-gray-50 text-sm text-gray-500">
             <tr><th className="text-left px-6 py-3">Nama</th><th className="text-left px-6 py-3">Email</th><th className="text-center px-6 py-3">Redaksi</th><th className="text-center px-6 py-3">Admin</th></tr>
@@ -40,6 +42,24 @@ export default function AdminUsersPage() {
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Cards */}
+      <div className="md:hidden space-y-3">
+        {users.map((user) => (
+          <div key={user.id} className="bg-white border border-gray-200 rounded-xl p-4">
+            <p className="font-medium text-gray-900">{user.name}</p>
+            <p className="text-xs text-gray-400 mt-0.5">{user.email}</p>
+            <div className="flex items-center gap-2 mt-3">
+              <button onClick={() => toggleRedaksi(user.id, user.isRedaksi)} className={`text-xs px-3 py-1 rounded-full ${user.isRedaksi ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                Redaksi: {user.isRedaksi ? 'Ya' : 'Tidak'}
+              </button>
+              <span className={`text-xs px-3 py-1 rounded-full ${user.isAdmin ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-500'}`}>
+                Admin: {user.isAdmin ? 'Ya' : 'Tidak'}
+              </span>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

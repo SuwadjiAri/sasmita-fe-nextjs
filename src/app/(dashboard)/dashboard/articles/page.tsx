@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import api from '@/lib/api';
+import { Pencil } from 'lucide-react';
 
 interface Article {
   id: number;
@@ -56,38 +57,63 @@ export default function MyArticlesPage() {
       ) : articles.length === 0 ? (
         <p className="text-gray-500">Belum ada artikel. Mulai menulis sekarang!</p>
       ) : (
-        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-          <table className="w-full">
-            <thead className="bg-gray-50 text-sm text-gray-500">
-              <tr>
-                <th className="text-left px-6 py-3">Judul</th>
-                <th className="text-left px-6 py-3">Status</th>
-                <th className="text-left px-6 py-3">Tanggal</th>
-                <th className="px-6 py-3"></th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {articles.map((article) => (
-                <tr key={article.id}>
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{article.title}</td>
-                  <td className="px-6 py-4">
-                    <span className={`text-xs px-2 py-1 rounded-full ${statusColor[article.status] || ''}`}>
+        <>
+          {/* Desktop Table */}
+          <div className="hidden md:block bg-white border border-gray-200 rounded-xl overflow-hidden">
+            <table className="w-full">
+              <thead className="bg-gray-50 text-sm text-gray-500">
+                <tr>
+                  <th className="text-left px-6 py-3">Judul</th>
+                  <th className="text-left px-6 py-3">Status</th>
+                  <th className="text-left px-6 py-3">Tanggal</th>
+                  <th className="px-6 py-3"></th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {articles.map((article) => (
+                  <tr key={article.id}>
+                    <td className="px-6 py-4 text-sm font-medium text-gray-900">{article.title}</td>
+                    <td className="px-6 py-4">
+                      <span className={`text-xs px-2 py-1 rounded-full ${statusColor[article.status] || ''}`}>
+                        {statusLabel[article.status] || article.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500">
+                      {new Date(article.createdAt).toLocaleDateString('id-ID')}
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <Link href={`/dashboard/articles/${article.id}/edit`} className="text-indigo-600 text-sm hover:underline">
+                        Edit
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile Cards */}
+          <div className="md:hidden space-y-3">
+            {articles.map((article) => (
+              <div key={article.id} className="bg-white border border-gray-200 rounded-xl p-4 flex items-start justify-between gap-3">
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-gray-900 line-clamp-2">{article.title}</p>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${statusColor[article.status] || ''}`}>
                       {statusLabel[article.status] || article.status}
                     </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
-                    {new Date(article.createdAt).toLocaleDateString('id-ID')}
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <Link href={`/dashboard/articles/${article.id}/edit`} className="text-indigo-600 text-sm hover:underline">
-                      Edit
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                    <span className="text-xs text-gray-400">
+                      {new Date(article.createdAt).toLocaleDateString('id-ID')}
+                    </span>
+                  </div>
+                </div>
+                <Link href={`/dashboard/articles/${article.id}/edit`} className="p-2 text-indigo-500 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition-colors">
+                  <Pencil className="w-4 h-4" />
+                </Link>
+              </div>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );

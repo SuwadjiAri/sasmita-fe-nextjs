@@ -62,18 +62,34 @@ export default function StatisticsPage() {
       {stats.top_articles.length === 0 ? (
         <p className="text-gray-500">Belum ada artikel terbit.</p>
       ) : (
-        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-          <table className="w-full">
-            <thead className="bg-gray-50 text-sm text-gray-500">
-              <tr><th className="text-left px-6 py-3">#</th><th className="text-left px-6 py-3">Judul</th><th className="text-right px-6 py-3">Pembaca</th></tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {stats.top_articles.map((a, i) => (
-                <tr key={a.id}><td className="px-6 py-3 text-sm text-gray-500">{i + 1}</td><td className="px-6 py-3 text-sm font-medium text-gray-900">{a.title}</td><td className="px-6 py-3 text-sm text-right text-gray-500">{a.view_count}</td></tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <>
+          {/* Desktop Table */}
+          <div className="hidden md:block bg-white border border-gray-200 rounded-xl overflow-hidden">
+            <table className="w-full">
+              <thead className="bg-gray-50 text-sm text-gray-500">
+                <tr><th className="text-left px-6 py-3">#</th><th className="text-left px-6 py-3">Judul</th><th className="text-right px-6 py-3">Pembaca</th></tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {stats.top_articles.map((a, i) => (
+                  <tr key={a.id}><td className="px-6 py-3 text-sm text-gray-500">{i + 1}</td><td className="px-6 py-3 text-sm font-medium text-gray-900">{a.title}</td><td className="px-6 py-3 text-sm text-right text-gray-500">{a.view_count}</td></tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile Cards */}
+          <div className="md:hidden space-y-3">
+            {stats.top_articles.map((a, i) => (
+              <div key={a.id} className="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-3">
+                <span className="w-7 h-7 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center text-xs font-bold">{i + 1}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-gray-900 text-sm line-clamp-1">{a.title}</p>
+                </div>
+                <span className="text-sm text-gray-500 whitespace-nowrap">{a.view_count} views</span>
+              </div>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );
