@@ -71,12 +71,19 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p className="text-center text-sm text-gray-500 mt-6">
-          Belum punya akun?{' '}
-          <Link href="/register" className="text-indigo-600 hover:underline">
-            Daftar
-          </Link>
-        </p>
+        <div className="text-center text-sm text-gray-500 mt-6 space-y-2">
+          <p>
+            <Link href="/forgot-password" className="text-indigo-600 hover:underline">
+              Lupa password?
+            </Link>
+          </p>
+          <p>
+            Belum punya akun?{' '}
+            <Link href="/register" className="text-indigo-600 hover:underline">
+              Daftar
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
