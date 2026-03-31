@@ -3,6 +3,11 @@
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
+import {
+  Bold, Italic, Strikethrough, Heading2, Heading3,
+  List, ListOrdered, Quote, Code2, Minus, Undo2, Redo2,
+  Pilcrow,
+} from 'lucide-react';
 
 interface Props {
   content: string;
@@ -12,6 +17,7 @@ interface Props {
 
 export default function TiptapEditor({ content, onChange, placeholder = 'Mulai menulis...' }: Props) {
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit,
       Placeholder.configure({ placeholder }),
@@ -22,86 +28,149 @@ export default function TiptapEditor({ content, onChange, placeholder = 'Mulai m
     },
     editorProps: {
       attributes: {
-        class: 'prose prose-lg max-w-none focus:outline-none min-h-[300px] px-4 py-3',
+        class: 'prose prose-lg max-w-none focus:outline-none min-h-[400px] px-5 py-4',
       },
     },
   });
 
   if (!editor) return null;
 
+  const ToolbarButton = ({
+    onClick,
+    active,
+    icon: Icon,
+    title,
+  }: {
+    onClick: () => void;
+    active: boolean;
+    icon: React.ComponentType<{ className?: string }>;
+    title: string;
+  }) => (
+    <button
+      type="button"
+      onClick={onClick}
+      title={title}
+      className={`p-2 rounded-lg transition-all ${
+        active
+          ? 'bg-indigo-100 text-indigo-700 shadow-sm'
+          : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+      }`}
+    >
+      <Icon className="w-4 h-4" />
+    </button>
+  );
+
+  const Divider = () => <span className="w-px h-6 bg-gray-200 mx-0.5" />;
+
   return (
-    <div className="border border-gray-300 rounded-lg overflow-hidden">
+    <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm resize-y" style={{ minHeight: '500px', overflow: 'auto' }}>
       {/* Toolbar */}
-      <div className="flex flex-wrap gap-1 p-2 border-b border-gray-200 bg-gray-50">
-        <button
-          type="button"
+      <div className="flex flex-wrap items-center gap-0.5 px-2 py-1.5 border-b border-gray-100 bg-gray-50/80">
+        {/* Text formatting */}
+        <ToolbarButton
           onClick={() => editor.chain().focus().toggleBold().run()}
-          className={`px-3 py-1 rounded text-sm ${editor.isActive('bold') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-200'}`}
-        >
-          B
-        </button>
-        <button
-          type="button"
+          active={editor.isActive('bold')}
+          icon={Bold}
+          title="Bold (Ctrl+B)"
+        />
+        <ToolbarButton
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={`px-3 py-1 rounded text-sm italic ${editor.isActive('italic') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-200'}`}
-        >
-          I
-        </button>
-        <button
-          type="button"
+          active={editor.isActive('italic')}
+          icon={Italic}
+          title="Italic (Ctrl+I)"
+        />
+        <ToolbarButton
           onClick={() => editor.chain().focus().toggleStrike().run()}
-          className={`px-3 py-1 rounded text-sm line-through ${editor.isActive('strike') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-200'}`}
-        >
-          S
-        </button>
-        <span className="w-px bg-gray-300 mx-1" />
-        <button
-          type="button"
+          active={editor.isActive('strike')}
+          icon={Strikethrough}
+          title="Strikethrough"
+        />
+
+        <Divider />
+
+        {/* Headings */}
+        <ToolbarButton
+          onClick={() => editor.chain().focus().setParagraph().run()}
+          active={editor.isActive('paragraph')}
+          icon={Pilcrow}
+          title="Paragraf"
+        />
+        <ToolbarButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          className={`px-3 py-1 rounded text-sm ${editor.isActive('heading', { level: 2 }) ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-200'}`}
-        >
-          H2
-        </button>
-        <button
-          type="button"
+          active={editor.isActive('heading', { level: 2 })}
+          icon={Heading2}
+          title="Heading 2"
+        />
+        <ToolbarButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-          className={`px-3 py-1 rounded text-sm ${editor.isActive('heading', { level: 3 }) ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-200'}`}
-        >
-          H3
-        </button>
-        <span className="w-px bg-gray-300 mx-1" />
-        <button
-          type="button"
+          active={editor.isActive('heading', { level: 3 })}
+          icon={Heading3}
+          title="Heading 3"
+        />
+
+        <Divider />
+
+        {/* Lists */}
+        <ToolbarButton
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={`px-3 py-1 rounded text-sm ${editor.isActive('bulletList') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-200'}`}
-        >
-          • List
-        </button>
-        <button
-          type="button"
+          active={editor.isActive('bulletList')}
+          icon={List}
+          title="Bullet List"
+        />
+        <ToolbarButton
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={`px-3 py-1 rounded text-sm ${editor.isActive('orderedList') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-200'}`}
-        >
-          1. List
-        </button>
-        <button
-          type="button"
+          active={editor.isActive('orderedList')}
+          icon={ListOrdered}
+          title="Numbered List"
+        />
+
+        <Divider />
+
+        {/* Block elements */}
+        <ToolbarButton
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          className={`px-3 py-1 rounded text-sm ${editor.isActive('blockquote') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-200'}`}
-        >
-          &ldquo; Quote
-        </button>
-        <button
-          type="button"
+          active={editor.isActive('blockquote')}
+          icon={Quote}
+          title="Kutipan"
+        />
+        <ToolbarButton
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-          className={`px-3 py-1 rounded text-sm font-mono ${editor.isActive('codeBlock') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-200'}`}
-        >
-          {'</>'}
-        </button>
+          active={editor.isActive('codeBlock')}
+          icon={Code2}
+          title="Code Block"
+        />
+        <ToolbarButton
+          onClick={() => editor.chain().focus().setHorizontalRule().run()}
+          active={false}
+          icon={Minus}
+          title="Garis Pemisah"
+        />
+
+        <Divider />
+
+        {/* Undo/Redo */}
+        <ToolbarButton
+          onClick={() => editor.chain().focus().undo().run()}
+          active={false}
+          icon={Undo2}
+          title="Undo (Ctrl+Z)"
+        />
+        <ToolbarButton
+          onClick={() => editor.chain().focus().redo().run()}
+          active={false}
+          icon={Redo2}
+          title="Redo (Ctrl+Y)"
+        />
       </div>
 
       {/* Editor */}
       <EditorContent editor={editor} />
+
+      {/* Footer - word count */}
+      <div className="px-4 py-2 border-t border-gray-100 bg-gray-50/50 text-xs text-gray-400 flex justify-between">
+        <span>{editor.storage.characterCount?.characters?.() ?? editor.getText().length} karakter</span>
+        <span>{editor.storage.characterCount?.words?.() ?? editor.getText().split(/\s+/).filter(Boolean).length} kata</span>
+      </div>
     </div>
   );
 }

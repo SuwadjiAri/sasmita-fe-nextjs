@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { PenLine, BookOpen, Search, CreditCard, Github } from 'lucide-react';
+import { PenLine, BookOpen, Search, CreditCard } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -45,13 +45,8 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="border-t border-gray-800 mt-12 pt-8 text-center">
           <p className="text-sm">&copy; {new Date().getFullYear()} SASMITA.COM — Project Work Universitas Pamulang</p>
-          <div className="flex items-center gap-4">
-            <a href="https://github.com/project-work-sasindo" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
-              <Github className="w-5 h-5" />
-            </a>
-          </div>
         </div>
       </div>
     </footer>
