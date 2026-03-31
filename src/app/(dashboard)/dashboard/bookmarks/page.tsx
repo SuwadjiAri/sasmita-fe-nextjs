@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import api from '@/lib/api';
+import EmptyState from '@/components/ui/EmptyState';
 
 export default function BookmarksPage() {
   const [bookmarks, setBookmarks] = useState<{ article: { id: number; title: string; slug: string; excerpt?: string } }[]>([]);
@@ -21,7 +22,7 @@ export default function BookmarksPage() {
       {loading ? (
         <p className="text-gray-500">Memuat...</p>
       ) : bookmarks.length === 0 ? (
-        <p className="text-gray-500">Belum ada artikel yang di-bookmark.</p>
+        <EmptyState icon="bookmark" title="Belum ada bookmark" description="Simpan artikel favorit anda untuk dibaca nanti." actionLabel="Jelajahi Artikel" actionHref="/" />
       ) : (
         <div className="space-y-4">
           {bookmarks.map((bm) => (

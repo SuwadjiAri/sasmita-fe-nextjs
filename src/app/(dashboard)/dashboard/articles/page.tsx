@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import api from '@/lib/api';
 import { Pencil } from 'lucide-react';
+import EmptyState from '@/components/ui/EmptyState';
 
 interface Article {
   id: number;
@@ -55,7 +56,7 @@ export default function MyArticlesPage() {
       {loading ? (
         <p className="text-gray-500">Memuat...</p>
       ) : articles.length === 0 ? (
-        <p className="text-gray-500">Belum ada artikel. Mulai menulis sekarang!</p>
+        <EmptyState icon="article" title="Belum ada artikel" description="Mulai menulis karya sastra anda dan bagikan ke dunia." actionLabel="Tulis Artikel Baru" actionHref="/dashboard/articles/create" />
       ) : (
         <>
           {/* Desktop Table */}

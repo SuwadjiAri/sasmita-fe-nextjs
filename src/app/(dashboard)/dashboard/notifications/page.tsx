@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
+import EmptyState from '@/components/ui/EmptyState';
 
 interface Notification {
   id: number;
@@ -43,7 +44,7 @@ export default function NotificationsPage() {
         {unread > 0 && (<button onClick={markAllAsRead} className="text-sm text-indigo-600 hover:underline">Tandai semua dibaca</button>)}
       </div>
       {notifications.length === 0 ? (
-        <p className="text-gray-500">Tidak ada notifikasi.</p>
+        <EmptyState icon="notification" title="Tidak ada notifikasi" description="Anda akan menerima notifikasi saat artikel anda direview." />
       ) : (
         <div className="space-y-3">
           {notifications.map((notif) => (

@@ -147,10 +147,21 @@ export default async function HomePage() {
                   href={`/articles/${article.slug}`}
                   className="card-hover group bg-white rounded-2xl overflow-hidden border border-gray-100"
                 >
-                  {/* Cover gradient placeholder */}
-                  <div className="h-40 bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
-                    <BookOpen className="w-10 h-10 text-indigo-300 group-hover:scale-110 transition-transform" />
-                  </div>
+                  {/* Cover image or gradient placeholder */}
+                  {article.coverImage ? (
+                    <div className="h-44 overflow-hidden">
+                      <img src={`${process.env.NEXT_PUBLIC_API_URL || ''}${article.coverImage}`} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    </div>
+                  ) : (
+                    <div className="h-44 bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 dark:from-indigo-900/30 dark:via-purple-900/20 dark:to-pink-900/30 flex items-center justify-center relative overflow-hidden">
+                      <div className="absolute inset-0 opacity-10">
+                        <div className="absolute top-4 left-4 w-16 h-16 border-2 border-indigo-300 rounded-full" />
+                        <div className="absolute bottom-4 right-4 w-24 h-24 border-2 border-purple-300 rounded-full" />
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 border-2 border-pink-300 rounded-lg rotate-45" />
+                      </div>
+                      <BookOpen className="w-10 h-10 text-indigo-300 group-hover:scale-110 transition-transform relative z-10" />
+                    </div>
+                  )}
                   <div className="p-6">
                     <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-indigo-600 transition-colors">
                       {article.title}
