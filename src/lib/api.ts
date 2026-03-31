@@ -23,8 +23,12 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401 && typeof window !== 'undefined') {
-      localStorage.removeItem('token');
-      window.location.href = '/login';
+      // Only redirect if not already on auth pages
+      const path = window.location.pathname;
+      if (!path.startsWith('/login') && !path.startsWith('/register') && !path.startsWith('/forgot-password')) {
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

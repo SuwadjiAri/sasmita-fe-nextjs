@@ -34,7 +34,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
         setTitle(article.title);
         setContent(article.content || '');
         setExcerpt(article.excerpt || '');
-        setCategoryId(String(article.categoryId));
+        setCategoryId(String(article.categoryId || article.category_id || ''));
       }
     }).catch(() => {}).finally(() => setFetching(false));
   }, [id]);
