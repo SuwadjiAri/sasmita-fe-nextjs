@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 async function getCategories() {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/categories`,
+    `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/categories`,
     { next: { revalidate: 3600 } }
   );
   if (!res.ok) return { data: [] };

@@ -6,7 +6,7 @@ interface Props {
 
 async function getCategoryArticles(slug: string) {
   const catRes = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/categories`,
+    `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/categories`,
     { next: { revalidate: 3600 } }
   );
   if (!catRes.ok) return { category: null, articles: [] };
@@ -15,7 +15,7 @@ async function getCategoryArticles(slug: string) {
   if (!category) return { category: null, articles: [] };
 
   const artRes = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/articles?category_id=${category.id}`,
+    `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/articles?category_id=${category.id}`,
     { next: { revalidate: 60 } }
   );
   if (!artRes.ok) return { category, articles: [] };

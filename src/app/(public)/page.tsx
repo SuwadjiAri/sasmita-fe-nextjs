@@ -3,7 +3,7 @@ import { ArrowRight, BookOpen, Users, Award, Sparkles } from 'lucide-react';
 
 async function getArticles() {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/articles?per_page=6`,
+    `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/articles?per_page=6`,
     { next: { revalidate: 60 } }
   );
   if (!res.ok) return { data: [] };
@@ -12,7 +12,7 @@ async function getArticles() {
 
 async function getCategories() {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/categories`,
+    `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/categories`,
     { next: { revalidate: 3600 } }
   );
   if (!res.ok) return { data: [] };

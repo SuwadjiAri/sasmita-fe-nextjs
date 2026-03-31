@@ -6,7 +6,7 @@ interface Props {
 
 async function getUser(id: string) {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/users/${id}`,
+    `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/users/${id}`,
     { next: { revalidate: 60 } }
   );
   if (!res.ok) return null;

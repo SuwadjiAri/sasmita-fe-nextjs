@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 async function getPlans() {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/subscription-plans`,
+    `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/subscription-plans`,
     { next: { revalidate: 3600 } }
   );
   if (!res.ok) return { data: [] };

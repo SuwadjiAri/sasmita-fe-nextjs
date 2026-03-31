@@ -8,7 +8,7 @@ interface Props {
 
 async function getArticle(slug: string) {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/articles/${slug}`,
+    `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/articles/${slug}`,
     { next: { revalidate: 60 } }
   );
   if (!res.ok) return null;
