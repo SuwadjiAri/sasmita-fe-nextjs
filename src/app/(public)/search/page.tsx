@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import api from '@/lib/api';
+import { Search, BookOpen, ArrowRight } from 'lucide-react';
 
 interface Article {
   id: number;
@@ -34,45 +35,78 @@ export default function SearchPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">Cari Artikel</h1>
+    <div>
+      {/* Hero search */}
+      <section className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 py-16">
+        <div className="max-w-3xl mx-auto px-4 text-center">
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">Cari Artikel</h1>
+          <p className="text-indigo-100 mb-8">Temukan puisi, cerpen, esai, dan karya sastra lainnya</p>
 
-      <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3 mb-8">
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Ketik judul atau kata kunci..."
-          className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-        />
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-indigo-700 disabled:opacity-50"
-        >
-          {loading ? 'Mencari...' : 'Cari'}
-        </button>
-      </form>
-
-      {searched && (
-        <div>
-          <p className="text-gray-500 mb-4">
-            {results.length} hasil untuk &ldquo;{query}&rdquo;
-          </p>
-          <div className="space-y-4">
-            {results.map((article) => (
-              <Link
-                key={article.id}
-                href={`/articles/${article.slug}`}
-                className="block bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow"
-              >
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{article.title}</h3>
-                <p className="text-gray-500 text-sm line-clamp-2">{article.excerpt || ''}</p>
-              </Link>
-            ))}
-          </div>
+          <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3">
+            <div className="relative flex-1">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Ketik judul atau kata kunci..."
+                className="w-full pl-12 pr-4 py-3.5 rounded-xl border-0 shadow-lg focus:ring-2 focus:ring-white/50 text-gray-900"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="bg-white text-indigo-600 px-8 py-3.5 rounded-xl font-semibold hover:bg-indigo-50 shadow-lg disabled:opacity-50 transition-all"
+            >
+              {loading ? 'Mencari...' : 'Cari'}
+            </button>
+          </form>
         </div>
-      )}
+      </section>
+
+      {/* Results */}
+      <div className="max-w-3xl mx-auto px-4 py-10">
+        {!searched ? (
+          <div className="text-center py-12">
+            <div className="w-20 h-20 bg-indigo-50 rounded-3xl flex items-center justify-center mx-auto mb-4">
+              <Search className="w-10 h-10 text-indigo-300" />
+            </div>
+            <p className="text-gray-500">Masukkan kata kunci untuk mulai mencari</p>
+          </div>
+        ) : results.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="w-20 h-20 bg-gray-100 rounded-3xl flex items-center justify-center mx-auto mb-4">
+              <BookOpen className="w-10 h-10 text-gray-300" />
+            </div>
+            <p className="text-gray-900 font-semibold text-lg mb-1">Tidak ada hasil</p>
+            <p className="text-gray-500">Tidak ditemukan artikel untuk &ldquo;{query}&rdquo;</p>
+          </div>
+        ) : (
+          <>
+            <p className="text-gray-500 mb-6">
+              <span className="font-semibold text-gray-900">{results.length}</span> hasil untuk &ldquo;{query}&rdquo;
+            </p>
+            <div className="space-y-4 stagger-children">
+              {results.map((article) => (
+                <Link
+                  key={article.id}
+                  href={`/articles/${article.slug}`}
+                  className="card-hover group flex items-start gap-4 bg-white border border-gray-100 rounded-2xl p-5"
+                >
+                  <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-indigo-100 transition-colors">
+                    <BookOpen className="w-5 h-5 text-indigo-400" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors">{article.title}</h3>
+                    <p className="text-gray-500 text-sm mt-1 line-clamp-2">{article.excerpt || 'Baca selengkapnya...'}</p>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-indigo-500 mt-1 flex-shrink-0 transition-colors" />
+                </Link>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }

@@ -2,61 +2,71 @@
 
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import { Users, Shield, Crown } from 'lucide-react';
+import { useToast } from '@/components/ui/Toast';
 
 interface User { id: number; name: string; email: string; isRedaksi: boolean; isAdmin: boolean; }
 
 export default function AdminUsersPage() {
+  const toast = useToast();
   const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => { api.get('/admin/users').then((res) => setUsers(res.data.data || [])).catch(() => {}); }, []);
+  useEffect(() => { api.get('/admin/users').then((res) => setUsers(res.data.data || [])).catch(() => {}).finally(() => setLoading(false)); }, []);
 
   const toggleRedaksi = async (userId: number, current: boolean) => {
     await api.put(`/admin/users/${userId}/role`, { is_redaksi: !current });
     setUsers((prev) => prev.map((u) => (u.id === userId ? { ...u, isRedaksi: !current } : u)));
+    toast.show(current ? 'Hak redaksi dicabut' : 'Hak redaksi diberikan', 'success');
   };
+
+  if (loading) return <LoadingSpinner message="Memuat pengguna..." />;
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Kelola Pengguna</h1>
-
-      {/* Desktop Table */}
-      <div className="hidden md:block bg-white border border-gray-200 rounded-xl overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50 text-sm text-gray-500">
-            <tr><th className="text-left px-6 py-3">Nama</th><th className="text-left px-6 py-3">Email</th><th className="text-center px-6 py-3">Redaksi</th><th className="text-center px-6 py-3">Admin</th></tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {users.map((user) => (
-              <tr key={user.id}>
-                <td className="px-6 py-3 text-sm font-medium text-gray-900">{user.name}</td>
-                <td className="px-6 py-3 text-sm text-gray-500">{user.email}</td>
-                <td className="px-6 py-3 text-center">
-                  <button onClick={() => toggleRedaksi(user.id, user.isRedaksi)} className={`text-xs px-3 py-1 rounded-full ${user.isRedaksi ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-                    {user.isRedaksi ? 'Ya' : 'Tidak'}
-                  </button>
-                </td>
-                <td className="px-6 py-3 text-center">
-                  <span className={`text-xs px-3 py-1 rounded-full ${user.isAdmin ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-500'}`}>{user.isAdmin ? 'Ya' : 'Tidak'}</span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-gray-900">Kelola Pengguna</h1>
+        <p className="text-gray-500 text-sm mt-1">{users.length} pengguna terdaftar</p>
       </div>
 
-      {/* Mobile Cards */}
-      <div className="md:hidden space-y-3">
+      <div className="space-y-3 stagger-children">
         {users.map((user) => (
-          <div key={user.id} className="bg-white border border-gray-200 rounded-xl p-4">
-            <p className="font-medium text-gray-900">{user.name}</p>
-            <p className="text-xs text-gray-400 mt-0.5">{user.email}</p>
-            <div className="flex items-center gap-2 mt-3">
-              <button onClick={() => toggleRedaksi(user.id, user.isRedaksi)} className={`text-xs px-3 py-1 rounded-full ${user.isRedaksi ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-                Redaksi: {user.isRedaksi ? 'Ya' : 'Tidak'}
+          <div key={user.id} className="card-hover bg-white border border-gray-100 rounded-2xl p-5 flex items-center gap-4">
+            {/* Avatar */}
+            <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
+              user.isAdmin ? 'bg-gradient-to-br from-purple-500 to-pink-500' :
+              user.isRedaksi ? 'bg-gradient-to-br from-green-500 to-emerald-500' :
+              'bg-gradient-to-br from-gray-400 to-gray-500'
+            }`}>
+              <span className="text-lg font-bold text-white">{user.name.charAt(0).toUpperCase()}</span>
+            </div>
+
+            {/* Info */}
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-gray-900">{user.name}</p>
+              <p className="text-xs text-gray-400 mt-0.5">{user.email}</p>
+            </div>
+
+            {/* Badges */}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <button
+                onClick={() => toggleRedaksi(user.id, user.isRedaksi)}
+                className={`inline-flex items-center gap-1 text-xs px-3 py-1.5 rounded-xl font-medium transition-all ${
+                  user.isRedaksi
+                    ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                    : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                }`}
+              >
+                <Shield className="w-3 h-3" />
+                Redaksi
               </button>
-              <span className={`text-xs px-3 py-1 rounded-full ${user.isAdmin ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-500'}`}>
-                Admin: {user.isAdmin ? 'Ya' : 'Tidak'}
-              </span>
+              {user.isAdmin && (
+                <span className="inline-flex items-center gap-1 text-xs px-3 py-1.5 rounded-xl font-medium bg-purple-100 text-purple-700">
+                  <Crown className="w-3 h-3" />
+                  Admin
+                </span>
+              )}
             </div>
           </div>
         ))}

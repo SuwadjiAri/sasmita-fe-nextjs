@@ -42,23 +42,29 @@ export default function StatisticsPage() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Statistik</h1>
-        <button onClick={handleExportPdf} className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700">
-          Export Portofolio PDF
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Statistik</h1>
+          <p className="text-gray-500 text-sm mt-1">Ringkasan performa karya anda</p>
+        </div>
+        <button onClick={handleExportPdf} className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-indigo-500/25 transition-all">
+          Export PDF
         </button>
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8 stagger-children">
         {[
-          { label: 'Total Artikel', value: stats.total_articles },
-          { label: 'Terbit', value: stats.published_articles },
-          { label: 'Pembaca', value: stats.total_views },
-          { label: 'Komentar', value: stats.total_comments },
-          { label: 'Bookmark', value: stats.total_bookmarks },
+          { label: 'Total Artikel', value: stats.total_articles, gradient: 'from-blue-500 to-cyan-500' },
+          { label: 'Terbit', value: stats.published_articles, gradient: 'from-green-500 to-emerald-500' },
+          { label: 'Pembaca', value: stats.total_views, gradient: 'from-purple-500 to-violet-500' },
+          { label: 'Komentar', value: stats.total_comments, gradient: 'from-orange-500 to-amber-500' },
+          { label: 'Bookmark', value: stats.total_bookmarks, gradient: 'from-pink-500 to-rose-500' },
         ].map((card) => (
-          <div key={card.label} className="bg-white border border-gray-200 rounded-lg p-4">
-            <p className="text-2xl font-bold text-indigo-600">{card.value}</p>
-            <p className="text-sm text-gray-500">{card.label}</p>
+          <div key={card.label} className="card-hover bg-white border border-gray-100 rounded-2xl p-5">
+            <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${card.gradient} flex items-center justify-center mb-3 opacity-80`}>
+              <span className="text-xs font-bold text-white">{card.value}</span>
+            </div>
+            <p className="text-2xl font-bold text-gray-900">{card.value}</p>
+            <p className="text-xs text-gray-500 mt-0.5">{card.label}</p>
           </div>
         ))}
       </div>
