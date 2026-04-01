@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
 import { useToast } from '@/components/ui/Toast';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 interface Stats {
   total_articles: number;
@@ -37,7 +38,7 @@ export default function StatisticsPage() {
     }
   };
 
-  if (!stats) return <p className="text-gray-500">Memuat statistik...</p>;
+  if (!stats) return <LoadingSpinner message="Memuat statistik..." />;
 
   return (
     <div>

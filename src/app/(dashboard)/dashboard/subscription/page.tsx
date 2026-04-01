@@ -5,6 +5,7 @@ import api from '@/lib/api';
 import Script from 'next/script';
 import { useToast } from '@/components/ui/Toast';
 import { Sparkles, Zap, Crown, Check, CheckCircle, Calendar } from 'lucide-react';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 interface Plan {
   id: number;
@@ -79,7 +80,7 @@ export default function SubscriptionDashboardPage() {
       <h1 className="text-2xl font-bold text-gray-900 mb-6">Status Langganan</h1>
 
       {subscription === null ? (
-        <p className="text-gray-500">Memuat...</p>
+        <LoadingSpinner message="Memuat langganan..." />
       ) : subscription.has_active ? (
         <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-8 mb-8">
           <div className="flex items-center gap-3 mb-3">

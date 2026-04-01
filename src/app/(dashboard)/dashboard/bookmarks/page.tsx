@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import api from '@/lib/api';
 import EmptyState from '@/components/ui/EmptyState';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 export default function BookmarksPage() {
   const [bookmarks, setBookmarks] = useState<{ article: { id: number; title: string; slug: string; excerpt?: string } }[]>([]);
@@ -20,7 +21,7 @@ export default function BookmarksPage() {
     <div>
       <h1 className="text-2xl font-bold text-gray-900 mb-6">Bookmarks</h1>
       {loading ? (
-        <p className="text-gray-500">Memuat...</p>
+        <LoadingSpinner message="Memuat bookmark..." />
       ) : bookmarks.length === 0 ? (
         <EmptyState icon="bookmark" title="Belum ada bookmark" description="Simpan artikel favorit anda untuk dibaca nanti." actionLabel="Jelajahi Artikel" actionHref="/" />
       ) : (

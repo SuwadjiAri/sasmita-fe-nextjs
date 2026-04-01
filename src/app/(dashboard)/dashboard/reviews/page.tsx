@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
 import { useToast } from '@/components/ui/Toast';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 interface Article {
   id: number;
@@ -30,7 +31,7 @@ export default function ReviewsPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-gray-900 mb-6">Review Artikel</h1>
-      {loading ? (<p className="text-gray-500">Memuat...</p>) : articles.length === 0 ? (<p className="text-gray-500">Tidak ada artikel yang menunggu review.</p>) : (
+      {loading ? (<LoadingSpinner message="Memuat review..." />) : articles.length === 0 ? (<p className="text-gray-500">Tidak ada artikel yang menunggu review.</p>) : (
         <div className="space-y-4">
           {articles.map((article) => (
             <div key={article.id} className="bg-white border border-gray-200 rounded-2xl p-5">

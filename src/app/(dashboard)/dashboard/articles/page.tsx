@@ -5,6 +5,7 @@ import Link from 'next/link';
 import api from '@/lib/api';
 import { Pencil } from 'lucide-react';
 import EmptyState from '@/components/ui/EmptyState';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 interface Article {
   id: number;
@@ -54,7 +55,7 @@ export default function MyArticlesPage() {
       </div>
 
       {loading ? (
-        <p className="text-gray-500">Memuat...</p>
+        <LoadingSpinner message="Memuat artikel..." />
       ) : articles.length === 0 ? (
         <EmptyState icon="article" title="Belum ada artikel" description="Mulai menulis karya sastra anda dan bagikan ke dunia." actionLabel="Tulis Artikel Baru" actionHref="/dashboard/articles/create" />
       ) : (

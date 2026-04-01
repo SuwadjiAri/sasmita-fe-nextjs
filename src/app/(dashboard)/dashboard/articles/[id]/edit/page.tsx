@@ -4,6 +4,7 @@ import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
 import TiptapEditor from '@/components/ui/TiptapEditor';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 interface Category {
   id: number;
@@ -55,7 +56,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
     }
   };
 
-  if (fetching) return <p className="text-gray-500">Memuat artikel...</p>;
+  if (fetching) return <LoadingSpinner message="Memuat artikel..." />;
 
   return (
     <div className="max-w-3xl">
