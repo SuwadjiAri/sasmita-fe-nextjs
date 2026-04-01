@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import api from '@/lib/api';
-import { Pencil, Send, PenLine, Clock, CheckCircle, AlertCircle, Archive, Eye } from 'lucide-react';
+import { Pencil, Send, PenLine, Clock, CheckCircle, AlertCircle, Archive, Eye, Trash2 } from 'lucide-react';
 import EmptyState from '@/components/ui/EmptyState';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import Pagination from '@/components/ui/Pagination';
@@ -68,8 +68,20 @@ export default function MyArticlesPage() {
     }
   };
 
+  const handleDelete = async (id: number, title: string) => {
+    if (!confirm(`Hapus artikel "${title}"?`)) return;
+    try {
+      await api.delete(`/articles/${id}`);
+      toast.show('Artikel berhasil dihapus', 'success');
+      loadArticles(page, perPage);
+    } catch {
+      toast.show('Gagal menghapus artikel', 'error');
+    }
+  };
+
   const canSubmit = (status: string) => status === 'draft' || status === 'revision';
   const canEdit = (status: string) => status !== 'published';
+  const canDelete = (status: string) => status === 'draft' || status === 'revision';
 
   return (
     <div>
@@ -171,6 +183,15 @@ export default function MyArticlesPage() {
                           <Pencil className="w-3.5 h-3.5" />
                           <span className="hidden sm:inline">Edit</span>
                         </Link>
+                      )}
+                      {canDelete(article.status) && (
+                        <button
+                          onClick={() => handleDelete(article.id, article.title)}
+                          className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                          title="Hapus"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       )}
                     </div>
                   </div>
