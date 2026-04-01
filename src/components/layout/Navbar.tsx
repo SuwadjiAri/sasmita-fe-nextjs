@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useAuthStore } from '@/stores/auth-store';
 import { useEffect, useState } from 'react';
 import { Search, BookOpen, CreditCard, LayoutDashboard, LogOut, Menu, X, PenLine } from 'lucide-react';
-import ThemeToggle from '@/components/ui/ThemeToggle';
 
 export default function Navbar() {
   const { user, logout, loadUser } = useAuthStore();
@@ -50,8 +49,7 @@ export default function Navbar() {
               Langganan
             </Link>
 
-            <ThemeToggle />
-            <span className="w-px h-6 bg-gray-200 dark:bg-gray-700 mx-2" />
+            <span className="w-px h-6 bg-gray-200 mx-2" />
 
             {user ? (
               <div className="flex items-center gap-2">
