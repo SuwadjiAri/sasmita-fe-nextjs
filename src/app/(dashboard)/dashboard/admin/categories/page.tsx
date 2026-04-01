@@ -6,11 +6,13 @@ import { Trash2, Plus, FolderOpen, Tag } from 'lucide-react';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import EmptyState from '@/components/ui/EmptyState';
 import { useToast } from '@/components/ui/Toast';
+import { useConfirm } from '@/components/ui/ConfirmModal';
 
 interface Category { id: number; name: string; slug: string; description?: string; }
 
 export default function AdminCategoriesPage() {
   const toast = useToast();
+  const confirmDialog = useConfirm();
   const [categories, setCategories] = useState<Category[]>([]);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -38,15 +40,22 @@ export default function AdminCategoriesPage() {
     }
   };
 
-  const handleDelete = async (id: number, catName: string) => {
-    if (!confirm(`Hapus kategori "${catName}"?`)) return;
-    try {
-      await api.delete(`/admin/categories/${id}`);
-      loadCategories();
-      toast.show('Kategori berhasil dihapus', 'success');
-    } catch {
-      toast.show('Gagal menghapus kategori', 'error');
-    }
+  const handleDelete = (id: number, catName: string) => {
+    confirmDialog.show({
+      title: 'Hapus Kategori',
+      message: `Apakah anda yakin ingin menghapus kategori "${catName}"? Artikel dalam kategori ini mungkin terpengaruh.`,
+      confirmLabel: 'Ya, Hapus',
+      type: 'danger',
+      onConfirm: async () => {
+        try {
+          await api.delete(`/admin/categories/${id}`);
+          loadCategories();
+          toast.show('Kategori berhasil dihapus', 'success');
+        } catch {
+          toast.show('Gagal menghapus kategori', 'error');
+        }
+      },
+    });
   };
 
   return (

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import api from '@/lib/api';
 import { Pencil, Send, PenLine, Clock, CheckCircle, AlertCircle, Archive, Eye, Trash2 } from 'lucide-react';
+import { useConfirm } from '@/components/ui/ConfirmModal';
 import EmptyState from '@/components/ui/EmptyState';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import Pagination from '@/components/ui/Pagination';
@@ -29,6 +30,7 @@ const statusConfig: Record<string, { label: string; color: string; bg: string; i
 
 export default function MyArticlesPage() {
   const toast = useToast();
+  const confirm = useConfirm();
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState<number | null>(null);
@@ -68,15 +70,22 @@ export default function MyArticlesPage() {
     }
   };
 
-  const handleDelete = async (id: number, title: string) => {
-    if (!confirm(`Hapus artikel "${title}"?`)) return;
-    try {
-      await api.delete(`/articles/${id}`);
-      toast.show('Artikel berhasil dihapus', 'success');
-      loadArticles(page, perPage);
-    } catch {
-      toast.show('Gagal menghapus artikel', 'error');
-    }
+  const handleDelete = (id: number, title: string) => {
+    confirm.show({
+      title: 'Hapus Artikel',
+      message: `Apakah anda yakin ingin menghapus artikel "${title}"? Tindakan ini tidak bisa dibatalkan.`,
+      confirmLabel: 'Ya, Hapus',
+      type: 'danger',
+      onConfirm: async () => {
+        try {
+          await api.delete(`/articles/${id}`);
+          toast.show('Artikel berhasil dihapus', 'success');
+          loadArticles(page, perPage);
+        } catch {
+          toast.show('Gagal menghapus artikel', 'error');
+        }
+      },
+    });
   };
 
   const canSubmit = (status: string) => status === 'draft' || status === 'revision';
