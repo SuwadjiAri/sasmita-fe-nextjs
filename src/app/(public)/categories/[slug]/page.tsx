@@ -86,8 +86,8 @@ export default async function CategoryDetailPage({ params }: Props) {
               </div>
               <p className="text-gray-900 font-semibold text-lg mb-1">Belum ada artikel</p>
               <p className="text-gray-500">Belum ada karya {category.name.toLowerCase()} yang dipublikasikan.</p>
-              <Link href="/register" className="inline-block mt-4 text-indigo-600 font-medium hover:underline">
-                Jadilah penulis pertama →
+              <Link href="/dashboard/articles/create" className="inline-block mt-4 text-indigo-600 font-medium hover:underline">
+                Tulis artikel pertama →
               </Link>
             </div>
           ) : (
