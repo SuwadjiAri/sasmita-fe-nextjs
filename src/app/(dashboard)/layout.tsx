@@ -93,36 +93,42 @@ export default function DashboardLayout({
       <div className="px-3 py-3 border-b border-gray-100 relative">
         <button
           onClick={() => setUserMenuOpen(!userMenuOpen)}
-          className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors"
+          className={`w-full flex items-center gap-3 p-2.5 rounded-2xl transition-all ${
+            userMenuOpen
+              ? 'bg-gradient-to-r from-indigo-50 to-purple-50 shadow-sm'
+              : 'hover:bg-gray-50'
+          }`}
         >
-          <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
-            <span className="text-sm font-bold text-white">{user.name.charAt(0).toUpperCase()}</span>
+          <div className="w-11 h-11 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-indigo-500/20">
+            <span className="text-base font-bold text-white">{user.name.charAt(0).toUpperCase()}</span>
           </div>
           <div className="flex-1 min-w-0 text-left">
-            <p className="text-sm font-medium text-gray-900 truncate">{user.name}</p>
-            <p className="text-xs text-gray-400 truncate">{user.email}</p>
+            <p className="text-sm font-semibold text-gray-900 truncate">{user.name}</p>
+            <p className="text-[11px] text-gray-400 truncate">{user.email}</p>
           </div>
-          <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${userMenuOpen ? 'rotate-180' : ''}`} />
+          <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${userMenuOpen ? 'rotate-180' : ''}`} />
         </button>
 
         {/* Dropdown */}
         {userMenuOpen && (
-          <div className="mx-2 mt-1 bg-white border border-gray-100 rounded-xl shadow-lg overflow-hidden animate-fade-in">
-            <Link
-              href="/dashboard/profile"
-              onClick={() => { setUserMenuOpen(false); if (mobile) setMobileOpen(false); }}
-              className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 transition-colors"
-            >
-              <Settings className="w-4 h-4 text-gray-400" />
-              Edit Profil
-            </Link>
-            <button
-              onClick={() => { handleLogout(); setUserMenuOpen(false); }}
-              className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors"
-            >
-              <LogOut className="w-4 h-4" />
-              Keluar
-            </button>
+          <div className="mx-2 mt-2 bg-white border border-gray-100 rounded-2xl shadow-xl shadow-gray-200/50 overflow-hidden animate-fade-in">
+            <div className="p-1.5">
+              <Link
+                href="/dashboard/profile"
+                onClick={() => { setUserMenuOpen(false); if (mobile) setMobileOpen(false); }}
+                className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 rounded-xl transition-all"
+              >
+                <Settings className="w-4 h-4" />
+                Edit Profil
+              </Link>
+              <button
+                onClick={() => { handleLogout(); setUserMenuOpen(false); }}
+                className="flex items-center gap-2.5 w-full px-3 py-2.5 text-sm text-red-500 hover:bg-red-50 rounded-xl transition-all"
+              >
+                <LogOut className="w-4 h-4" />
+                Keluar
+              </button>
+            </div>
           </div>
         )}
       </div>
