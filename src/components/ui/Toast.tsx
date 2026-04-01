@@ -29,15 +29,15 @@ const icons = {
 };
 
 const styles = {
-  success: 'bg-green-50 border-green-200 text-green-800 dark:bg-green-900/30 dark:border-green-800 dark:text-green-300',
-  error: 'bg-red-50 border-red-200 text-red-800 dark:bg-red-900/30 dark:border-red-800 dark:text-red-300',
-  info: 'bg-indigo-50 border-indigo-200 text-indigo-800 dark:bg-indigo-900/30 dark:border-indigo-800 dark:text-indigo-300',
+  success: 'bg-green-600 border-green-700 text-white',
+  error: 'bg-red-600 border-red-700 text-white',
+  info: 'bg-indigo-600 border-indigo-700 text-white',
 };
 
 const iconStyles = {
-  success: 'text-green-500',
-  error: 'text-red-500',
-  info: 'text-indigo-500',
+  success: 'text-green-200',
+  error: 'text-red-200',
+  info: 'text-indigo-200',
 };
 
 export default function Toast() {
@@ -66,8 +66,8 @@ export default function Toast() {
       <div className={`flex items-start gap-3 p-4 rounded-xl border shadow-lg ${styles[type]}`}>
         <Icon className={`w-5 h-5 flex-shrink-0 mt-0.5 ${iconStyles[type]}`} />
         <p className="text-sm font-medium flex-1">{message}</p>
-        <button onClick={() => { setShow(false); setTimeout(hide, 300); }} className="p-0.5 hover:opacity-70">
-          <X className="w-4 h-4" />
+        <button onClick={() => { setShow(false); setTimeout(hide, 300); }} className="p-1 hover:bg-white/20 rounded-lg transition-colors">
+          <X className="w-4 h-4 text-white" />
         </button>
       </div>
     </div>
