@@ -18,18 +18,16 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Handle 401 responses (token expired)
+// Handle 401 responses (session expired)
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401 && typeof window !== 'undefined') {
-      const method = error.config?.method?.toUpperCase();
-      if (method === 'GET') {
-        const path = window.location.pathname;
-        if (!path.startsWith('/login') && !path.startsWith('/register') && !path.startsWith('/forgot-password')) {
-          localStorage.removeItem('token');
-          window.location.href = '/login';
-        }
+      const path = window.location.pathname;
+      if (!path.startsWith('/login') && !path.startsWith('/register') && !path.startsWith('/forgot-password')) {
+        localStorage.removeItem('token');
+        alert('Sesi anda telah berakhir. Silakan login kembali.');
+        window.location.href = '/login';
       }
     }
     return Promise.reject(error);
