@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
+import { useToast } from '@/components/ui/Toast';
 
 interface Article {
   id: number;
@@ -11,6 +12,7 @@ interface Article {
 }
 
 export default function ReviewsPage() {
+  const toast = useToast();
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -22,7 +24,7 @@ export default function ReviewsPage() {
     try {
       await api.post(`/redaksi/reviews/${articleId}`, { status, notes });
       setArticles((prev) => prev.filter((a) => a.id !== articleId));
-    } catch { alert('Gagal menyimpan review'); }
+    } catch { toast.show('Gagal menyimpan review', 'error'); }
   };
 
   return (

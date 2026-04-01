@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
 import Script from 'next/script';
+import { useToast } from '@/components/ui/Toast';
 import { Sparkles, Zap, Crown, Check, CheckCircle, Calendar } from 'lucide-react';
 
 interface Plan {
@@ -41,6 +42,7 @@ const benefits = [
 ];
 
 export default function SubscriptionDashboardPage() {
+  const toast = useToast();
   const [subscription, setSubscription] = useState<{ has_active: boolean; subscription: { status: string; expiredAt?: string } | null } | null>(null);
   const [plans, setPlans] = useState<Plan[]>([]);
   const [loading, setLoading] = useState<number | null>(null);
@@ -57,14 +59,14 @@ export default function SubscriptionDashboardPage() {
       const { snap_token } = res.data.data;
       if (window.snap) {
         window.snap.pay(snap_token, {
-          onSuccess: () => { alert('Pembayaran berhasil!'); window.location.reload(); },
-          onPending: () => { alert('Menunggu pembayaran...'); },
-          onError: () => { alert('Pembayaran gagal'); },
+          onSuccess: () => { toast.show('Pembayaran berhasil!', 'success'); window.location.reload(); },
+          onPending: () => { toast.show('Menunggu pembayaran...', 'info'); },
+          onError: () => { toast.show('Pembayaran gagal', 'error'); },
           onClose: () => {},
         });
       }
     } catch {
-      alert('Gagal membuat transaksi');
+      toast.show('Gagal membuat transaksi', 'error');
     } finally {
       setLoading(null);
     }

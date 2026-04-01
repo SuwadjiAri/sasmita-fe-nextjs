@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
+import { useToast } from '@/components/ui/Toast';
 
 interface Stats {
   total_articles: number;
@@ -14,6 +15,8 @@ interface Stats {
 
 export default function StatisticsPage() {
   const [stats, setStats] = useState<Stats | null>(null);
+
+  const toast = useToast();
 
   useEffect(() => {
     api.get('/my/stats').then((res) => setStats(res.data.data)).catch(() => {});
@@ -30,7 +33,7 @@ export default function StatisticsPage() {
       link.click();
       link.remove();
     } catch {
-      alert('Gagal mengunduh portofolio');
+      toast.show('Gagal mengunduh portofolio', 'error');
     }
   };
 

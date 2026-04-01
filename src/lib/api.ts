@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useToast } from '@/components/ui/Toast';
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080',
@@ -26,8 +27,10 @@ api.interceptors.response.use(
       const path = window.location.pathname;
       if (!path.startsWith('/login') && !path.startsWith('/register') && !path.startsWith('/forgot-password')) {
         localStorage.removeItem('token');
-        alert('Sesi anda telah berakhir. Silakan login kembali.');
-        window.location.href = '/login';
+        useToast.getState().show('Sesi anda telah berakhir. Silakan login kembali.', 'error');
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 2000);
       }
     }
     return Promise.reject(error);

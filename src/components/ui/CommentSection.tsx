@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
 import { useAuthStore } from '@/stores/auth-store';
+import { useToast } from '@/components/ui/Toast';
 
 interface Comment {
   id: number;
@@ -13,6 +14,7 @@ interface Comment {
 
 export default function CommentSection({ articleId }: { articleId: number }) {
   const { user } = useAuthStore();
+  const toast = useToast();
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(false);
@@ -33,7 +35,7 @@ export default function CommentSection({ articleId }: { articleId: number }) {
       setComments((prev) => [res.data.data, ...prev]);
       setNewComment('');
     } catch {
-      alert('Gagal mengirim komentar');
+      toast.show('Gagal mengirim komentar', 'error');
     } finally {
       setLoading(false);
     }
