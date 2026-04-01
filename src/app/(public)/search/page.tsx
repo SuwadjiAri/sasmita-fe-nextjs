@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import api from '@/lib/api';
 import { Search, BookOpen, ArrowRight } from 'lucide-react';
@@ -17,6 +17,15 @@ export default function SearchPage() {
   const [results, setResults] = useState<Article[]>([]);
   const [searched, setSearched] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [latestArticles, setLatestArticles] = useState<Article[]>([]);
+  const [loadingLatest, setLoadingLatest] = useState(true);
+
+  useEffect(() => {
+    api.get('/articles?per_page=6')
+      .then((res) => setLatestArticles(res.data.data || []))
+      .catch(() => {})
+      .finally(() => setLoadingLatest(false));
+  }, []);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,11 +76,34 @@ export default function SearchPage() {
       {/* Results */}
       <div className="max-w-3xl mx-auto px-4 py-10">
         {!searched ? (
-          <div className="text-center py-12">
-            <div className="w-20 h-20 bg-indigo-50 rounded-3xl flex items-center justify-center mx-auto mb-4">
-              <Search className="w-10 h-10 text-indigo-300" />
-            </div>
-            <p className="text-gray-500">Masukkan kata kunci untuk mulai mencari</p>
+          <div>
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Artikel Terbaru</h2>
+            {loadingLatest ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+              </div>
+            ) : latestArticles.length === 0 ? (
+              <p className="text-gray-500 text-center py-8">Belum ada artikel yang dipublikasikan.</p>
+            ) : (
+              <div className="space-y-4 stagger-children">
+                {latestArticles.map((article) => (
+                  <Link
+                    key={article.id}
+                    href={`/articles/${article.slug}`}
+                    className="card-hover group flex items-start gap-4 bg-white border border-gray-100 rounded-2xl p-5"
+                  >
+                    <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-100 transition-colors">
+                      <BookOpen className="w-5 h-5 text-indigo-400" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors">{article.title}</h3>
+                      <p className="text-gray-500 text-sm mt-1 line-clamp-2">{article.excerpt || 'Baca selengkapnya...'}</p>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-indigo-500 mt-1 flex-shrink-0 transition-colors" />
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
         ) : results.length === 0 ? (
           <div className="text-center py-12">
