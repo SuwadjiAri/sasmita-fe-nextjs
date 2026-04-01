@@ -5,6 +5,7 @@ import api from '@/lib/api';
 import EmptyState from '@/components/ui/EmptyState';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { Bell, CheckCheck, Clock, CheckCircle } from 'lucide-react';
+import Pagination from '@/components/ui/Pagination';
 
 interface Notification {
   id: number;
@@ -18,13 +19,21 @@ export default function NotificationsPage() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unread, setUnread] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [meta, setMeta] = useState({ total: 0, page: 1, per_page: 20, last_page: 1 });
 
-  useEffect(() => {
-    api.get('/notifications').then((res) => {
+  const loadNotifications = (p: number) => {
+    setLoading(true);
+    api.get(`/notifications?page=${p}&per_page=20`).then((res) => {
       setNotifications(res.data.data.data || []);
       setUnread(res.data.data.unread_count || 0);
+      setMeta({ total: res.data.data.total || 0, page: res.data.data.page || p, per_page: res.data.data.per_page || 20, last_page: res.data.data.last_page || 1 });
     }).catch(() => {}).finally(() => setLoading(false));
-  }, []);
+  };
+
+  useEffect(() => { loadNotifications(1); }, []);
+
+  const handlePageChange = (p: number) => { setPage(p); loadNotifications(p); };
 
   const markAsRead = async (id: number) => {
     await api.put(`/notifications/${id}/read`);
@@ -63,6 +72,7 @@ export default function NotificationsPage() {
       ) : notifications.length === 0 ? (
         <EmptyState icon="notification" title="Tidak ada notifikasi" description="Anda akan menerima notifikasi saat artikel anda direview." />
       ) : (
+        <>
         <div className="space-y-3 stagger-children">
           {notifications.map((notif) => (
             <div
@@ -96,6 +106,9 @@ export default function NotificationsPage() {
             </div>
           ))}
         </div>
+
+        <Pagination page={meta.page} lastPage={meta.last_page} total={meta.total} perPage={meta.per_page} onPageChange={handlePageChange} />
+        </>
       )}
     </div>
   );

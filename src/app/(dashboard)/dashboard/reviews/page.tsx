@@ -6,6 +6,7 @@ import { useToast } from '@/components/ui/Toast';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import EmptyState from '@/components/ui/EmptyState';
 import { ChevronDown, ChevronUp, Eye } from 'lucide-react';
+import Pagination from '@/components/ui/Pagination';
 
 interface Article {
   id: number;
@@ -23,10 +24,20 @@ export default function ReviewsPage() {
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [reviewNotes, setReviewNotes] = useState<Record<number, string>>({});
+  const [page, setPage] = useState(1);
+  const [meta, setMeta] = useState({ total: 0, page: 1, per_page: 10, last_page: 1 });
 
-  useEffect(() => {
-    api.get('/redaksi/reviews').then((res) => setArticles(res.data.data || [])).catch(() => {}).finally(() => setLoading(false));
-  }, []);
+  const loadReviews = (p: number) => {
+    setLoading(true);
+    api.get(`/redaksi/reviews?page=${p}&per_page=10`).then((res) => {
+      setArticles(res.data.data || []);
+      setMeta(res.data.meta || { total: 0, page: p, per_page: 10, last_page: 1 });
+    }).catch(() => {}).finally(() => setLoading(false));
+  };
+
+  useEffect(() => { loadReviews(1); }, []);
+
+  const handlePageChange = (p: number) => { setPage(p); loadReviews(p); };
 
   const handleReview = async (articleId: number, status: string) => {
     try {
@@ -55,6 +66,7 @@ export default function ReviewsPage() {
       ) : articles.length === 0 ? (
         <EmptyState icon="article" title="Tidak ada artikel menunggu review" description="Semua artikel sudah direview. Cek kembali nanti." />
       ) : (
+        <>
         <div className="space-y-4">
           {articles.map((article) => (
             <div key={article.id} className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
@@ -124,6 +136,9 @@ export default function ReviewsPage() {
             </div>
           ))}
         </div>
+
+        <Pagination page={meta.page} lastPage={meta.last_page} total={meta.total} perPage={meta.per_page} onPageChange={handlePageChange} />
+      </>
       )}
     </div>
   );

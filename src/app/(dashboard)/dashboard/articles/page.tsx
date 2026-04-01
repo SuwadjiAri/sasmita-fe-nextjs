@@ -6,6 +6,7 @@ import api from '@/lib/api';
 import { Pencil, Send, PenLine, Clock, CheckCircle, AlertCircle, Archive, Eye } from 'lucide-react';
 import EmptyState from '@/components/ui/EmptyState';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import Pagination from '@/components/ui/Pagination';
 import { useToast } from '@/components/ui/Toast';
 
 interface Article {
@@ -31,15 +32,29 @@ export default function MyArticlesPage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState<number | null>(null);
+  const [page, setPage] = useState(1);
+  const [meta, setMeta] = useState({ total: 0, page: 1, per_page: 10, last_page: 1 });
+  const [statusFilter, setStatusFilter] = useState('all');
 
-  const loadArticles = () => {
-    api.get('/my/articles')
-      .then((res) => setArticles(res.data.data || []))
+  const loadArticles = (p: number = 1) => {
+    setLoading(true);
+    api.get(`/my/articles?page=${p}&per_page=10`)
+      .then((res) => {
+        setArticles(res.data.data || []);
+        setMeta(res.data.meta || { total: 0, page: p, per_page: 10, last_page: 1 });
+      })
       .catch(() => {})
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { loadArticles(); }, []);
+  useEffect(() => { loadArticles(1); }, []);
+
+  const handlePageChange = (p: number) => {
+    setPage(p);
+    loadArticles(p);
+  };
+
+  const filtered = statusFilter === 'all' ? articles : articles.filter(a => a.status === statusFilter);
 
   const handleSubmit = async (id: number) => {
     setSubmitting(id);
@@ -73,13 +88,37 @@ export default function MyArticlesPage() {
         </Link>
       </div>
 
+      {/* Status filter tabs */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        {[
+          { key: 'all', label: 'Semua' },
+          { key: 'draft', label: 'Draf' },
+          { key: 'pending', label: 'Pending' },
+          { key: 'revision', label: 'Revisi' },
+          { key: 'published', label: 'Terbit' },
+        ].map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => setStatusFilter(tab.key)}
+            className={`px-4 py-1.5 rounded-xl text-sm font-medium transition-all ${
+              statusFilter === tab.key
+                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
       {loading ? (
         <LoadingSpinner message="Memuat artikel..." />
       ) : articles.length === 0 ? (
         <EmptyState icon="article" title="Belum ada artikel" description="Mulai menulis karya sastra anda dan bagikan ke dunia." actionLabel="Tulis Artikel Baru" actionHref="/dashboard/articles/create" />
       ) : (
+        <>
         <div className="space-y-4 stagger-children">
-          {articles.map((article) => {
+          {filtered.map((article) => {
             const status = statusConfig[article.status] || statusConfig.draft;
             const StatusIcon = status.icon;
 
@@ -141,6 +180,9 @@ export default function MyArticlesPage() {
             );
           })}
         </div>
+
+        <Pagination page={meta.page} lastPage={meta.last_page} total={meta.total} perPage={meta.per_page} onPageChange={handlePageChange} />
+      </>
       )}
     </div>
   );
