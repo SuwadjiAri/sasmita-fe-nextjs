@@ -45,7 +45,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
     setLoading(true);
 
     try {
-      await api.put(`/articles/${id}`, { title, content, excerpt, category_id: parseInt(categoryId) });
+      await api.post(`/articles/${id}/update`, { title, content, excerpt, category_id: parseInt(categoryId) });
       router.push('/dashboard/articles');
     } catch (err: unknown) {
       const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Gagal memperbarui artikel';

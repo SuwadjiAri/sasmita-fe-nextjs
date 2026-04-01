@@ -24,7 +24,7 @@ export default function ProfilePage() {
     e.preventDefault();
     setLoading(true); setError(''); setSuccess('');
     try {
-      await api.put('/me', { name, bio });
+      await api.post('/me/update', { name, bio });
       await loadUser();
       setSuccess('Profil berhasil diperbarui');
     } catch { setError('Gagal memperbarui profil'); }

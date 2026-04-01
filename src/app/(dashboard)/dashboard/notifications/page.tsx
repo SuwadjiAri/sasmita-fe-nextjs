@@ -24,13 +24,13 @@ export default function NotificationsPage() {
   }, []);
 
   const markAsRead = async (id: number) => {
-    await api.put(`/notifications/${id}/read`);
+    await api.post(`/notifications/${id}/read`);
     setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, is_read: true } : n)));
     setUnread((prev) => Math.max(0, prev - 1));
   };
 
   const markAllAsRead = async () => {
-    await api.put('/notifications/read-all');
+    await api.post('/notifications/read-all');
     setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
     setUnread(0);
   };

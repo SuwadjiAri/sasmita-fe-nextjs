@@ -23,7 +23,7 @@ export default function AdminCategoriesPage() {
 
   const handleDelete = async (id: number) => {
     if (!confirm('Hapus kategori ini?')) return;
-    await api.delete(`/admin/categories/${id}`);
+    await api.post(`/admin/categories/${id}/delete`);
     loadCategories();
   };
 
