@@ -13,7 +13,7 @@ export default function AdminAdsPage() {
   const loadAds = () => { api.get('/admin/ads').then((res) => setAds(res.data.data || [])).catch(() => {}); };
 
   const toggleActive = async (id: number, current: boolean) => {
-    await api.post(`/admin/ads/${id}/update`, { is_active: !current });
+    await api.put(`/admin/ads/${id}`, { is_active: !current });
     loadAds();
   };
 

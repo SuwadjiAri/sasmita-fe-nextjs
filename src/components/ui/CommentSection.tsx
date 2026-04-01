@@ -42,7 +42,7 @@ export default function CommentSection({ articleId }: { articleId: number }) {
   };
 
   const handleDelete = async (id: number) => {
-    await api.post(`/comments/${id}/delete`);
+    await api.delete(`/comments/${id}`);
     setComments((prev) => prev.filter((c) => c.id !== id));
   };
 

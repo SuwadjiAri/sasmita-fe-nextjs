@@ -11,7 +11,7 @@ export default function AdminUsersPage() {
   useEffect(() => { api.get('/admin/users').then((res) => setUsers(res.data.data || [])).catch(() => {}); }, []);
 
   const toggleRedaksi = async (userId: number, current: boolean) => {
-    await api.post(`/admin/users/${userId}/role`, { is_redaksi: !current });
+    await api.put(`/admin/users/${userId}/role`, { is_redaksi: !current });
     setUsers((prev) => prev.map((u) => (u.id === userId ? { ...u, isRedaksi: !current } : u)));
   };
 
