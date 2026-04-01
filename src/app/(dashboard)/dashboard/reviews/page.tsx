@@ -25,19 +25,21 @@ export default function ReviewsPage() {
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [reviewNotes, setReviewNotes] = useState<Record<number, string>>({});
   const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
   const [meta, setMeta] = useState({ total: 0, page: 1, per_page: 10, last_page: 1 });
 
-  const loadReviews = (p: number) => {
+  const loadReviews = (p: number, pp: number = 10) => {
     setLoading(true);
-    api.get(`/redaksi/reviews?page=${p}&per_page=10`).then((res) => {
+    api.get(`/redaksi/reviews?page=${p}&per_page=${pp}`).then((res) => {
       setArticles(res.data.data || []);
-      setMeta(res.data.meta || { total: 0, page: p, per_page: 10, last_page: 1 });
+      setMeta(res.data.meta || { total: 0, page: p, per_page: pp, last_page: 1 });
     }).catch(() => {}).finally(() => setLoading(false));
   };
 
-  useEffect(() => { loadReviews(1); }, []);
+  useEffect(() => { loadReviews(1, perPage); }, []);
 
-  const handlePageChange = (p: number) => { setPage(p); loadReviews(p); };
+  const handlePageChange = (p: number) => { setPage(p); loadReviews(p, perPage); };
+  const handlePerPageChange = (pp: number) => { setPerPage(pp); setPage(1); loadReviews(1, pp); };
 
   const handleReview = async (articleId: number, status: string) => {
     try {
@@ -137,7 +139,7 @@ export default function ReviewsPage() {
           ))}
         </div>
 
-        <Pagination page={meta.page} lastPage={meta.last_page} total={meta.total} perPage={meta.per_page} onPageChange={handlePageChange} />
+        <Pagination page={meta.page} lastPage={meta.last_page} total={meta.total} perPage={meta.per_page} onPageChange={handlePageChange} onPerPageChange={handlePerPageChange} />
       </>
       )}
     </div>

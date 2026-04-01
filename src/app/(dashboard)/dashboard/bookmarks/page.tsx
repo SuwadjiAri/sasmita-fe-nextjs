@@ -12,25 +12,24 @@ export default function BookmarksPage() {
   const [bookmarks, setBookmarks] = useState<{ article: { id: number; title: string; slug: string; excerpt?: string } }[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
   const [meta, setMeta] = useState({ total: 0, page: 1, per_page: 10, last_page: 1 });
 
-  const loadBookmarks = useCallback((p: number) => {
+  const loadBookmarks = useCallback((p: number, pp: number = 10) => {
     setLoading(true);
-    api.get(`/my/bookmarks?page=${p}&per_page=10`)
+    api.get(`/my/bookmarks?page=${p}&per_page=${pp}`)
       .then((res) => {
         setBookmarks(res.data.data || []);
-        setMeta(res.data.meta || { total: 0, page: p, per_page: 10, last_page: 1 });
+        setMeta(res.data.meta || { total: 0, page: p, per_page: pp, last_page: 1 });
       })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
-  useEffect(() => { loadBookmarks(1); }, [loadBookmarks]);
+  useEffect(() => { loadBookmarks(1, perPage); }, [loadBookmarks, perPage]);
 
-  const handlePageChange = (p: number) => {
-    setPage(p);
-    loadBookmarks(p);
-  };
+  const handlePageChange = (p: number) => { setPage(p); loadBookmarks(p, perPage); };
+  const handlePerPageChange = (pp: number) => { setPerPage(pp); setPage(1); loadBookmarks(1, pp); };
 
   return (
     <div>
@@ -60,7 +59,7 @@ export default function BookmarksPage() {
             ))}
           </div>
 
-          <Pagination page={meta.page} lastPage={meta.last_page} total={meta.total} perPage={meta.per_page} onPageChange={handlePageChange} />
+          <Pagination page={meta.page} lastPage={meta.last_page} total={meta.total} perPage={meta.per_page} onPageChange={handlePageChange} onPerPageChange={handlePerPageChange} />
         </>
       )}
     </div>

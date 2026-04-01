@@ -33,26 +33,25 @@ export default function MyArticlesPage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState<number | null>(null);
   const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
   const [meta, setMeta] = useState({ total: 0, page: 1, per_page: 10, last_page: 1 });
   const [statusFilter, setStatusFilter] = useState('all');
 
-  const loadArticles = (p: number = 1) => {
+  const loadArticles = (p: number = 1, pp: number = 10) => {
     setLoading(true);
-    api.get(`/my/articles?page=${p}&per_page=10`)
+    api.get(`/my/articles?page=${p}&per_page=${pp}`)
       .then((res) => {
         setArticles(res.data.data || []);
-        setMeta(res.data.meta || { total: 0, page: p, per_page: 10, last_page: 1 });
+        setMeta(res.data.meta || { total: 0, page: p, per_page: pp, last_page: 1 });
       })
       .catch(() => {})
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { loadArticles(1); }, []);
+  useEffect(() => { loadArticles(1, perPage); }, []);
 
-  const handlePageChange = (p: number) => {
-    setPage(p);
-    loadArticles(p);
-  };
+  const handlePageChange = (p: number) => { setPage(p); loadArticles(p, perPage); };
+  const handlePerPageChange = (pp: number) => { setPerPage(pp); setPage(1); loadArticles(1, pp); };
 
   const filtered = statusFilter === 'all' ? articles : articles.filter(a => a.status === statusFilter);
 
@@ -61,7 +60,7 @@ export default function MyArticlesPage() {
     try {
       await api.post(`/articles/${id}/submit`);
       toast.show('Artikel berhasil diajukan untuk review', 'success');
-      loadArticles();
+      loadArticles(page, perPage);
     } catch {
       toast.show('Gagal mengajukan artikel', 'error');
     } finally {
@@ -181,7 +180,7 @@ export default function MyArticlesPage() {
           })}
         </div>
 
-        <Pagination page={meta.page} lastPage={meta.last_page} total={meta.total} perPage={meta.per_page} onPageChange={handlePageChange} />
+        <Pagination page={meta.page} lastPage={meta.last_page} total={meta.total} perPage={meta.per_page} onPageChange={handlePageChange} onPerPageChange={handlePerPageChange} />
       </>
       )}
     </div>

@@ -20,20 +20,22 @@ export default function NotificationsPage() {
   const [unread, setUnread] = useState(0);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(20);
   const [meta, setMeta] = useState({ total: 0, page: 1, per_page: 20, last_page: 1 });
 
-  const loadNotifications = (p: number) => {
+  const loadNotifications = (p: number, pp: number = 20) => {
     setLoading(true);
-    api.get(`/notifications?page=${p}&per_page=20`).then((res) => {
+    api.get(`/notifications?page=${p}&per_page=${pp}`).then((res) => {
       setNotifications(res.data.data.data || []);
       setUnread(res.data.data.unread_count || 0);
-      setMeta({ total: res.data.data.total || 0, page: res.data.data.page || p, per_page: res.data.data.per_page || 20, last_page: res.data.data.last_page || 1 });
+      setMeta({ total: res.data.data.total || 0, page: res.data.data.page || p, per_page: res.data.data.per_page || pp, last_page: res.data.data.last_page || 1 });
     }).catch(() => {}).finally(() => setLoading(false));
   };
 
-  useEffect(() => { loadNotifications(1); }, []);
+  useEffect(() => { loadNotifications(1, perPage); }, []);
 
-  const handlePageChange = (p: number) => { setPage(p); loadNotifications(p); };
+  const handlePageChange = (p: number) => { setPage(p); loadNotifications(p, perPage); };
+  const handlePerPageChange = (pp: number) => { setPerPage(pp); setPage(1); loadNotifications(1, pp); };
 
   const markAsRead = async (id: number) => {
     await api.put(`/notifications/${id}/read`);
@@ -107,7 +109,7 @@ export default function NotificationsPage() {
           ))}
         </div>
 
-        <Pagination page={meta.page} lastPage={meta.last_page} total={meta.total} perPage={meta.per_page} onPageChange={handlePageChange} />
+        <Pagination page={meta.page} lastPage={meta.last_page} total={meta.total} perPage={meta.per_page} onPageChange={handlePageChange} onPerPageChange={handlePerPageChange} />
         </>
       )}
     </div>

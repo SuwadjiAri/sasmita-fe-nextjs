@@ -14,26 +14,25 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
   const [meta, setMeta] = useState({ total: 0, page: 1, per_page: 10, last_page: 1 });
   const [search, setSearch] = useState('');
 
-  const loadUsers = useCallback((p: number) => {
+  const loadUsers = useCallback((p: number, pp: number = 10) => {
     setLoading(true);
-    api.get(`/admin/users?page=${p}&per_page=10`)
+    api.get(`/admin/users?page=${p}&per_page=${pp}`)
       .then((res) => {
         setUsers(res.data.data || []);
-        setMeta(res.data.meta || { total: 0, page: p, per_page: 10, last_page: 1 });
+        setMeta(res.data.meta || { total: 0, page: p, per_page: pp, last_page: 1 });
       })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
-  useEffect(() => { loadUsers(1); }, [loadUsers]);
+  useEffect(() => { loadUsers(1, perPage); }, [loadUsers, perPage]);
 
-  const handlePageChange = (p: number) => {
-    setPage(p);
-    loadUsers(p);
-  };
+  const handlePageChange = (p: number) => { setPage(p); loadUsers(p, perPage); };
+  const handlePerPageChange = (pp: number) => { setPerPage(pp); setPage(1); loadUsers(1, pp); };
 
   const toggleRedaksi = async (userId: number, current: boolean) => {
     await api.put(`/admin/users/${userId}/role`, { is_redaksi: !current });
@@ -103,7 +102,7 @@ export default function AdminUsersPage() {
             ))}
           </div>
 
-          <Pagination page={meta.page} lastPage={meta.last_page} total={meta.total} perPage={meta.per_page} onPageChange={handlePageChange} />
+          <Pagination page={meta.page} lastPage={meta.last_page} total={meta.total} perPage={meta.per_page} onPageChange={handlePageChange} onPerPageChange={handlePerPageChange} />
         </>
       )}
     </div>
