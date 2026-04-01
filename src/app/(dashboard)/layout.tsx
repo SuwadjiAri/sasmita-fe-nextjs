@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import {
   LayoutDashboard, FileText, Bookmark, CreditCard, BarChart3,
   Bell, UserCircle, ClipboardCheck, Users, FolderOpen, Megaphone,
-  LogOut, PenLine, ChevronRight, Menu, X
+  LogOut, PenLine, ChevronRight, Menu, X, ChevronDown, Settings
 } from 'lucide-react';
 
 const memberMenus = [
@@ -18,7 +18,6 @@ const memberMenus = [
   { href: '/dashboard/subscription', label: 'Subscription', icon: CreditCard },
   { href: '/dashboard/statistics', label: 'Statistics', icon: BarChart3 },
   { href: '/dashboard/notifications', label: 'Notifications', icon: Bell },
-  { href: '/dashboard/profile', label: 'Edit Profile', icon: UserCircle },
 ];
 
 const redaksiMenus = [
@@ -46,6 +45,7 @@ export default function DashboardLayout({
   };
 
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   useEffect(() => {
     loadUser().then(() => {
@@ -89,17 +89,42 @@ export default function DashboardLayout({
         </Link>
       </div>
 
-      {/* User info */}
-      <div className="px-5 py-4 border-b border-gray-100">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center">
-            <span className="text-sm font-bold text-indigo-600">{user.name.charAt(0).toUpperCase()}</span>
+      {/* User info - clickable dropdown */}
+      <div className="px-3 py-3 border-b border-gray-100 relative">
+        <button
+          onClick={() => setUserMenuOpen(!userMenuOpen)}
+          className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors"
+        >
+          <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
+            <span className="text-sm font-bold text-white">{user.name.charAt(0).toUpperCase()}</span>
           </div>
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 text-left">
             <p className="text-sm font-medium text-gray-900 truncate">{user.name}</p>
             <p className="text-xs text-gray-400 truncate">{user.email}</p>
           </div>
-        </div>
+          <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${userMenuOpen ? 'rotate-180' : ''}`} />
+        </button>
+
+        {/* Dropdown */}
+        {userMenuOpen && (
+          <div className="mx-2 mt-1 bg-white border border-gray-100 rounded-xl shadow-lg overflow-hidden animate-fade-in">
+            <Link
+              href="/dashboard/profile"
+              onClick={() => { setUserMenuOpen(false); if (mobile) setMobileOpen(false); }}
+              className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 transition-colors"
+            >
+              <Settings className="w-4 h-4 text-gray-400" />
+              Edit Profil
+            </Link>
+            <button
+              onClick={() => { handleLogout(); setUserMenuOpen(false); }}
+              className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors"
+            >
+              <LogOut className="w-4 h-4" />
+              Keluar
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Navigation */}
@@ -132,16 +157,6 @@ export default function DashboardLayout({
         ))}
       </nav>
 
-      {/* Logout */}
-      <div className="p-3 border-t border-gray-100">
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm text-red-500 hover:bg-red-50 transition-all"
-        >
-          <LogOut className="w-4 h-4" />
-          Keluar
-        </button>
-      </div>
     </>
   );
 
