@@ -3,9 +3,10 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import api from '@/lib/api';
-import { Pencil } from 'lucide-react';
+import { Pencil, Send } from 'lucide-react';
 import EmptyState from '@/components/ui/EmptyState';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import { useToast } from '@/components/ui/Toast';
 
 interface Article {
   id: number;
@@ -32,15 +33,28 @@ const statusColor: Record<string, string> = {
 };
 
 export default function MyArticlesPage() {
+  const toast = useToast();
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const loadArticles = () => {
     api.get('/my/articles')
       .then((res) => setArticles(res.data.data || []))
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, []);
+  };
+
+  useEffect(() => { loadArticles(); }, []);
+
+  const handleSubmit = async (id: number) => {
+    try {
+      await api.post(`/articles/${id}/submit`);
+      toast.show('Artikel berhasil diajukan untuk review', 'success');
+      loadArticles();
+    } catch {
+      toast.show('Gagal mengajukan artikel', 'error');
+    }
+  };
 
   return (
     <div>
@@ -83,10 +97,17 @@ export default function MyArticlesPage() {
                     <td className="px-6 py-4 text-sm text-gray-500">
                       {new Date(article.createdAt).toLocaleDateString('id-ID')}
                     </td>
-                    <td className="px-6 py-4 text-right">
-                      <Link href={`/dashboard/articles/${article.id}/edit`} className="text-indigo-600 text-sm hover:underline">
-                        Edit
-                      </Link>
+                    <td className="px-6 py-4 text-right space-x-3">
+                      {(article.status === 'draft' || article.status === 'revision') && (
+                        <button onClick={() => handleSubmit(article.id)} className="text-green-600 text-sm hover:underline">
+                          Ajukan
+                        </button>
+                      )}
+                      {article.status !== 'published' && (
+                        <Link href={`/dashboard/articles/${article.id}/edit`} className="text-indigo-600 text-sm hover:underline">
+                          Edit
+                        </Link>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -109,9 +130,18 @@ export default function MyArticlesPage() {
                     </span>
                   </div>
                 </div>
-                <Link href={`/dashboard/articles/${article.id}/edit`} className="p-2 text-indigo-500 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition-colors">
-                  <Pencil className="w-4 h-4" />
-                </Link>
+                <div className="flex gap-1">
+                  {(article.status === 'draft' || article.status === 'revision') && (
+                    <button onClick={() => handleSubmit(article.id)} className="p-2 text-green-500 hover:text-green-700 hover:bg-green-50 rounded-lg transition-colors" title="Ajukan Review">
+                      <Send className="w-4 h-4" />
+                    </button>
+                  )}
+                  {article.status !== 'published' && (
+                    <Link href={`/dashboard/articles/${article.id}/edit`} className="p-2 text-indigo-500 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition-colors" title="Edit">
+                      <Pencil className="w-4 h-4" />
+                    </Link>
+                  )}
+                </div>
               </div>
             ))}
           </div>
