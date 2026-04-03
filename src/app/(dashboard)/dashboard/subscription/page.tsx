@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import { useSearchParams } from 'next/navigation';
 import api from '@/lib/api';
 import Script from 'next/script';
 import { useToast } from '@/components/ui/Toast';
@@ -46,14 +47,29 @@ const benefits = [
 export default function SubscriptionDashboardPage() {
   const toast = useToast();
   const confirmDialog = useConfirm();
+  const searchParams = useSearchParams();
+  const autoTriggered = useRef(false);
   const [subscription, setSubscription] = useState<{ has_active: boolean; subscription: { status: string; expiredAt?: string } | null; history: { id: number; orderId: string; amount: number; status: string; snapToken?: string; paymentType?: string; createdAt?: string; startedAt?: string; expiredAt?: string }[] } | null>(null);
   const [plans, setPlans] = useState<Plan[]>([]);
   const [loading, setLoading] = useState<number | null>(null);
+  const [plansLoaded, setPlansLoaded] = useState(false);
 
   useEffect(() => {
     api.get('/my/subscription').then((res) => setSubscription(res.data.data)).catch(() => {});
-    api.get('/subscription-plans').then((res) => setPlans(res.data.data || [])).catch(() => {});
+    api.get('/subscription-plans').then((res) => { setPlans(res.data.data || []); setPlansLoaded(true); }).catch(() => {});
   }, []);
+
+  // Auto-trigger subscribe from public page ?plan=ID
+  useEffect(() => {
+    const planId = searchParams.get('plan');
+    if (planId && plansLoaded && plans.length > 0 && !autoTriggered.current && subscription && !subscription.has_active) {
+      autoTriggered.current = true;
+      const id = parseInt(planId);
+      if (plans.find(p => p.id === id)) {
+        setTimeout(() => handleSubscribe(id), 500);
+      }
+    }
+  }, [searchParams, plansLoaded, plans, subscription]);
 
   const handleSubscribe = (planId: number) => {
     const plan = plans.find(p => p.id === planId);

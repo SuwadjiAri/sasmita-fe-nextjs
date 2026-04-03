@@ -98,6 +98,7 @@ export default async function SubscriptionPage() {
 
               {/* CTA */}
               <SubscribeButton
+                planId={plan.id}
                 planName={plan.name}
                 className={`block w-full text-white py-3.5 rounded-xl font-semibold transition-all hover:shadow-lg ${style.button}`}
               />
