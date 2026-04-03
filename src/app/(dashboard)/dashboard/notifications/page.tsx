@@ -91,7 +91,11 @@ export default function NotificationsPage() {
               onClick={async () => {
                 if (!notif.is_read) await markAsRead(notif.id);
                 if (notif.reference_type === 'article' && notif.reference_id) {
-                  router.push(`/dashboard/articles/${notif.reference_id}/edit`);
+                  if (notif.title === 'Artikel Disetujui') {
+                    router.push(`/dashboard/articles`);
+                  } else {
+                    router.push(`/dashboard/articles/${notif.reference_id}/edit`);
+                  }
                 }
               }}
             >
