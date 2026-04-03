@@ -17,8 +17,8 @@
   --font-mono: var(--font-geist-mono);
 }
 
-button, [role="button"], a, select, input[type="file"] {
-  cursor: pointer;
+button, [role="button"], a, select, input[type="file"], .card-hover {
+  cursor: pointer !important;
 }
 
 body {
