@@ -12,6 +12,7 @@ interface Comment {
   id: number;
   userId: number;
   content: string;
+  userName?: string;
   createdAt: string;
 }
 
@@ -121,12 +122,13 @@ export default function CommentSection({ articleId }: { articleId: number }) {
         <div className="space-y-4">
           {comments.map((comment) => (
             <div key={comment.id} className="group flex gap-3">
-              <div className="w-9 h-9 bg-gray-200 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-xs font-bold text-gray-500">
-                  {comment.userId === user?.id ? user.name.charAt(0).toUpperCase() : '?'}
+              <div className="w-9 h-9 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-xs font-bold text-white">
+                  {(comment.userName || 'A').charAt(0).toUpperCase()}
                 </span>
               </div>
               <div className="flex-1 min-w-0">
+                <p className="text-xs font-semibold text-gray-700 mb-1 px-1">{comment.userName || 'Anonim'}</p>
                 <div className="bg-gray-50 rounded-2xl rounded-tl-md p-4">
                   <p className="text-gray-800 text-sm leading-relaxed">{comment.content}</p>
                 </div>
