@@ -4,6 +4,7 @@ import BookmarkButton from '@/components/ui/BookmarkButton';
 import CommentSection from '@/components/ui/CommentSection';
 import PremiumGate from '@/components/ui/PremiumGate';
 import AdSlot from '@/components/ui/AdSlot';
+import ContentProtection from '@/components/ui/ContentProtection';
 
 interface Article {
   id: number;
@@ -36,11 +37,13 @@ export default function ArticleContent({ article }: { article: Article }) {
 
       <AdSlot position="header" />
 
-      {article.isPremium ? (
-        <PremiumGate>{contentBlock}</PremiumGate>
-      ) : (
-        contentBlock
-      )}
+      <ContentProtection>
+        {article.isPremium ? (
+          <PremiumGate>{contentBlock}</PremiumGate>
+        ) : (
+          contentBlock
+        )}
+      </ContentProtection>
 
       <AdSlot position="in_article" />
 
