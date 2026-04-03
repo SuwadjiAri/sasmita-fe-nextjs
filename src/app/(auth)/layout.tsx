@@ -15,10 +15,10 @@ export default function AuthLayout({
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-300/10 rounded-full blur-3xl" />
         </div>
         <div className="relative flex flex-col items-center justify-center w-full p-16 text-white text-center">
-          <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-8">
+          <Link href="/" className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-8 hover:bg-white/30 transition-colors">
             <PenLine className="w-8 h-8" />
-          </div>
-          <h1 className="text-4xl font-bold mb-4">SASMITA.COM</h1>
+          </Link>
+          <Link href="/" className="text-4xl font-bold mb-4 hover:text-indigo-200 transition-colors">SASMITA.COM</Link>
           <p className="text-lg text-indigo-100 max-w-md leading-relaxed">
             Platform Literasi Digital Karya Sastra dan Akademik Mahasiswa
           </p>
