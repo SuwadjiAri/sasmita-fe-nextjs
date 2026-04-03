@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import api from '@/lib/api';
 import Script from 'next/script';
 import { useToast } from '@/components/ui/Toast';
-import { Sparkles, Zap, Crown, Check, CheckCircle, Calendar, Clock, XCircle, AlertCircle } from 'lucide-react';
+import { Sparkles, Zap, Crown, Check, CheckCircle, Calendar, Clock, XCircle, AlertCircle, CreditCard } from 'lucide-react';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useConfirm } from '@/components/ui/ConfirmModal';
 
@@ -111,9 +111,22 @@ export default function SubscriptionDashboardPage() {
         </div>
       ) : (
         <>
-          <div className="bg-gradient-to-r from-gray-50 to-slate-50 border border-gray-200 rounded-2xl p-6 mb-8">
-            <p className="text-gray-700 font-semibold">Tidak ada langganan aktif</p>
-            <p className="text-gray-500 text-sm mt-1">Pilih paket di bawah untuk berlangganan dan akses artikel premium.</p>
+          <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-2xl p-8 mb-8 relative overflow-hidden">
+            <div className="absolute inset-0">
+              <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl" />
+              <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-purple-300/10 rounded-full blur-2xl" />
+            </div>
+            <div className="relative">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                  <CreditCard className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <p className="text-white font-bold text-xl">Belum Berlangganan</p>
+                  <p className="text-white/70 text-sm">Pilih paket di bawah untuk akses semua artikel premium</p>
+                </div>
+              </div>
+            </div>
           </div>
 
           <h2 className="text-lg font-semibold text-gray-900 mb-5">Pilih Paket</h2>
