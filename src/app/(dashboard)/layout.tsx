@@ -73,6 +73,15 @@ export default function DashboardLayout({
     return () => clearInterval(interval);
   }, [loadUser, router, fetchBadges]);
 
+  // Fetch pending reviews for redaksi
+  useEffect(() => {
+    if (user?.is_redaksi) {
+      fetchPendingReviews();
+      const interval = setInterval(fetchPendingReviews, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [user, fetchPendingReviews]);
+
   if (!user) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-50">
@@ -89,15 +98,6 @@ export default function DashboardLayout({
       </div>
     );
   }
-
-  // Fetch pending reviews for redaksi
-  useEffect(() => {
-    if (user?.is_redaksi) {
-      fetchPendingReviews();
-      const interval = setInterval(fetchPendingReviews, 30000);
-      return () => clearInterval(interval);
-    }
-  }, [user, fetchPendingReviews]);
 
   const allMenus = [
     { section: 'Menu', items: memberMenus },
