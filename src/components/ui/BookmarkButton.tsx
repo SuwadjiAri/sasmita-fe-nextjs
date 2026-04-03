@@ -34,13 +34,13 @@ export default function BookmarkButton({ articleId }: { articleId: number }) {
     <button
       onClick={toggle}
       disabled={loading}
-      className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
+      className={`cursor-pointer inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
         bookmarked
-          ? 'bg-indigo-50 border-indigo-300 text-indigo-700'
-          : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50'
-      }`}
+          ? 'bg-indigo-50 border-indigo-300 text-indigo-700 hover:bg-indigo-100'
+          : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50 hover:border-gray-400'
+      } disabled:opacity-50 disabled:cursor-not-allowed`}
     >
-      {bookmarked ? 'Bookmarked' : 'Bookmark'}
+      {bookmarked ? '★ Bookmarked' : '☆ Bookmark'}
     </button>
   );
 }
