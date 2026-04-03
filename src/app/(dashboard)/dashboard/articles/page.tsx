@@ -16,6 +16,7 @@ interface Article {
   slug: string;
   excerpt?: string;
   status: string;
+  isPremium: boolean;
   viewCount: number;
   createdAt: string;
 }
@@ -161,6 +162,11 @@ export default function MyArticlesPage() {
                         <span className={`inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium ${status.bg} ${status.color}`}>
                           {status.label}
                         </span>
+                        {article.isPremium ? (
+                          <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-yellow-100 text-yellow-700">Premium</span>
+                        ) : (
+                          <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-blue-50 text-blue-600">Gratis</span>
+                        )}
                         <span className="text-xs text-gray-400">
                           {new Date(article.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                         </span>
