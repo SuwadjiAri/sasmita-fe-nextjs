@@ -1,9 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import api from '@/lib/api';
 import { useAuthStore } from '@/stores/auth-store';
 import { useToast } from '@/components/ui/Toast';
+import { MessageCircle, LogIn } from 'lucide-react';
 
 interface Comment {
   id: number;
@@ -48,9 +50,20 @@ export default function CommentSection({ articleId }: { articleId: number }) {
 
   return (
     <div className="mt-12 border-t border-gray-200 pt-8">
-      <h2 className="text-xl font-bold text-gray-900 mb-6">Komentar ({comments.length})</h2>
+      <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+        <MessageCircle className="w-5 h-5 text-indigo-500" />
+        Komentar ({comments.length})
+      </h2>
 
-      {user && (
+      {!user ? (
+        <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6 mb-8 text-center">
+          <p className="text-gray-600 mb-3">Masuk untuk memberikan komentar</p>
+          <Link href="/login" className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-indigo-500/25 transition-all">
+            <LogIn className="w-4 h-4" />
+            Masuk
+          </Link>
+        </div>
+      ) : (
         <form onSubmit={handleSubmit} className="mb-8">
           <textarea
             value={newComment}
