@@ -92,50 +92,50 @@ export default function DashboardLayout({
   const sidebarContent = (mobile: boolean) => (
     <>
       {/* Logo */}
-      <div className="p-5 border-b border-gray-100">
+      <div className={`p-5 ${mobile ? 'border-b border-gray-100' : 'border-b border-white/10'}`}>
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+          <div className="w-8 h-8 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-lg flex items-center justify-center">
             <PenLine className="w-4 h-4 text-white" />
           </div>
-          <span className="text-lg font-bold gradient-text">SASMITA</span>
+          <span className={`text-lg font-bold ${mobile ? 'gradient-text' : 'text-white'}`}>SASMITA</span>
         </Link>
       </div>
 
       {/* User info - clickable dropdown */}
-      <div className="px-3 py-3 border-b border-gray-100 relative">
+      <div className={`px-3 py-3 ${mobile ? 'border-b border-gray-100' : 'border-b border-white/10'} relative`}>
         <button
           onClick={() => setUserMenuOpen(!userMenuOpen)}
           className={`w-full flex items-center gap-3 p-2.5 rounded-2xl transition-all ${
             userMenuOpen
-              ? 'bg-gradient-to-r from-indigo-50 to-purple-50 shadow-sm'
-              : 'hover:bg-gray-50'
+              ? mobile ? 'bg-gradient-to-r from-indigo-50 to-purple-50 shadow-sm' : 'bg-white/10'
+              : mobile ? 'hover:bg-gray-50' : 'hover:bg-white/5'
           }`}
         >
-          <div className="w-11 h-11 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-indigo-500/20">
+          <div className="w-11 h-11 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-indigo-500/30">
             <span className="text-base font-bold text-white">{user.name.charAt(0).toUpperCase()}</span>
           </div>
           <div className="flex-1 min-w-0 text-left">
-            <p className="text-sm font-semibold text-gray-900 truncate">{user.name}</p>
-            <p className="text-[11px] text-gray-400 truncate">{user.email}</p>
+            <p className={`text-sm font-semibold truncate ${mobile ? 'text-gray-900' : 'text-white'}`}>{user.name}</p>
+            <p className={`text-[11px] truncate ${mobile ? 'text-gray-400' : 'text-slate-400'}`}>{user.email}</p>
           </div>
-          <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${userMenuOpen ? 'rotate-180' : ''}`} />
+          <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${userMenuOpen ? 'rotate-180' : ''} ${mobile ? 'text-gray-400' : 'text-slate-400'}`} />
         </button>
 
         {/* Dropdown */}
         {userMenuOpen && (
-          <div className="mx-2 mt-2 bg-white border border-gray-100 rounded-2xl shadow-xl shadow-gray-200/50 overflow-hidden animate-fade-in">
+          <div className={`mx-2 mt-2 rounded-2xl shadow-xl overflow-hidden animate-fade-in ${mobile ? 'bg-white border border-gray-100 shadow-gray-200/50' : 'bg-slate-700 border border-slate-600'}`}>
             <div className="p-1.5">
               <Link
                 href="/dashboard/profile"
                 onClick={() => { setUserMenuOpen(false); if (mobile) setMobileOpen(false); }}
-                className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 rounded-xl transition-all"
+                className={`flex items-center gap-2.5 px-3 py-2.5 text-sm rounded-xl transition-all ${mobile ? 'text-gray-600 hover:bg-indigo-50 hover:text-indigo-600' : 'text-slate-200 hover:bg-white/10'}`}
               >
                 <Settings className="w-4 h-4" />
                 Edit Profil
               </Link>
               <button
                 onClick={() => { handleLogout(); setUserMenuOpen(false); }}
-                className="flex items-center gap-2.5 w-full px-3 py-2.5 text-sm text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                className={`flex items-center gap-2.5 w-full px-3 py-2.5 text-sm rounded-xl transition-all ${mobile ? 'text-red-500 hover:bg-red-50' : 'text-red-400 hover:bg-red-500/10'}`}
               >
                 <LogOut className="w-4 h-4" />
                 Keluar
@@ -149,7 +149,7 @@ export default function DashboardLayout({
       <nav className="flex-1 overflow-y-auto p-3 space-y-6">
         {allMenus.map((group) => (
           <div key={group.section}>
-            <p className="px-3 mb-2 text-[10px] font-semibold text-gray-400 uppercase tracking-widest">{group.section}</p>
+            <p className={`px-3 mb-2 text-[10px] font-semibold uppercase tracking-widest ${mobile ? 'text-gray-400' : 'text-slate-500'}`}>{group.section}</p>
             <div className="space-y-0.5">
               {group.items.map((menu) => {
                 const isActive = pathname === menu.href;
@@ -159,19 +159,23 @@ export default function DashboardLayout({
                     href={menu.href}
                     onClick={() => mobile && setMobileOpen(false)}
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
-                      isActive
-                        ? 'bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-700 font-medium shadow-sm'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                      mobile
+                        ? isActive ? 'bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-700 font-medium shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                        : isActive ? 'bg-white/10 text-white font-medium' : 'text-slate-400 hover:bg-white/5 hover:text-white'
                     }`}
                   >
-                    <menu.icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-indigo-600' : 'text-gray-400'}`} />
+                    <menu.icon className={`w-4 h-4 flex-shrink-0 ${
+                      mobile
+                        ? isActive ? 'text-indigo-600' : 'text-gray-400'
+                        : isActive ? 'text-indigo-400' : 'text-slate-500'
+                    }`} />
                     <span className="flex-1">{menu.label}</span>
                     {menu.href === '/dashboard/notifications' && unreadCount > 0 && (
                       <span className="bg-red-500 text-white text-[10px] font-bold min-w-[18px] h-[18px] flex items-center justify-center rounded-full px-1 animate-pulse">
                         {unreadCount > 99 ? '99+' : unreadCount}
                       </span>
                     )}
-                    {isActive && menu.href !== '/dashboard/notifications' && <ChevronRight className="w-3 h-3 text-indigo-400" />}
+                    {isActive && menu.href !== '/dashboard/notifications' && <ChevronRight className={`w-3 h-3 ${mobile ? 'text-indigo-400' : 'text-slate-500'}`} />}
                   </Link>
                 );
               })}
@@ -184,7 +188,7 @@ export default function DashboardLayout({
   );
 
   return (
-    <div className="min-h-screen flex bg-gray-50">
+    <div className="min-h-screen flex bg-gray-100/80">
       {/* Mobile Header */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-40 bg-white border-b border-gray-100 px-4 h-14 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
@@ -219,7 +223,7 @@ export default function DashboardLayout({
       )}
 
       {/* Desktop Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-100 hidden md:flex flex-col">
+      <aside className="w-64 bg-gradient-to-b from-slate-900 to-slate-800 hidden md:flex flex-col">
         {sidebarContent(false)}
       </aside>
 
