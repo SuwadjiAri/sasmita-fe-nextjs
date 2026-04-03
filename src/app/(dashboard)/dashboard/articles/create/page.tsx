@@ -20,6 +20,7 @@ export default function CreateArticlePage() {
   const [pdfFile, setPdfFile] = useState('');
   const [uploadingPdf, setUploadingPdf] = useState(false);
   const [tags, setTags] = useState('');
+  const [isPremium, setIsPremium] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -61,6 +62,7 @@ export default function CreateArticlePage() {
         excerpt,
         category_id: parseInt(categoryId),
         cover_image: coverImage || undefined,
+        is_premium: isPremium,
       });
       // Sync tags if provided
       const articleId = res.data.data?.id;
@@ -119,6 +121,13 @@ export default function CreateArticlePage() {
           }} className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100" />
           {uploadingPdf && <p className="text-sm text-gray-500 mt-1">Mengupload PDF...</p>}
           {pdfFile && <p className="text-sm text-green-600 mt-1">PDF berhasil diupload</p>}
+        </div>
+        <div className="flex items-center gap-3 bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+          <input type="checkbox" id="premium" checked={isPremium} onChange={(e) => setIsPremium(e.target.checked)} className="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500" />
+          <label htmlFor="premium" className="text-sm">
+            <span className="font-medium text-gray-900">Artikel Premium</span>
+            <span className="text-gray-500 ml-1">— Hanya bisa dibaca oleh subscriber</span>
+          </label>
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Tag</label>

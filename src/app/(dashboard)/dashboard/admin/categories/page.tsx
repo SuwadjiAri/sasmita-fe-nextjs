@@ -85,7 +85,7 @@ export default function AdminCategoriesPage() {
           <Plus className="w-5 h-5 text-indigo-600" />
           <h2 className="font-semibold text-gray-900">{editingId ? 'Edit Kategori' : 'Tambah Kategori'}</h2>
         </div>
-        <form onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-3">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <input
             type="text"
             value={name}

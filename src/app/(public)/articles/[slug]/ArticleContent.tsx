@@ -3,6 +3,7 @@
 import BookmarkButton from '@/components/ui/BookmarkButton';
 import CommentSection from '@/components/ui/CommentSection';
 import PremiumGate from '@/components/ui/PremiumGate';
+import AdSlot from '@/components/ui/AdSlot';
 
 interface Article {
   id: number;
@@ -33,11 +34,15 @@ export default function ArticleContent({ article }: { article: Article }) {
         )}
       </div>
 
+      <AdSlot position="header" />
+
       {article.isPremium ? (
         <PremiumGate>{contentBlock}</PremiumGate>
       ) : (
         contentBlock
       )}
+
+      <AdSlot position="in_article" />
 
       <CommentSection articleId={article.id} />
     </>

@@ -81,7 +81,7 @@ export default function AdminAdsPage() {
             </div>
             <button onClick={() => setShowForm(false)} className="p-1.5 hover:bg-gray-100 rounded-lg"><X className="w-4 h-4 text-gray-400" /></button>
           </div>
-          <form onSubmit={handleCreate} className="flex flex-col md:flex-row gap-3">
+          <form onSubmit={handleCreate} className="flex flex-col gap-3">
             <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Nama slot (misal: Header Banner)" className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required />
             <select value={position} onChange={(e) => setPosition(e.target.value)} className="px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
               <option value="header">Header</option>
