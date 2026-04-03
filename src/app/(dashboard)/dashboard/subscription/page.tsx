@@ -46,7 +46,7 @@ const benefits = [
 export default function SubscriptionDashboardPage() {
   const toast = useToast();
   const confirmDialog = useConfirm();
-  const [subscription, setSubscription] = useState<{ has_active: boolean; subscription: { status: string; expiredAt?: string } | null; history: { id: number; orderId: string; amount: number; status: string; paymentType?: string; createdAt?: string; startedAt?: string; expiredAt?: string }[] } | null>(null);
+  const [subscription, setSubscription] = useState<{ has_active: boolean; subscription: { status: string; expiredAt?: string } | null; history: { id: number; orderId: string; amount: number; status: string; snapToken?: string; paymentType?: string; createdAt?: string; startedAt?: string; expiredAt?: string }[] } | null>(null);
   const [plans, setPlans] = useState<Plan[]>([]);
   const [loading, setLoading] = useState<number | null>(null);
 
@@ -195,8 +195,27 @@ export default function SubscriptionDashboardPage() {
               const st = statusConfig[tx.status] || statusConfig.pending;
               const StIcon = st.icon;
 
+              const isPending = tx.status === 'pending' && tx.snapToken;
+
+              const handleResume = () => {
+                if (isPending && window.snap) {
+                  window.snap.pay(tx.snapToken!, {
+                    onSuccess: () => { toast.show('Pembayaran berhasil!', 'success'); window.location.reload(); },
+                    onPending: () => { toast.show('Menunggu pembayaran...', 'info'); },
+                    onError: () => { toast.show('Pembayaran gagal', 'error'); },
+                    onClose: () => {},
+                  });
+                }
+              };
+
               return (
-                <div key={tx.id} className="bg-white border border-gray-100 rounded-2xl p-5 flex items-center gap-4">
+                <div
+                  key={tx.id}
+                  onClick={isPending ? handleResume : undefined}
+                  className={`bg-white border border-gray-100 rounded-2xl p-5 flex items-center gap-4 transition-all ${
+                    isPending ? 'cursor-pointer hover:border-yellow-300 hover:shadow-lg hover:shadow-yellow-500/10' : ''
+                  }`}
+                >
                   <div className={`w-10 h-10 rounded-xl ${st.bg} flex items-center justify-center flex-shrink-0`}>
                     <StIcon className={`w-5 h-5 ${st.color}`} />
                   </div>
@@ -210,6 +229,11 @@ export default function SubscriptionDashboardPage() {
                       {tx.paymentType && ` · ${tx.paymentType}`}
                     </p>
                   </div>
+                  {isPending && (
+                    <span className="text-xs bg-yellow-500 text-white px-3 py-1.5 rounded-xl font-medium whitespace-nowrap">
+                      Bayar Sekarang
+                    </span>
+                  )}
                 </div>
               );
             })}
