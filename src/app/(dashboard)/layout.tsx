@@ -224,9 +224,23 @@ export default function DashboardLayout({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 min-w-0 p-6 pt-20 md:pt-8 md:p-8 overflow-auto animate-fade-in">
-        {children}
-      </main>
+      <div className="flex-1 min-w-0 flex flex-col overflow-auto">
+        {/* Desktop Top Bar */}
+        <div className="hidden md:flex items-center justify-end px-8 py-4 border-b border-gray-100 bg-white">
+          <Link href="/dashboard/notifications" className="p-2 rounded-xl hover:bg-gray-100 relative transition-colors">
+            <Bell className="w-5 h-5 text-gray-500" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[9px] font-bold min-w-[16px] h-[16px] flex items-center justify-center rounded-full px-0.5 animate-pulse">
+                {unreadCount > 99 ? '99+' : unreadCount}
+              </span>
+            )}
+          </Link>
+        </div>
+
+        <main className="flex-1 p-6 pt-20 md:pt-6 md:p-8 animate-fade-in">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }
