@@ -4,18 +4,22 @@ import { useEffect, useState } from 'react';
 import api from '@/lib/api';
 import EmptyState from '@/components/ui/EmptyState';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
-import { Bell, CheckCheck, Clock, CheckCircle } from 'lucide-react';
+import { Bell, CheckCheck, Clock, CheckCircle, ArrowRight } from 'lucide-react';
 import Pagination from '@/components/ui/Pagination';
+import { useRouter } from 'next/navigation';
 
 interface Notification {
   id: number;
   title: string;
   message: string;
+  reference_type?: string;
+  reference_id?: number;
   is_read: boolean;
   created_at: string;
 }
 
 export default function NotificationsPage() {
+  const router = useRouter();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unread, setUnread] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -84,7 +88,12 @@ export default function NotificationsPage() {
                   ? 'bg-white border-gray-100'
                   : 'bg-gradient-to-r from-indigo-50 to-purple-50 border-indigo-200'
               }`}
-              onClick={() => !notif.is_read && markAsRead(notif.id)}
+              onClick={async () => {
+                if (!notif.is_read) await markAsRead(notif.id);
+                if (notif.reference_type === 'article' && notif.reference_id) {
+                  router.push(`/dashboard/articles/${notif.reference_id}/edit`);
+                }
+              }}
             >
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
                 notif.is_read ? 'bg-gray-100' : 'bg-indigo-100'
@@ -102,7 +111,10 @@ export default function NotificationsPage() {
                   {new Date(notif.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                 </p>
               </div>
-              {!notif.is_read && (
+              {notif.reference_type && notif.reference_id && (
+                <ArrowRight className="w-4 h-4 text-gray-300 flex-shrink-0 mt-1" />
+              )}
+              {!notif.is_read && !notif.reference_type && (
                 <div className="w-2.5 h-2.5 bg-indigo-500 rounded-full flex-shrink-0 mt-2" />
               )}
             </div>
