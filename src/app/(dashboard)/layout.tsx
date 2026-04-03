@@ -49,10 +49,17 @@ export default function DashboardLayout({
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [pendingReviews, setPendingReviews] = useState(0);
 
-  const fetchUnread = useCallback(() => {
+  const fetchBadges = useCallback(() => {
     api.get('/notifications?page=1&per_page=1')
       .then((res) => setUnreadCount(res.data.data?.unread_count || 0))
+      .catch(() => {});
+  }, []);
+
+  const fetchPendingReviews = useCallback(() => {
+    api.get('/redaksi/reviews?page=1&per_page=1')
+      .then((res) => setPendingReviews(res.data.meta?.total || 0))
       .catch(() => {});
   }, []);
 
@@ -61,10 +68,10 @@ export default function DashboardLayout({
       const token = localStorage.getItem('token');
       if (!token) router.push('/login');
     });
-    fetchUnread();
-    const interval = setInterval(fetchUnread, 30000);
+    fetchBadges();
+    const interval = setInterval(fetchBadges, 30000);
     return () => clearInterval(interval);
-  }, [loadUser, router, fetchUnread]);
+  }, [loadUser, router, fetchBadges]);
 
   if (!user) {
     return (
@@ -82,6 +89,15 @@ export default function DashboardLayout({
       </div>
     );
   }
+
+  // Fetch pending reviews for redaksi
+  useEffect(() => {
+    if (user?.is_redaksi) {
+      fetchPendingReviews();
+      const interval = setInterval(fetchPendingReviews, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [user, fetchPendingReviews]);
 
   const allMenus = [
     { section: 'Menu', items: memberMenus },
@@ -175,7 +191,12 @@ export default function DashboardLayout({
                         {unreadCount > 99 ? '99+' : unreadCount}
                       </span>
                     )}
-                    {isActive && menu.href !== '/dashboard/notifications' && <ChevronRight className={`w-3 h-3 ${mobile ? 'text-indigo-400' : 'text-slate-500'}`} />}
+                    {menu.href === '/dashboard/reviews' && pendingReviews > 0 && (
+                      <span className="bg-yellow-500 text-white text-[10px] font-bold min-w-[18px] h-[18px] flex items-center justify-center rounded-full px-1 animate-pulse">
+                        {pendingReviews > 99 ? '99+' : pendingReviews}
+                      </span>
+                    )}
+                    {isActive && menu.href !== '/dashboard/notifications' && menu.href !== '/dashboard/reviews' && <ChevronRight className={`w-3 h-3 ${mobile ? 'text-indigo-400' : 'text-slate-500'}`} />}
                   </Link>
                 );
               })}
