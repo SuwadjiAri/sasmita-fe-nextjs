@@ -27,6 +27,7 @@ const redaksiMenus = [
 const adminMenus = [
   { href: '/dashboard/admin/users', label: 'Kelola Pengguna', icon: Users },
   { href: '/dashboard/admin/categories', label: 'Kelola Kategori', icon: FolderOpen },
+  { href: '/dashboard/admin/plans', label: 'Kelola Paket', icon: CreditCard },
   { href: '/dashboard/admin/ads', label: 'Kelola Iklan', icon: Megaphone },
 ];
 
