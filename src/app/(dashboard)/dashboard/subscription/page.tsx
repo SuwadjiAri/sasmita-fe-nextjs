@@ -4,8 +4,9 @@ import { useEffect, useState } from 'react';
 import api from '@/lib/api';
 import Script from 'next/script';
 import { useToast } from '@/components/ui/Toast';
-import { Sparkles, Zap, Crown, Check, CheckCircle, Calendar } from 'lucide-react';
+import { Sparkles, Zap, Crown, Check, CheckCircle, Calendar, Clock, XCircle, AlertCircle } from 'lucide-react';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import { useConfirm } from '@/components/ui/ConfirmModal';
 
 interface Plan {
   id: number;
@@ -44,7 +45,8 @@ const benefits = [
 
 export default function SubscriptionDashboardPage() {
   const toast = useToast();
-  const [subscription, setSubscription] = useState<{ has_active: boolean; subscription: { status: string; expiredAt?: string } | null } | null>(null);
+  const confirmDialog = useConfirm();
+  const [subscription, setSubscription] = useState<{ has_active: boolean; subscription: { status: string; expiredAt?: string } | null; history: { id: number; orderId: string; amount: number; status: string; paymentType?: string; createdAt?: string; startedAt?: string; expiredAt?: string }[] } | null>(null);
   const [plans, setPlans] = useState<Plan[]>([]);
   const [loading, setLoading] = useState<number | null>(null);
 
@@ -53,24 +55,35 @@ export default function SubscriptionDashboardPage() {
     api.get('/subscription-plans').then((res) => setPlans(res.data.data || [])).catch(() => {});
   }, []);
 
-  const handleSubscribe = async (planId: number) => {
-    setLoading(planId);
-    try {
-      const res = await api.post('/subscriptions', { plan_id: planId });
-      const { snap_token } = res.data.data;
-      if (window.snap) {
-        window.snap.pay(snap_token, {
-          onSuccess: () => { toast.show('Pembayaran berhasil!', 'success'); window.location.reload(); },
-          onPending: () => { toast.show('Menunggu pembayaran...', 'info'); },
-          onError: () => { toast.show('Pembayaran gagal', 'error'); },
-          onClose: () => {},
-        });
-      }
-    } catch {
-      toast.show('Gagal membuat transaksi', 'error');
-    } finally {
-      setLoading(null);
-    }
+  const handleSubscribe = (planId: number) => {
+    const plan = plans.find(p => p.id === planId);
+    if (!plan) return;
+
+    confirmDialog.show({
+      title: 'Konfirmasi Langganan',
+      message: `Anda akan berlangganan paket "${plan.name}" (${plan.durationDays} hari) seharga Rp${plan.price.toLocaleString('id-ID')}. Lanjutkan ke pembayaran?`,
+      confirmLabel: 'Ya, Lanjutkan',
+      type: 'info',
+      onConfirm: async () => {
+        setLoading(planId);
+        try {
+          const res = await api.post('/subscriptions', { plan_id: planId });
+          const { snap_token } = res.data.data;
+          if (window.snap) {
+            window.snap.pay(snap_token, {
+              onSuccess: () => { toast.show('Pembayaran berhasil!', 'success'); window.location.reload(); },
+              onPending: () => { toast.show('Menunggu pembayaran. Cek riwayat di bawah.', 'info'); window.location.reload(); },
+              onError: () => { toast.show('Pembayaran gagal', 'error'); },
+              onClose: () => { toast.show('Pembayaran dibatalkan', 'info'); window.location.reload(); },
+            });
+          }
+        } catch {
+          toast.show('Gagal membuat transaksi', 'error');
+        } finally {
+          setLoading(null);
+        }
+      },
+    });
   };
 
   return (
@@ -151,6 +164,44 @@ export default function SubscriptionDashboardPage() {
             })}
           </div>
         </>
+      )}
+
+      {/* Riwayat Transaksi */}
+      {subscription && subscription.history && subscription.history.length > 0 && (
+        <div className="mt-10">
+          <h2 className="text-lg font-bold text-gray-900 mb-4">Riwayat Transaksi</h2>
+          <div className="space-y-3">
+            {subscription.history.map((tx) => {
+              const statusConfig: Record<string, { label: string; color: string; bg: string; icon: typeof Clock }> = {
+                pending: { label: 'Menunggu Pembayaran', color: 'text-yellow-700', bg: 'bg-yellow-100', icon: Clock },
+                active: { label: 'Aktif', color: 'text-green-700', bg: 'bg-green-100', icon: CheckCircle },
+                expired: { label: 'Kadaluarsa', color: 'text-gray-600', bg: 'bg-gray-100', icon: AlertCircle },
+                cancelled: { label: 'Dibatalkan', color: 'text-red-700', bg: 'bg-red-100', icon: XCircle },
+                refunded: { label: 'Dikembalikan', color: 'text-blue-700', bg: 'bg-blue-100', icon: AlertCircle },
+              };
+              const st = statusConfig[tx.status] || statusConfig.pending;
+              const StIcon = st.icon;
+
+              return (
+                <div key={tx.id} className="bg-white border border-gray-100 rounded-2xl p-5 flex items-center gap-4">
+                  <div className={`w-10 h-10 rounded-xl ${st.bg} flex items-center justify-center flex-shrink-0`}>
+                    <StIcon className={`w-5 h-5 ${st.color}`} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p className="font-semibold text-gray-900">Rp{tx.amount.toLocaleString('id-ID')}</p>
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${st.bg} ${st.color}`}>{st.label}</span>
+                    </div>
+                    <p className="text-xs text-gray-400 mt-0.5">
+                      {tx.orderId} · {tx.createdAt ? new Date(tx.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}
+                      {tx.paymentType && ` · ${tx.paymentType}`}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       )}
     </div>
   );
