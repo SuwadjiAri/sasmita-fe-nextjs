@@ -1,5 +1,5 @@
-import Link from 'next/link';
 import { Check, Sparkles, Zap, Crown } from 'lucide-react';
+import SubscribeButton from './SubscribeButton';
 
 async function getPlans() {
   const res = await fetch(
@@ -97,12 +97,10 @@ export default async function SubscriptionPage() {
               </ul>
 
               {/* CTA */}
-              <Link
-                href="/login"
+              <SubscribeButton
+                planName={plan.name}
                 className={`block w-full text-white py-3.5 rounded-xl font-semibold transition-all hover:shadow-lg ${style.button}`}
-              >
-                Pilih {plan.name}
-              </Link>
+              />
             </div>
           );
         })}
