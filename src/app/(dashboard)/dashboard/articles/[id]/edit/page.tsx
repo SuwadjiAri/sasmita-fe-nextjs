@@ -18,6 +18,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
   const [content, setContent] = useState('');
   const [excerpt, setExcerpt] = useState('');
   const [categoryId, setCategoryId] = useState('');
+  const [tags, setTags] = useState('');
   const [categories, setCategories] = useState<Category[]>([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -27,7 +28,8 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
     Promise.all([
       api.get('/categories'),
       api.get('/my/articles'),
-    ]).then(([catRes, artRes]) => {
+      api.get(`/articles/${id}/tags`),
+    ]).then(([catRes, artRes, tagRes]) => {
       setCategories(catRes.data.data || []);
       const articles = artRes.data.data || [];
       const article = articles.find((a: { id: number }) => a.id === parseInt(id));
@@ -37,6 +39,8 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
         setExcerpt(article.excerpt || '');
         setCategoryId(String(article.categoryId || article.category_id || ''));
       }
+      const existingTags = (tagRes.data.data || []).map((t: { name: string }) => t.name);
+      setTags(existingTags.join(', '));
     }).catch(() => {}).finally(() => setFetching(false));
   }, [id]);
 
@@ -47,6 +51,10 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
 
     try {
       await api.put(`/articles/${id}`, { title, content, excerpt, category_id: parseInt(categoryId) });
+      if (tags.trim()) {
+        const tagList = tags.split(',').map(t => t.trim()).filter(Boolean);
+        await api.post(`/articles/${id}/tags`, { tags: tagList });
+      }
       router.push('/dashboard/articles');
     } catch (err: unknown) {
       const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Gagal memperbarui artikel';
@@ -73,6 +81,10 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
             <option value="">Pilih kategori</option>
             {categories.map((cat) => (<option key={cat.id} value={cat.id}>{cat.name}</option>))}
           </select>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Tag</label>
+          <input type="text" value={tags} onChange={(e) => setTags(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Pisahkan dengan koma: romantis, budaya, modern" />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Ringkasan</label>

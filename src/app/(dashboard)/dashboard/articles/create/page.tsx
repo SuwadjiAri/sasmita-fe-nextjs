@@ -17,6 +17,9 @@ export default function CreateArticlePage() {
   const [excerpt, setExcerpt] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [coverImage, setCoverImage] = useState('');
+  const [pdfFile, setPdfFile] = useState('');
+  const [uploadingPdf, setUploadingPdf] = useState(false);
+  const [tags, setTags] = useState('');
   const [categories, setCategories] = useState<Category[]>([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -52,13 +55,19 @@ export default function CreateArticlePage() {
     setLoading(true);
 
     try {
-      await api.post('/articles', {
+      const res = await api.post('/articles', {
         title,
         content,
         excerpt,
         category_id: parseInt(categoryId),
         cover_image: coverImage || undefined,
       });
+      // Sync tags if provided
+      const articleId = res.data.data?.id;
+      if (articleId && tags.trim()) {
+        const tagList = tags.split(',').map(t => t.trim()).filter(Boolean);
+        await api.post(`/articles/${articleId}/tags`, { tags: tagList });
+      }
       router.push('/dashboard/articles');
     } catch (err: unknown) {
       const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Gagal membuat artikel';
@@ -93,6 +102,27 @@ export default function CreateArticlePage() {
           <input type="file" accept="image/*" onChange={handleUploadCover} className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
           {uploading && <p className="text-sm text-gray-500 mt-1">Mengupload...</p>}
           {coverImage && <p className="text-sm text-green-600 mt-1">Cover berhasil diupload</p>}
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Upload Karya PDF (opsional)</label>
+          <input type="file" accept=".pdf" onChange={async (e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+            setUploadingPdf(true);
+            const formData = new FormData();
+            formData.append('file', file);
+            try {
+              const res = await api.post('/upload/pdf', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+              setPdfFile(res.data.data.path);
+            } catch { setError('Gagal upload PDF'); }
+            finally { setUploadingPdf(false); }
+          }} className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100" />
+          {uploadingPdf && <p className="text-sm text-gray-500 mt-1">Mengupload PDF...</p>}
+          {pdfFile && <p className="text-sm text-green-600 mt-1">PDF berhasil diupload</p>}
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Tag</label>
+          <input type="text" value={tags} onChange={(e) => setTags(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Pisahkan dengan koma: romantis, budaya, modern" />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Ringkasan</label>

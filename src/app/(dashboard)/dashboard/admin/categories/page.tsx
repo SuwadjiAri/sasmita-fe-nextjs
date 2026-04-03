@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
-import { Trash2, Plus, FolderOpen, Tag } from 'lucide-react';
+import { Trash2, Plus, FolderOpen, Tag, Pencil } from 'lucide-react';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import EmptyState from '@/components/ui/EmptyState';
 import { useToast } from '@/components/ui/Toast';
@@ -16,6 +16,7 @@ export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
 
@@ -25,16 +26,29 @@ export default function AdminCategoriesPage() {
     api.get('/categories').then((res) => setCategories(res.data.data || [])).catch(() => {}).finally(() => setLoading(false));
   };
 
-  const handleCreate = async (e: React.FormEvent) => {
+  const startEdit = (cat: Category) => {
+    setName(cat.name);
+    setDescription(cat.description || '');
+    setEditingId(cat.id);
+  };
+
+  const resetForm = () => { setName(''); setDescription(''); setEditingId(null); };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setCreating(true);
     try {
-      await api.post('/admin/categories', { name, description });
-      setName(''); setDescription('');
+      if (editingId) {
+        await api.put(`/admin/categories/${editingId}`, { name, description });
+        toast.show('Kategori berhasil diperbarui', 'success');
+      } else {
+        await api.post('/admin/categories', { name, description });
+        toast.show('Kategori berhasil ditambahkan', 'success');
+      }
+      resetForm();
       loadCategories();
-      toast.show('Kategori berhasil ditambahkan', 'success');
     } catch {
-      toast.show('Gagal menambahkan kategori', 'error');
+      toast.show(editingId ? 'Gagal memperbarui kategori' : 'Gagal menambahkan kategori', 'error');
     } finally {
       setCreating(false);
     }
@@ -69,9 +83,9 @@ export default function AdminCategoriesPage() {
       <div className="bg-white border border-gray-100 rounded-2xl p-6 mb-8">
         <div className="flex items-center gap-2 mb-5">
           <Plus className="w-5 h-5 text-indigo-600" />
-          <h2 className="font-semibold text-gray-900">Tambah Kategori</h2>
+          <h2 className="font-semibold text-gray-900">{editingId ? 'Edit Kategori' : 'Tambah Kategori'}</h2>
         </div>
-        <form onSubmit={handleCreate} className="flex flex-col md:flex-row gap-3">
+        <form onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-3">
           <input
             type="text"
             value={name}
@@ -93,7 +107,7 @@ export default function AdminCategoriesPage() {
             className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2.5 rounded-xl font-medium hover:shadow-lg hover:shadow-indigo-500/25 transition-all disabled:opacity-50 whitespace-nowrap"
           >
             <Plus className="w-4 h-4" />
-            {creating ? 'Menambah...' : 'Tambah'}
+            {creating ? 'Menyimpan...' : editingId ? 'Simpan' : 'Tambah'}
           </button>
         </form>
       </div>
@@ -118,13 +132,14 @@ export default function AdminCategoriesPage() {
                   {cat.description && <span>· {cat.description}</span>}
                 </p>
               </div>
-              <button
-                onClick={() => handleDelete(cat.id, cat.name)}
-                className="p-2.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
-                title="Hapus"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
+              <div className="flex gap-1">
+                <button onClick={() => startEdit(cat)} className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all" title="Edit">
+                  <Pencil className="w-4 h-4" />
+                </button>
+                <button onClick={() => handleDelete(cat.id, cat.name)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all" title="Hapus">
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           ))}
         </div>

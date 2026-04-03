@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import api from '@/lib/api';
-import { Pencil, Send, PenLine, Clock, CheckCircle, AlertCircle, Archive, Eye, Trash2 } from 'lucide-react';
+import { Pencil, Send, PenLine, Clock, CheckCircle, AlertCircle, Archive, Eye, Trash2, BarChart3 } from 'lucide-react';
 import { useConfirm } from '@/components/ui/ConfirmModal';
 import EmptyState from '@/components/ui/EmptyState';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
@@ -191,6 +191,15 @@ export default function MyArticlesPage() {
                         >
                           <Pencil className="w-3.5 h-3.5" />
                           <span className="hidden sm:inline">Edit</span>
+                        </Link>
+                      )}
+                      {article.status === 'published' && (
+                        <Link
+                          href={`/dashboard/statistics?article=${article.id}`}
+                          className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
+                          title="Statistik"
+                        >
+                          <BarChart3 className="w-4 h-4" />
                         </Link>
                       )}
                       {canDelete(article.status) && (
