@@ -29,7 +29,10 @@ export default function SearchPage() {
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!query.trim()) return;
+    if (!query.trim()) {
+      setSearched(false);
+      return;
+    }
 
     setLoading(true);
     try {
@@ -57,7 +60,7 @@ export default function SearchPage() {
               <input
                 type="text"
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
+                onChange={(e) => { setQuery(e.target.value); if (!e.target.value.trim()) setSearched(false); }}
                 placeholder="Ketik judul atau kata kunci..."
                 className="w-full pl-12 pr-4 py-3.5 rounded-xl border-0 shadow-lg focus:ring-2 focus:ring-white/50 text-gray-900"
               />
