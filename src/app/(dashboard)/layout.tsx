@@ -3,13 +3,14 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth-store';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   LayoutDashboard, FileText, Bookmark, CreditCard, BarChart3,
-  Bell, UserCircle, ClipboardCheck, Users, FolderOpen, Megaphone,
+  Bell, ClipboardCheck, Users, FolderOpen, Megaphone,
   LogOut, PenLine, ChevronRight, Menu, X, ChevronDown, Settings
 } from 'lucide-react';
+import api from '@/lib/api';
 
 const memberMenus = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -47,13 +48,23 @@ export default function DashboardLayout({
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  const fetchUnread = useCallback(() => {
+    api.get('/notifications?page=1&per_page=1')
+      .then((res) => setUnreadCount(res.data.data?.unread_count || 0))
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     loadUser().then(() => {
       const token = localStorage.getItem('token');
       if (!token) router.push('/login');
     });
-  }, [loadUser, router]);
+    fetchUnread();
+    const interval = setInterval(fetchUnread, 30000);
+    return () => clearInterval(interval);
+  }, [loadUser, router, fetchUnread]);
 
   if (!user) {
     return (
@@ -155,7 +166,12 @@ export default function DashboardLayout({
                   >
                     <menu.icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-indigo-600' : 'text-gray-400'}`} />
                     <span className="flex-1">{menu.label}</span>
-                    {isActive && <ChevronRight className="w-3 h-3 text-indigo-400" />}
+                    {menu.href === '/dashboard/notifications' && unreadCount > 0 && (
+                      <span className="bg-red-500 text-white text-[10px] font-bold min-w-[18px] h-[18px] flex items-center justify-center rounded-full px-1 animate-pulse">
+                        {unreadCount > 99 ? '99+' : unreadCount}
+                      </span>
+                    )}
+                    {isActive && menu.href !== '/dashboard/notifications' && <ChevronRight className="w-3 h-3 text-indigo-400" />}
                   </Link>
                 );
               })}
@@ -177,9 +193,19 @@ export default function DashboardLayout({
           </div>
           <span className="text-lg font-bold gradient-text">SASMITA</span>
         </Link>
-        <button onClick={() => setMobileOpen(!mobileOpen)} className="p-2 rounded-lg hover:bg-gray-100">
-          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
+        <div className="flex items-center gap-2">
+          <Link href="/dashboard/notifications" className="p-2 rounded-lg hover:bg-gray-100 relative">
+            <Bell className="w-5 h-5 text-gray-600" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[9px] font-bold min-w-[16px] h-[16px] flex items-center justify-center rounded-full px-0.5 animate-pulse">
+                {unreadCount > 99 ? '99+' : unreadCount}
+              </span>
+            )}
+          </Link>
+          <button onClick={() => setMobileOpen(!mobileOpen)} className="p-2 rounded-lg hover:bg-gray-100">
+            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Sidebar Overlay */}
