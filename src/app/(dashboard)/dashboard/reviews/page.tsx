@@ -14,6 +14,7 @@ interface Article {
   slug: string;
   content: string;
   excerpt?: string;
+  isPremium: boolean;
   userId: number;
   createdAt: string;
 }
@@ -77,9 +78,14 @@ export default function ReviewsPage() {
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1">
                     <h3 className="font-semibold text-gray-900 text-lg">{article.title}</h3>
-                    <p className="text-sm text-gray-500 mt-1">
-                      Diajukan: {new Date(article.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
-                    </p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <p className="text-sm text-gray-500">
+                        Diajukan: {new Date(article.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                      </p>
+                      {article.isPremium && (
+                        <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-medium">Premium</span>
+                      )}
+                    </div>
                     {article.excerpt && (
                       <p className="text-sm text-gray-600 mt-2 italic">&ldquo;{article.excerpt}&rdquo;</p>
                     )}
