@@ -23,6 +23,7 @@ export default function AdminAdsPage() {
   const [slotId, setSlotId] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [linkUrl, setLinkUrl] = useState('');
+  const [uploading, setUploading] = useState(false);
   const [creating, setCreating] = useState(false);
 
   useEffect(() => { loadAds(); }, []);
@@ -91,7 +92,29 @@ export default function AdminAdsPage() {
               <option value="in_article">Dalam Artikel</option>
               <option value="footer">Footer</option>
             </select>
-            <input type="url" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="URL Gambar Banner (misal: https://example.com/banner.jpg)" className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Gambar Banner</label>
+              <input type="file" accept="image/*" onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                setUploading(true);
+                const formData = new FormData();
+                formData.append('file', file);
+                try {
+                  const res = await api.post('/upload/image', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+                  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+                  setImageUrl(apiUrl + res.data.data.path);
+                  toast.show('Gambar berhasil diupload', 'success');
+                } catch { toast.show('Gagal upload gambar', 'error'); }
+                finally { setUploading(false); }
+              }} className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+              {uploading && <p className="text-sm text-gray-500 mt-1">Mengupload...</p>}
+              {imageUrl && (
+                <div className="mt-2">
+                  <img src={imageUrl} alt="Preview" className="h-20 rounded-lg object-cover" />
+                </div>
+              )}
+            </div>
             <input type="url" value={linkUrl} onChange={(e) => setLinkUrl(e.target.value)} placeholder="URL Tujuan saat diklik (misal: https://example.com)" className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
             <input type="text" value={slotId} onChange={(e) => setSlotId(e.target.value)} placeholder="Slot ID / kode AdSense (opsional)" className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
             <button type="submit" disabled={creating} className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2.5 rounded-xl font-medium hover:shadow-lg hover:shadow-indigo-500/25 transition-all disabled:opacity-50 whitespace-nowrap">
