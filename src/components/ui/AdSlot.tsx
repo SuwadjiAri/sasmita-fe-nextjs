@@ -6,6 +6,8 @@ interface Ad {
   id: number;
   name: string;
   slotId?: string;
+  imageUrl?: string;
+  linkUrl?: string;
   position: string;
   isActive: boolean;
 }
@@ -25,12 +27,25 @@ export default function AdSlot({ position }: { position: string }) {
       .catch(() => {});
   }, [position]);
 
-  if (!ad || !ad.slotId) return null;
+  if (!ad) return null;
+  if (!ad.imageUrl && !ad.slotId) return null;
 
   return (
-    <div className="bg-gradient-to-r from-gray-50 to-slate-50 border border-gray-200 rounded-xl p-4 text-center my-6">
-      <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-2">Iklan</p>
-      <div dangerouslySetInnerHTML={{ __html: ad.slotId }} />
+    <div className="my-6 text-center">
+      <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Iklan</p>
+      {ad.imageUrl ? (
+        ad.linkUrl ? (
+          <a href={ad.linkUrl} target="_blank" rel="noopener noreferrer sponsored" className="inline-block rounded-xl overflow-hidden hover:shadow-lg transition-shadow">
+            <img src={ad.imageUrl} alt={ad.name} className="max-w-full h-auto rounded-xl" />
+          </a>
+        ) : (
+          <div className="inline-block rounded-xl overflow-hidden">
+            <img src={ad.imageUrl} alt={ad.name} className="max-w-full h-auto rounded-xl" />
+          </div>
+        )
+      ) : ad.slotId ? (
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-4" dangerouslySetInnerHTML={{ __html: ad.slotId }} />
+      ) : null}
     </div>
   );
 }

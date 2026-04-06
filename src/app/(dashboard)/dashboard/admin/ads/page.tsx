@@ -8,7 +8,7 @@ import { useToast } from '@/components/ui/Toast';
 import { useConfirm } from '@/components/ui/ConfirmModal';
 import { Megaphone, MapPin, ToggleLeft, ToggleRight, Plus, Trash2, X } from 'lucide-react';
 
-interface AdPlacement { id: number; name: string; slotId?: string; position: string; isActive: boolean; }
+interface AdPlacement { id: number; name: string; slotId?: string; imageUrl?: string; linkUrl?: string; position: string; isActive: boolean; }
 
 const positionLabel: Record<string, string> = { header: 'Header', sidebar: 'Sidebar', in_article: 'Dalam Artikel', footer: 'Footer' };
 
@@ -21,6 +21,8 @@ export default function AdminAdsPage() {
   const [name, setName] = useState('');
   const [position, setPosition] = useState('sidebar');
   const [slotId, setSlotId] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+  const [linkUrl, setLinkUrl] = useState('');
   const [creating, setCreating] = useState(false);
 
   useEffect(() => { loadAds(); }, []);
@@ -31,9 +33,9 @@ export default function AdminAdsPage() {
     e.preventDefault();
     setCreating(true);
     try {
-      await api.post('/admin/ads', { name, position, slot_id: slotId || undefined });
+      await api.post('/admin/ads', { name, position, slot_id: slotId || undefined, image_url: imageUrl || undefined, link_url: linkUrl || undefined });
       toast.show('Slot iklan berhasil ditambahkan', 'success');
-      setName(''); setSlotId(''); setShowForm(false);
+      setName(''); setSlotId(''); setImageUrl(''); setLinkUrl(''); setShowForm(false);
       loadAds();
     } catch { toast.show('Gagal menambahkan slot iklan', 'error'); }
     finally { setCreating(false); }
@@ -89,7 +91,9 @@ export default function AdminAdsPage() {
               <option value="in_article">Dalam Artikel</option>
               <option value="footer">Footer</option>
             </select>
-            <input type="text" value={slotId} onChange={(e) => setSlotId(e.target.value)} placeholder="Slot ID (opsional)" className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+            <input type="url" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="URL Gambar Banner (misal: https://example.com/banner.jpg)" className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+            <input type="url" value={linkUrl} onChange={(e) => setLinkUrl(e.target.value)} placeholder="URL Tujuan saat diklik (misal: https://example.com)" className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+            <input type="text" value={slotId} onChange={(e) => setSlotId(e.target.value)} placeholder="Slot ID / kode AdSense (opsional)" className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
             <button type="submit" disabled={creating} className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2.5 rounded-xl font-medium hover:shadow-lg hover:shadow-indigo-500/25 transition-all disabled:opacity-50 whitespace-nowrap">
               <Plus className="w-4 h-4" /> {creating ? 'Menambah...' : 'Tambah'}
             </button>
@@ -105,14 +109,18 @@ export default function AdminAdsPage() {
         <div className="space-y-3 stagger-children">
           {ads.map((ad) => (
             <div key={ad.id} className="card-hover bg-white border border-gray-100 rounded-2xl p-5 flex items-center gap-4">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${ad.isActive ? 'bg-green-100' : 'bg-gray-100'}`}>
-                <Megaphone className={`w-5 h-5 ${ad.isActive ? 'text-green-600' : 'text-gray-400'}`} />
-              </div>
+              {ad.imageUrl ? (
+                <img src={ad.imageUrl} alt={ad.name} className="w-16 h-12 rounded-lg object-cover flex-shrink-0" />
+              ) : (
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${ad.isActive ? 'bg-green-100' : 'bg-gray-100'}`}>
+                  <Megaphone className={`w-5 h-5 ${ad.isActive ? 'text-green-600' : 'text-gray-400'}`} />
+                </div>
+              )}
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-gray-900">{ad.name}</p>
-                <p className="flex items-center gap-1.5 text-xs text-gray-400 mt-0.5">
+                <p className="flex flex-wrap items-center gap-1.5 text-xs text-gray-400 mt-0.5">
                   <MapPin className="w-3 h-3" /> {positionLabel[ad.position] || ad.position}
-                  {ad.slotId && <span>· {ad.slotId}</span>}
+                  {ad.linkUrl && <span>· <a href={ad.linkUrl} target="_blank" rel="noopener" className="text-indigo-500 hover:underline">{ad.linkUrl.substring(0, 30)}...</a></span>}
                 </p>
               </div>
               <div className="flex items-center gap-1.5 flex-shrink-0">
