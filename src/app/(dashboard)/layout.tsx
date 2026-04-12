@@ -173,7 +173,14 @@ export default function DashboardLayout({
                   <Link
                     key={menu.href}
                     href={menu.href}
-                    onClick={() => mobile && setMobileOpen(false)}
+                    onClick={(e) => {
+                      if (mobile) setMobileOpen(false);
+                      if (isActive) {
+                        e.preventDefault();
+                        router.push(menu.href);
+                        router.refresh();
+                      }
+                    }}
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
                       mobile
                         ? isActive ? 'bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-700 font-medium shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'

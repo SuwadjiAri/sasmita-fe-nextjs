@@ -1,9 +1,13 @@
+'use client';
+
 import Link from 'next/link';
 import { PenLine, BookOpen, Search, CreditCard } from 'lucide-react';
+import AdSlot from '@/components/ui/AdSlot';
 
 export default function Footer() {
   return (
     <footer className="bg-gradient-to-b from-gray-900 to-gray-950 text-gray-400 mt-auto">
+      <AdSlot position="footer" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Brand */}

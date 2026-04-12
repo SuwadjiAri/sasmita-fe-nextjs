@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, createContext, useContext } from 'react';
 
 interface Ad {
   id: number;
@@ -12,20 +12,42 @@ interface Ad {
   isActive: boolean;
 }
 
-export default function AdSlot({ position }: { position: string }) {
-  const [ad, setAd] = useState<Ad | null>(null);
+const AdsContext = createContext<Ad[] | null>(null);
+
+export function AdsProvider({ children }: { children: React.ReactNode }) {
+  const [ads, setAds] = useState<Ad[]>([]);
 
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/ads/active`)
       .then(res => res.ok ? res.json() : null)
       .then(data => {
+        if (data?.data) setAds(data.data);
+      })
+      .catch(() => {});
+  }, []);
+
+  return <AdsContext.Provider value={ads}>{children}</AdsContext.Provider>;
+}
+
+export default function AdSlot({ position }: { position: string }) {
+  const contextAds = useContext(AdsContext);
+  const [fallbackAd, setFallbackAd] = useState<Ad | null>(null);
+
+  // Fallback: fetch sendiri jika tidak dibungkus AdsProvider
+  useEffect(() => {
+    if (contextAds !== null) return;
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/ads/active`)
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
         if (data?.data) {
           const found = data.data.find((a: Ad) => a.position === position);
-          if (found) setAd(found);
+          if (found) setFallbackAd(found);
         }
       })
       .catch(() => {});
-  }, [position]);
+  }, [position, contextAds]);
+
+  const ad = contextAds ? contextAds.find(a => a.position === position) : fallbackAd;
 
   if (!ad) return null;
   if (!ad.imageUrl && !ad.slotId) return null;

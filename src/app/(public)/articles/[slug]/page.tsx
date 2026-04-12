@@ -40,27 +40,29 @@ export default async function ArticleDetailPage({ params }: Props) {
   }
 
   return (
-    <article className="max-w-3xl mx-auto px-4 py-12">
-      <header className="mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-          {article.title}
-        </h1>
-        <div className="flex items-center gap-4 text-sm text-gray-500">
-          <span>
-            {article.publishedAt
-              ? new Date(article.publishedAt).toLocaleDateString('id-ID', {
-                  day: 'numeric',
-                  month: 'long',
-                  year: 'numeric',
-                })
-              : ''}
-          </span>
-          <span>·</span>
-          <span>{article.viewCount} pembaca</span>
-        </div>
-      </header>
+    <div className="max-w-7xl mx-auto px-4 py-12">
+      <article>
+        <header className="max-w-3xl mx-auto mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            {article.title}
+          </h1>
+          <div className="flex items-center gap-4 text-sm text-gray-500">
+            <span>
+              {article.publishedAt
+                ? new Date(article.publishedAt).toLocaleDateString('id-ID', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                  })
+                : ''}
+            </span>
+            <span>·</span>
+            <span>{article.viewCount} pembaca</span>
+          </div>
+        </header>
 
-      <ArticleContent article={article} />
-    </article>
+        <ArticleContent article={article} />
+      </article>
+    </div>
   );
 }

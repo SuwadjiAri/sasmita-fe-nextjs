@@ -6,11 +6,11 @@ import EmptyState from '@/components/ui/EmptyState';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useToast } from '@/components/ui/Toast';
 import { useConfirm } from '@/components/ui/ConfirmModal';
-import { Megaphone, MapPin, ToggleLeft, ToggleRight, Plus, Trash2, X } from 'lucide-react';
+import { Megaphone, MapPin, ToggleLeft, ToggleRight, Plus, Trash2, X, Pencil } from 'lucide-react';
 
 interface AdPlacement { id: number; name: string; slotId?: string; imageUrl?: string; linkUrl?: string; position: string; isActive: boolean; }
 
-const positionLabel: Record<string, string> = { header: 'Header', sidebar: 'Sidebar', in_article: 'Dalam Artikel', footer: 'Footer' };
+const positionLabel: Record<string, string> = { header: 'Header', sidebar_left: 'Sidebar Kiri', sidebar_right: 'Sidebar Kanan', in_article: 'Dalam Artikel', footer: 'Footer' };
 
 export default function AdminAdsPage() {
   const toast = useToast();
@@ -18,28 +18,55 @@ export default function AdminAdsPage() {
   const [ads, setAds] = useState<AdPlacement[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [name, setName] = useState('');
-  const [position, setPosition] = useState('sidebar');
+  const [position, setPosition] = useState('header');
   const [slotId, setSlotId] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [linkUrl, setLinkUrl] = useState('');
   const [uploading, setUploading] = useState(false);
-  const [creating, setCreating] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => { loadAds(); }, []);
 
   const loadAds = () => { api.get('/admin/ads').then((res) => setAds(res.data.data || [])).catch(() => {}).finally(() => setLoading(false)); };
 
-  const handleCreate = async (e: React.FormEvent) => {
+  const resetForm = () => {
+    setName(''); setPosition('header'); setSlotId(''); setImageUrl(''); setLinkUrl('');
+    setEditingId(null); setShowForm(false);
+  };
+
+  const openCreate = () => {
+    resetForm();
+    setShowForm(true);
+  };
+
+  const openEdit = (ad: AdPlacement) => {
+    setEditingId(ad.id);
+    setName(ad.name);
+    setPosition(ad.position);
+    setSlotId(ad.slotId || '');
+    setImageUrl(ad.imageUrl || '');
+    setLinkUrl(ad.linkUrl || '');
+    setShowForm(true);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setCreating(true);
+    setSaving(true);
     try {
-      await api.post('/admin/ads', { name, position, slot_id: slotId || undefined, image_url: imageUrl || undefined, link_url: linkUrl || undefined });
-      toast.show('Slot iklan berhasil ditambahkan', 'success');
-      setName(''); setSlotId(''); setImageUrl(''); setLinkUrl(''); setShowForm(false);
+      const payload = { name, position, slot_id: slotId || undefined, image_url: imageUrl || undefined, link_url: linkUrl || undefined };
+      if (editingId) {
+        await api.put(`/admin/ads/${editingId}`, payload);
+        toast.show('Slot iklan berhasil diperbarui', 'success');
+      } else {
+        await api.post('/admin/ads', payload);
+        toast.show('Slot iklan berhasil ditambahkan', 'success');
+      }
+      resetForm();
       loadAds();
-    } catch { toast.show('Gagal menambahkan slot iklan', 'error'); }
-    finally { setCreating(false); }
+    } catch { toast.show(editingId ? 'Gagal memperbarui slot iklan' : 'Gagal menambahkan slot iklan', 'error'); }
+    finally { setSaving(false); }
   };
 
   const toggleActive = async (id: number, current: boolean) => {
@@ -69,7 +96,7 @@ export default function AdminAdsPage() {
           <p className="text-gray-500 text-sm mt-1">{ads.length} slot iklan</p>
         </div>
         {!showForm && (
-          <button onClick={() => setShowForm(true)} className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-indigo-500/25 transition-all">
+          <button onClick={openCreate} className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-indigo-500/25 transition-all">
             <Plus className="w-4 h-4" /> Tambah Slot
           </button>
         )}
@@ -80,15 +107,16 @@ export default function AdminAdsPage() {
           <div className="flex items-center justify-between mb-5">
             <div className="flex items-center gap-2">
               <Megaphone className="w-5 h-5 text-indigo-600" />
-              <h2 className="font-semibold text-gray-900">Tambah Slot Iklan</h2>
+              <h2 className="font-semibold text-gray-900">{editingId ? 'Edit Slot Iklan' : 'Tambah Slot Iklan'}</h2>
             </div>
-            <button onClick={() => setShowForm(false)} className="p-1.5 hover:bg-gray-100 rounded-lg"><X className="w-4 h-4 text-gray-400" /></button>
+            <button onClick={resetForm} className="p-1.5 hover:bg-gray-100 rounded-lg"><X className="w-4 h-4 text-gray-400" /></button>
           </div>
-          <form onSubmit={handleCreate} className="flex flex-col gap-3">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
             <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Nama slot (misal: Header Banner)" className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required />
             <select value={position} onChange={(e) => setPosition(e.target.value)} className="px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
               <option value="header">Header</option>
-              <option value="sidebar">Sidebar</option>
+              <option value="sidebar_left">Sidebar Kiri</option>
+              <option value="sidebar_right">Sidebar Kanan</option>
               <option value="in_article">Dalam Artikel</option>
               <option value="footer">Footer</option>
             </select>
@@ -117,8 +145,12 @@ export default function AdminAdsPage() {
             </div>
             <input type="url" value={linkUrl} onChange={(e) => setLinkUrl(e.target.value)} placeholder="URL Tujuan saat diklik (misal: https://example.com)" className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
             <input type="text" value={slotId} onChange={(e) => setSlotId(e.target.value)} placeholder="Slot ID / kode AdSense (opsional)" className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
-            <button type="submit" disabled={creating} className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2.5 rounded-xl font-medium hover:shadow-lg hover:shadow-indigo-500/25 transition-all disabled:opacity-50 whitespace-nowrap">
-              <Plus className="w-4 h-4" /> {creating ? 'Menambah...' : 'Tambah'}
+            <button type="submit" disabled={saving} className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2.5 rounded-xl font-medium hover:shadow-lg hover:shadow-indigo-500/25 transition-all disabled:opacity-50 whitespace-nowrap">
+              {editingId ? (
+                <>{saving ? 'Menyimpan...' : <><Pencil className="w-4 h-4" /> Simpan</>}</>
+              ) : (
+                <>{saving ? 'Menambah...' : <><Plus className="w-4 h-4" /> Tambah</>}</>
+              )}
             </button>
           </form>
         </div>
@@ -147,6 +179,9 @@ export default function AdminAdsPage() {
                 </p>
               </div>
               <div className="flex items-center gap-1.5 flex-shrink-0">
+                <button onClick={() => openEdit(ad)} className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all">
+                  <Pencil className="w-4 h-4" />
+                </button>
                 <button onClick={() => toggleActive(ad.id, ad.isActive)} className={`p-2 rounded-xl transition-all ${ad.isActive ? 'text-green-600 hover:bg-green-50' : 'text-gray-400 hover:bg-gray-100'}`}>
                   {ad.isActive ? <ToggleRight className="w-5 h-5" /> : <ToggleLeft className="w-5 h-5" />}
                 </button>
