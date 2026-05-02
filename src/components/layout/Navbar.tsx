@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useAuthStore } from '@/stores/auth-store';
 import { useEffect, useState } from 'react';
-import { Search, BookOpen, CreditCard, LayoutDashboard, LogOut, Menu, X, PenLine } from 'lucide-react';
+import { Search, BookOpen, CreditCard, LayoutDashboard, LogOut, Menu, X } from 'lucide-react';
 
 export default function Navbar() {
   const { user, logout, loadUser } = useAuthStore();
@@ -24,11 +24,14 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110">
-              <PenLine className="w-4 h-4 text-white" />
-            </div>
-            <span className="text-xl font-bold gradient-text">SASMITA</span>
+          <Link href="/" className="flex items-center group">
+            <img
+              src="/logo-sasmita.png"
+              alt="SASMITA.com"
+              width={1048}
+              height={225}
+              className="h-8 w-auto brightness-0 invert transition-transform group-hover:scale-105"
+            />
           </Link>
 
           {/* Desktop Menu */}

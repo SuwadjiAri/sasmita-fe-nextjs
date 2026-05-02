@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { PenLine } from 'lucide-react';
 
 export default function AuthLayout({
   children,
@@ -15,10 +14,15 @@ export default function AuthLayout({
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-300/10 rounded-full blur-3xl" />
         </div>
         <div className="relative flex flex-col items-center justify-center w-full p-16 text-white text-center">
-          <Link href="/" className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-8 hover:bg-white/30 transition-colors">
-            <PenLine className="w-8 h-8" />
+          <Link href="/" className="mb-8 hover:opacity-90 transition-opacity">
+            <img
+              src="/logo-sasmita.png"
+              alt="SASMITA.com"
+              width={1048}
+              height={225}
+              className="h-14 w-auto brightness-0 invert"
+            />
           </Link>
-          <Link href="/" className="text-4xl font-bold mb-4 hover:text-indigo-200 transition-colors">SASMITA.COM</Link>
           <p className="text-lg text-indigo-100 max-w-md leading-relaxed">
             Platform Literasi Digital Karya Sastra dan Akademik Mahasiswa
           </p>
@@ -30,11 +34,14 @@ export default function AuthLayout({
         <div className="w-full max-w-md">
           {/* Mobile logo */}
           <div className="lg:hidden text-center mb-8">
-            <Link href="/" className="inline-flex items-center gap-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
-                <PenLine className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-2xl font-bold gradient-text">SASMITA</span>
+            <Link href="/" className="inline-block">
+              <img
+                src="/logo-sasmita.png"
+                alt="SASMITA.com"
+                width={1048}
+                height={225}
+                className="h-9 w-auto"
+              />
             </Link>
           </div>
           {children}

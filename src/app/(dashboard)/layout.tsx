@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import {
   LayoutDashboard, FileText, Bookmark, CreditCard, BarChart3,
   Bell, ClipboardCheck, Users, FolderOpen, Megaphone,
-  LogOut, PenLine, ChevronRight, Menu, X, ChevronDown, Settings
+  LogOut, ChevronRight, Menu, X, ChevronDown, Settings
 } from 'lucide-react';
 import api from '@/lib/api';
 
@@ -85,12 +85,13 @@ export default function DashboardLayout({
   if (!user) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-50">
-        <div className="flex items-center gap-2 mb-6">
-          <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
-            <PenLine className="w-5 h-5 text-white" />
-          </div>
-          <span className="text-2xl font-bold gradient-text">SASMITA</span>
-        </div>
+        <img
+          src="/logo-sasmita.png"
+          alt="SASMITA.com"
+          width={1048}
+          height={225}
+          className="h-10 w-auto mb-6"
+        />
         <div className="flex items-center gap-3">
           <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
           <p className="text-gray-500 text-sm">Memuat dashboard...</p>
@@ -109,11 +110,14 @@ export default function DashboardLayout({
     <>
       {/* Logo */}
       <div className={`p-5 ${mobile ? 'border-b border-gray-100' : 'border-b border-white/10'}`}>
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-lg flex items-center justify-center">
-            <PenLine className="w-4 h-4 text-white" />
-          </div>
-          <span className={`text-lg font-bold ${mobile ? 'gradient-text' : 'text-white'}`}>SASMITA</span>
+        <Link href="/" className="inline-flex items-center group">
+          <img
+            src="/logo-sasmita.png"
+            alt="SASMITA.com"
+            width={1048}
+            height={225}
+            className={`h-7 w-auto transition-transform group-hover:scale-105 ${mobile ? '' : 'brightness-0 invert'}`}
+          />
         </Link>
       </div>
 
@@ -219,11 +223,14 @@ export default function DashboardLayout({
     <div className="min-h-screen flex bg-gray-100/80">
       {/* Mobile Header */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-40 bg-white border-b border-gray-100 px-4 h-14 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-7 h-7 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
-            <PenLine className="w-3.5 h-3.5 text-white" />
-          </div>
-          <span className="text-lg font-bold gradient-text">SASMITA</span>
+        <Link href="/" className="inline-flex items-center">
+          <img
+            src="/logo-sasmita.png"
+            alt="SASMITA.com"
+            width={1048}
+            height={225}
+            className="h-7 w-auto"
+          />
         </Link>
         <div className="flex items-center gap-2">
           <Link href="/dashboard/notifications" className="p-2 rounded-lg hover:bg-gray-100 relative">
