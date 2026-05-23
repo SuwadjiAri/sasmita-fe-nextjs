@@ -60,8 +60,8 @@ export default async function HomePage() {
             </h1>
 
             <p className="text-lg md:text-xl text-indigo-100 mb-10 max-w-2xl mx-auto leading-relaxed">
-              SASMITA.COM — wadah bagi mahasiswa Sastra Indonesia UNPAM
-              untuk menerbitkan puisi, cerpen, esai, dan karya akademik
+              SASMITA.COM — tempat menulis, menerbitkan, dan berbagi
+              puisi, cerpen, esai, dan karya akademik
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
