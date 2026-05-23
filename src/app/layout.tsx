@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Toast from "@/components/ui/Toast";
 import ConfirmModal from "@/components/ui/ConfirmModal";
+import DevelopmentScreen from "@/components/DevelopmentScreen";
+import { isDevelopmentMode } from "@/config/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,9 +36,15 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        {children}
-        <Toast />
-        <ConfirmModal />
+        {isDevelopmentMode ? (
+          <DevelopmentScreen />
+        ) : (
+          <>
+            {children}
+            <Toast />
+            <ConfirmModal />
+          </>
+        )}
       </body>
     </html>
   );
