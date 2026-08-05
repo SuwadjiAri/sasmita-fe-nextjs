@@ -6,34 +6,47 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen flex">
-      {/* Left side - decorative */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 relative overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-white/10 rounded-full blur-3xl" />
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-300/10 rounded-full blur-3xl" />
-        </div>
-        <div className="relative flex flex-col items-center justify-center w-full p-16 text-white text-center">
-          <Link href="/" className="mb-8 hover:opacity-90 transition-opacity">
+    <div className="flex min-h-screen">
+      {/* Sisi kiri, hanya tampil pada layar lebar. */}
+      <div className="relative hidden overflow-hidden bg-tinta-950 lg:flex lg:w-1/2">
+        <div
+          className="absolute inset-0 opacity-[0.18]"
+          aria-hidden="true"
+          style={{
+            backgroundImage:
+              'radial-gradient(circle at 25% 20%, #c08d3c 0, transparent 45%), radial-gradient(circle at 75% 85%, #465e80 0, transparent 45%)',
+          }}
+        />
+
+        <div className="relative flex w-full flex-col justify-between p-14 text-white">
+          <Link href="/" className="transition-opacity hover:opacity-90">
             <img
               src="/logo-sasmita.png"
               alt="SASMITA.com"
               width={1048}
               height={225}
-              className="h-14 w-auto brightness-0 invert"
+              className="h-10 w-auto brightness-0 invert"
             />
           </Link>
-          <p className="text-lg text-indigo-100 max-w-md leading-relaxed">
-            Platform Literasi Digital Karya Sastra dan Akademik Mahasiswa
+
+          <div className="max-w-md">
+            <p className="label-mikro text-emas-300">Platform Literasi Digital</p>
+            <p className="mt-5 font-serif text-2xl leading-snug">
+              Ruang terbit untuk puisi, cerpen, esai, novel, resensi, dan artikel
+              akademik mahasiswa.
+            </p>
+          </div>
+
+          <p className="text-sm text-tinta-400">
+            Program Studi Sastra Indonesia, Universitas Pamulang
           </p>
         </div>
       </div>
 
-      {/* Right side - form */}
-      <div className="flex-1 flex items-center justify-center px-4 py-12 bg-gray-50">
+      {/* Sisi kanan, formulir. */}
+      <div className="flex flex-1 items-center justify-center bg-kertas px-4 py-12">
         <div className="w-full max-w-md">
-          {/* Mobile logo */}
-          <div className="lg:hidden text-center mb-8">
+          <div className="mb-8 text-center lg:hidden">
             <Link href="/" className="inline-block">
               <img
                 src="/logo-sasmita.png"

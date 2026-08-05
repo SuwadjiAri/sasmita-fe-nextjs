@@ -29,15 +29,15 @@ const icons = {
 };
 
 const styles = {
-  success: 'bg-green-600 border-green-700 text-white',
-  error: 'bg-red-600 border-red-700 text-white',
-  info: 'bg-indigo-600 border-indigo-700 text-white',
+  success: 'bg-green-800 text-white',
+  error: 'bg-red-800 text-white',
+  info: 'bg-tinta-900 text-white',
 };
 
 const iconStyles = {
-  success: 'text-green-200',
-  error: 'text-red-200',
-  info: 'text-indigo-200',
+  success: 'text-green-300',
+  error: 'text-red-300',
+  info: 'text-emas-300',
 };
 
 export default function Toast() {
@@ -63,7 +63,10 @@ export default function Toast() {
     <div className={`fixed top-4 right-4 z-[100] max-w-sm transition-all duration-300 ${
       show ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
     }`}>
-      <div className={`flex items-start gap-3 p-4 rounded-xl border shadow-lg ${styles[type]}`}>
+      <div
+        role="status"
+        className={`flex items-start gap-3 rounded-lg p-4 shadow-[0_16px_40px_-16px_rgba(0,0,0,0.6)] ${styles[type]}`}
+      >
         <Icon className={`w-5 h-5 flex-shrink-0 mt-0.5 ${iconStyles[type]}`} />
         <p className="text-sm font-medium flex-1">{message}</p>
         <button onClick={() => { setShow(false); setTimeout(hide, 300); }} className="p-1 hover:bg-white/20 rounded-lg transition-colors">

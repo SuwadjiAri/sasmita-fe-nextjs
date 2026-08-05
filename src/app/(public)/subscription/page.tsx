@@ -1,5 +1,13 @@
-import { Check, Sparkles, Zap, Crown } from 'lucide-react';
+import { Check } from 'lucide-react';
 import SubscribeButton from './SubscribeButton';
+
+type Paket = {
+  id: number;
+  name: string;
+  price: number;
+  durationDays: number;
+  description?: string;
+};
 
 async function getPlans() {
   const res = await fetch(
@@ -10,101 +18,81 @@ async function getPlans() {
   return res.json();
 }
 
-export const metadata = { title: 'Subscription' };
+export const metadata = { title: 'Langganan' };
 
-const planStyles = [
-  {
-    icon: Sparkles,
-    gradient: 'from-blue-500 to-cyan-500',
-    border: 'border-blue-200 hover:border-blue-400',
-    badge: null,
-    button: 'bg-blue-600 hover:bg-blue-700 hover:shadow-blue-500/25',
-  },
-  {
-    icon: Zap,
-    gradient: 'from-indigo-500 to-purple-600',
-    border: 'border-indigo-300 ring-2 ring-indigo-500/20 hover:ring-indigo-500/40',
-    badge: 'Paling Populer',
-    button: 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:shadow-indigo-500/25',
-  },
-  {
-    icon: Crown,
-    gradient: 'from-amber-500 to-orange-500',
-    border: 'border-amber-200 hover:border-amber-400',
-    badge: 'Hemat',
-    button: 'bg-amber-600 hover:bg-amber-700 hover:shadow-amber-500/25',
-  },
-];
-
-const benefits = [
-  'Akses semua artikel premium',
-  'Baca tanpa batas',
-  'Dukung penulis SASMITA',
+const manfaat = [
+  'Akses seluruh karya premium',
+  'Membaca tanpa batas',
+  'Mendukung penulis SASMITA',
 ];
 
 export default async function SubscriptionPage() {
   const { data: plans } = await getPlans();
 
+  // Paket di tengah ditandai sebagai pilihan yang disarankan. Bila jumlah
+  // paketnya genap, penanda ini dilewatkan saja.
+  const indeksSorotan = plans.length % 2 === 1 ? Math.floor(plans.length / 2) : -1;
+
   return (
-    <div className="max-w-5xl mx-auto px-4 py-20">
-      <div className="text-center mb-14">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Pilih Paket Langganan</h1>
-        <p className="text-gray-500 max-w-xl mx-auto text-lg">
-          Berlangganan untuk akses semua artikel premium di SASMITA.COM
-        </p>
-      </div>
+    <div>
+      <header className="border-b border-tinta-200/70 bg-white">
+        <div className="mx-auto max-w-5xl px-4 py-16 text-center sm:px-6">
+          <p className="label-mikro">Langganan</p>
+          <h1 className="mt-3 text-4xl font-semibold text-tinta-900">Pilih Paket Langganan</h1>
+          <p className="mx-auto mt-4 max-w-xl leading-relaxed text-tinta-600">
+            Sebagian besar karya di SASMITA dapat dibaca gratis. Berlangganan
+            membuka karya yang ditandai premium oleh penulisnya.
+          </p>
+        </div>
+      </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 stagger-children">
-        {plans.map((plan: { id: number; name: string; price: number; durationDays: number; description?: string }, index: number) => {
-          const style = planStyles[index] || planStyles[0];
-          const Icon = style.icon;
+      <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6">
+        <div className="grid grid-cols-1 gap-6 stagger-children md:grid-cols-3">
+          {(plans as Paket[]).map((plan, index) => {
+            const disorot = index === indeksSorotan;
 
-          return (
-            <div
-              key={plan.id}
-              className={`card-hover relative bg-white border-2 rounded-2xl p-8 text-center flex flex-col ${style.border}`}
-            >
-              {/* Badge */}
-              {style.badge && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className={`bg-gradient-to-r ${style.gradient} text-white text-xs px-4 py-1.5 rounded-full font-semibold shadow-lg`}>
-                    {style.badge}
+            return (
+              <div
+                key={plan.id}
+                className={`relative flex flex-col rounded-xl border bg-white p-8 ${
+                  disorot ? 'border-emas-300 ring-1 ring-emas-300' : 'border-tinta-200/70'
+                }`}
+              >
+                {disorot && (
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-emas-700 px-4 py-1 text-[11px] font-semibold uppercase tracking-wider text-white">
+                    Paling Populer
                   </span>
-                </div>
-              )}
+                )}
 
-              {/* Icon */}
-              <div className={`w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br ${style.gradient} flex items-center justify-center mb-5 mt-2`}>
-                <Icon className="w-7 h-7 text-white" />
+                <h2 className="label-mikro">{plan.name}</h2>
+
+                <p className="mt-4 font-serif text-4xl font-semibold text-tinta-900">
+                  Rp{plan.price.toLocaleString('id-ID')}
+                </p>
+                <p className="mt-1 text-sm text-tinta-500">untuk {plan.durationDays} hari</p>
+
+                {plan.description && (
+                  <p className="mt-4 text-sm leading-relaxed text-tinta-600">{plan.description}</p>
+                )}
+
+                <ul className="mt-6 flex-1 space-y-3 border-t border-tinta-200/70 pt-6">
+                  {manfaat.map((item) => (
+                    <li key={item} className="flex items-start gap-2.5 text-sm text-tinta-700">
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-emas-700" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+
+                <SubscribeButton
+                  planId={plan.id}
+                  planName={plan.name}
+                  className={`mt-8 w-full ${disorot ? 'btn-emas' : 'btn-utama'}`}
+                />
               </div>
-
-              {/* Plan info */}
-              <h3 className="text-xl font-bold text-gray-900 mb-3">{plan.name}</h3>
-              <div className="mb-4">
-                <span className="text-4xl font-bold text-gray-900">Rp{plan.price.toLocaleString('id-ID')}</span>
-                <span className="text-gray-400 text-sm ml-1">/ {plan.durationDays} hari</span>
-              </div>
-              <p className="text-gray-500 text-sm mb-6">{plan.description}</p>
-
-              {/* Benefits */}
-              <ul className="space-y-3 mb-8 text-left flex-1">
-                {benefits.map((benefit) => (
-                  <li key={benefit} className="flex items-center gap-2 text-sm text-gray-600">
-                    <Check className="w-4 h-4 text-green-500 flex-shrink-0" />
-                    {benefit}
-                  </li>
-                ))}
-              </ul>
-
-              {/* CTA */}
-              <SubscribeButton
-                planId={plan.id}
-                planName={plan.name}
-                className={`block w-full text-white py-3.5 rounded-xl font-semibold transition-all hover:shadow-lg ${style.button}`}
-              />
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     </div>
   );

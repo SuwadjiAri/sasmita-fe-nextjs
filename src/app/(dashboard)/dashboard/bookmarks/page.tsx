@@ -34,8 +34,8 @@ export default function BookmarksPage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Bookmarks</h1>
-        <p className="text-gray-500 text-sm mt-1">{meta.total} artikel disimpan</p>
+        <h1 className="text-2xl font-semibold text-tinta-900">Bookmarks</h1>
+        <p className="text-tinta-500 text-sm mt-1">{meta.total} artikel disimpan</p>
       </div>
 
       {loading ? (
@@ -46,15 +46,15 @@ export default function BookmarksPage() {
         <>
           <div className="space-y-3 stagger-children">
             {bookmarks.map((bm) => (
-              <Link key={bm.article.id} href={`/articles/${bm.article.slug}`} className="card-hover group flex items-start gap-4 bg-white border border-gray-100 rounded-2xl p-5">
-                <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-100 transition-colors">
-                  <BookOpen className="w-5 h-5 text-indigo-400" />
+              <Link key={bm.article.id} href={`/articles/${bm.article.slug}`} className="kartu-tautan group flex items-start gap-4 bg-white border border-tinta-200/70 rounded-xl p-5">
+                <div className="w-10 h-10 bg-emas-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-emas-100 transition-colors">
+                  <BookOpen className="w-5 h-5 text-emas-400" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors">{bm.article.title}</h3>
-                  <p className="text-gray-500 text-sm mt-1 line-clamp-2">{bm.article.excerpt || 'Baca selengkapnya...'}</p>
+                  <h3 className="font-semibold text-tinta-900 group-hover:text-emas-700 transition-colors">{bm.article.title}</h3>
+                  <p className="text-tinta-500 text-sm mt-1 line-clamp-2">{bm.article.excerpt || 'Baca selengkapnya...'}</p>
                 </div>
-                <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-indigo-500 mt-1 flex-shrink-0 transition-colors" />
+                <ArrowRight className="w-4 h-4 text-tinta-300 group-hover:text-emas-600 mt-1 flex-shrink-0 transition-colors" />
               </Link>
             ))}
           </div>

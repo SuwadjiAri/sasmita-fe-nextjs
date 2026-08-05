@@ -103,13 +103,13 @@ export default function AdminPlansPage() {
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Kelola Paket Langganan</h1>
-          <p className="text-gray-500 text-sm mt-1">{plans.length} paket</p>
+          <h1 className="text-2xl font-semibold text-tinta-900">Kelola Paket Langganan</h1>
+          <p className="text-tinta-500 text-sm mt-1">{plans.length} paket</p>
         </div>
         {!showForm && (
           <button
             onClick={() => { resetForm(); setShowForm(true); }}
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-indigo-500/25 transition-all"
+            className="btn-utama hover:shadow-lg transition-all"
           >
             <Plus className="w-4 h-4" />
             Tambah Paket
@@ -119,36 +119,36 @@ export default function AdminPlansPage() {
 
       {/* Form */}
       {showForm && (
-        <div className="bg-white border border-gray-100 rounded-2xl p-6 mb-8 animate-fade-in">
+        <div className="bg-white border border-tinta-200/70 rounded-xl p-6 mb-8 animate-fade-in">
           <div className="flex items-center justify-between mb-5">
             <div className="flex items-center gap-2">
-              <CreditCard className="w-5 h-5 text-indigo-600" />
-              <h2 className="font-semibold text-gray-900">{editingId ? 'Edit Paket' : 'Tambah Paket Baru'}</h2>
+              <CreditCard className="w-5 h-5 text-emas-700" />
+              <h2 className="font-semibold text-tinta-900">{editingId ? 'Edit Paket' : 'Tambah Paket Baru'}</h2>
             </div>
-            <button onClick={resetForm} className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
-              <X className="w-4 h-4 text-gray-400" />
+            <button onClick={resetForm} className="p-1.5 hover:bg-tinta-100 rounded-lg transition-colors">
+              <X className="w-4 h-4 text-tinta-400" />
             </button>
           </div>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nama Paket</label>
-                <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="misal: Bulanan" className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required />
+                <label className="block text-sm font-medium text-tinta-700 mb-1">Nama Paket</label>
+                <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="misal: Bulanan" className="kolom-isian" required />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Durasi (hari)</label>
-                <input type="number" value={durationDays} onChange={(e) => setDurationDays(e.target.value)} placeholder="misal: 30" className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required min="1" />
+                <label className="block text-sm font-medium text-tinta-700 mb-1">Durasi (hari)</label>
+                <input type="number" value={durationDays} onChange={(e) => setDurationDays(e.target.value)} placeholder="misal: 30" className="kolom-isian" required min="1" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Harga (Rupiah)</label>
-                <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="misal: 15000" className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required min="1" />
+                <label className="block text-sm font-medium text-tinta-700 mb-1">Harga (Rupiah)</label>
+                <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="misal: 15000" className="kolom-isian" required min="1" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Deskripsi (opsional)</label>
-                <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Keuntungan paket ini" className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+                <label className="block text-sm font-medium text-tinta-700 mb-1">Deskripsi (opsional)</label>
+                <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Keuntungan paket ini" className="kolom-isian" />
               </div>
             </div>
-            <button type="submit" disabled={creating} className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2.5 rounded-xl font-medium hover:shadow-lg hover:shadow-indigo-500/25 transition-all disabled:opacity-50">
+            <button type="submit" disabled={creating} className="btn-utama">
               <Save className="w-4 h-4" />
               {creating ? 'Menyimpan...' : editingId ? 'Simpan Perubahan' : 'Tambah Paket'}
             </button>
@@ -164,31 +164,31 @@ export default function AdminPlansPage() {
       ) : (
         <div className="space-y-3 stagger-children">
           {plans.map((plan) => (
-            <div key={plan.id} className="card-hover bg-white border border-gray-100 rounded-2xl p-5 flex items-center gap-4">
+            <div key={plan.id} className="kartu-tautan bg-white border border-tinta-200/70 rounded-xl p-5 flex items-center gap-4">
               <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                plan.isActive ? 'bg-gradient-to-br from-indigo-500 to-purple-600' : 'bg-gray-200'
+                plan.isActive ? 'bg-tinta-900' : 'bg-tinta-200'
               }`}>
-                <CreditCard className={`w-6 h-6 ${plan.isActive ? 'text-white' : 'text-gray-400'}`} />
+                <CreditCard className={`w-6 h-6 ${plan.isActive ? 'text-white' : 'text-tinta-400'}`} />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <p className="font-semibold text-gray-900">{plan.name}</p>
-                  {!plan.isActive && <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">Nonaktif</span>}
+                  <p className="font-semibold text-tinta-900">{plan.name}</p>
+                  {!plan.isActive && <span className="text-xs bg-tinta-100 text-tinta-500 px-2 py-0.5 rounded-full">Nonaktif</span>}
                 </div>
-                <p className="text-sm text-gray-500 mt-0.5">
-                  <span className="font-semibold text-indigo-600">{formatRupiah(plan.price)}</span>
-                  <span className="text-gray-400"> · {plan.durationDays} hari</span>
-                  {plan.description && <span className="text-gray-400"> · {plan.description}</span>}
+                <p className="text-sm text-tinta-500 mt-0.5">
+                  <span className="font-semibold text-emas-700">{formatRupiah(plan.price)}</span>
+                  <span className="text-tinta-400"> / {plan.durationDays} hari</span>
+                  {plan.description && <span className="text-tinta-400"> / {plan.description}</span>}
                 </p>
               </div>
               <div className="flex items-center gap-1.5 flex-shrink-0">
-                <button onClick={() => handleToggle(plan.id, plan.isActive)} className={`p-2 rounded-xl transition-all ${plan.isActive ? 'text-green-600 hover:bg-green-50' : 'text-gray-400 hover:bg-gray-100'}`} title={plan.isActive ? 'Nonaktifkan' : 'Aktifkan'}>
+                <button onClick={() => handleToggle(plan.id, plan.isActive)} className={`p-2 rounded-xl transition-all ${plan.isActive ? 'text-green-600 hover:bg-green-50' : 'text-tinta-400 hover:bg-tinta-100'}`} title={plan.isActive ? 'Nonaktifkan' : 'Aktifkan'}>
                   {plan.isActive ? <ToggleRight className="w-5 h-5" /> : <ToggleLeft className="w-5 h-5" />}
                 </button>
-                <button onClick={() => startEdit(plan)} className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all" title="Edit">
+                <button onClick={() => startEdit(plan)} className="p-2 text-tinta-400 hover:text-emas-700 hover:bg-emas-50 rounded-xl transition-all" title="Edit">
                   <Pencil className="w-4 h-4" />
                 </button>
-                <button onClick={() => handleDelete(plan.id, plan.name)} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all" title="Hapus">
+                <button onClick={() => handleDelete(plan.id, plan.name)} className="p-2 text-tinta-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all" title="Hapus">
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>

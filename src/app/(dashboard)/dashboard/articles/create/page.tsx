@@ -81,7 +81,7 @@ export default function CreateArticlePage() {
 
   return (
     <div className="max-w-3xl">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Tulis Artikel Baru</h1>
+      <h1 className="text-2xl font-semibold text-tinta-900 mb-6">Tulis Artikel Baru</h1>
 
       {error && (
         <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg mb-4">{error}</div>
@@ -89,24 +89,24 @@ export default function CreateArticlePage() {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Judul</label>
-          <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required />
+          <label className="block text-sm font-medium text-tinta-700 mb-1">Judul</label>
+          <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="kolom-isian" required />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
-          <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required>
+          <label className="block text-sm font-medium text-tinta-700 mb-1">Kategori</label>
+          <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className="kolom-isian" required>
             <option value="">Pilih kategori</option>
             {categories.map((cat) => (<option key={cat.id} value={cat.id}>{cat.name}</option>))}
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Cover Image</label>
-          <input type="file" accept="image/*" onChange={handleUploadCover} className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
-          {uploading && <p className="text-sm text-gray-500 mt-1">Mengupload...</p>}
+          <label className="block text-sm font-medium text-tinta-700 mb-1">Cover Image</label>
+          <input type="file" accept="image/*" onChange={handleUploadCover} className="w-full text-sm text-tinta-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-emas-50 file:text-emas-800 hover:file:bg-emas-100" />
+          {uploading && <p className="text-sm text-tinta-500 mt-1">Mengupload...</p>}
           {coverImage && <p className="text-sm text-green-600 mt-1">Cover berhasil diupload</p>}
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Upload Karya PDF (opsional)</label>
+          <label className="block text-sm font-medium text-tinta-700 mb-1">Upload Karya PDF (opsional)</label>
           <input type="file" accept=".pdf" onChange={async (e) => {
             const file = e.target.files?.[0];
             if (!file) return;
@@ -118,34 +118,34 @@ export default function CreateArticlePage() {
               setPdfFile(res.data.data.path);
             } catch { setError('Gagal upload PDF'); }
             finally { setUploadingPdf(false); }
-          }} className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100" />
-          {uploadingPdf && <p className="text-sm text-gray-500 mt-1">Mengupload PDF...</p>}
+          }} className="w-full text-sm text-tinta-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-emas-50 file:text-emas-800 hover:file:bg-emas-100" />
+          {uploadingPdf && <p className="text-sm text-tinta-500 mt-1">Mengupload PDF...</p>}
           {pdfFile && <p className="text-sm text-green-600 mt-1">PDF berhasil diupload</p>}
         </div>
         <div className="flex items-center gap-3 bg-yellow-50 border border-yellow-200 rounded-xl p-4">
-          <input type="checkbox" id="premium" checked={isPremium} onChange={(e) => setIsPremium(e.target.checked)} className="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500" />
+          <input type="checkbox" id="premium" checked={isPremium} onChange={(e) => setIsPremium(e.target.checked)} className="w-4 h-4 text-emas-700 rounded focus:ring-emas-600" />
           <label htmlFor="premium" className="text-sm">
-            <span className="font-medium text-gray-900">Artikel Premium</span>
-            <span className="text-gray-500 ml-1">— Hanya bisa dibaca oleh subscriber</span>
+            <span className="font-medium text-tinta-900">Artikel Premium</span>
+            <span className="text-tinta-500 ml-1">- Hanya bisa dibaca oleh subscriber</span>
           </label>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Tag</label>
-          <input type="text" value={tags} onChange={(e) => setTags(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Pisahkan dengan koma: romantis, budaya, modern" />
+          <label className="block text-sm font-medium text-tinta-700 mb-1">Tag</label>
+          <input type="text" value={tags} onChange={(e) => setTags(e.target.value)} className="kolom-isian" placeholder="Pisahkan dengan koma: romantis, budaya, modern" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Ringkasan</label>
-          <textarea value={excerpt} onChange={(e) => setExcerpt(e.target.value)} rows={2} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Ringkasan singkat artikel..." />
+          <label className="block text-sm font-medium text-tinta-700 mb-1">Ringkasan</label>
+          <textarea value={excerpt} onChange={(e) => setExcerpt(e.target.value)} rows={2} className="kolom-isian" placeholder="Ringkasan singkat artikel..." />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Konten</label>
+          <label className="block text-sm font-medium text-tinta-700 mb-1">Konten</label>
           <TiptapEditor content={content} onChange={setContent} />
         </div>
         <div className="flex gap-3">
-          <button type="submit" disabled={loading} className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-indigo-700 disabled:opacity-50">
+          <button type="submit" disabled={loading} className="bg-emas-700 text-white px-6 py-2 rounded-lg font-medium hover:bg-emas-800 disabled:opacity-50">
             {loading ? 'Menyimpan...' : 'Simpan Draf'}
           </button>
-          <button type="button" onClick={() => router.back()} className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Batal</button>
+          <button type="button" onClick={() => router.back()} className="px-6 py-2 border border-tinta-300 rounded-lg text-tinta-700 hover:bg-tinta-50">Batal</button>
         </div>
       </form>
     </div>

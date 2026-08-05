@@ -24,19 +24,14 @@ export default function EmptyState({ icon = 'article', title, description, actio
   const Icon = icons[icon];
 
   return (
-    <div className="flex flex-col items-center justify-center py-16 px-4">
-      <div className="w-20 h-20 bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 rounded-3xl flex items-center justify-center mb-6">
-        <Icon className="w-10 h-10 text-indigo-400" />
-      </div>
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 text-center">{title}</h3>
+    <div className="rounded-xl border border-dashed border-tinta-300 px-6 py-16 text-center">
+      <Icon className="mx-auto h-10 w-10 text-tinta-300" />
+      <h3 className="mt-4 text-lg font-semibold text-tinta-900">{title}</h3>
       {description && (
-        <p className="text-gray-500 dark:text-gray-400 text-sm text-center max-w-sm mb-6">{description}</p>
+        <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-tinta-500">{description}</p>
       )}
       {actionLabel && actionHref && (
-        <Link
-          href={actionHref}
-          className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2.5 rounded-xl font-medium text-sm hover:shadow-lg hover:shadow-indigo-500/25 transition-all"
-        >
+        <Link href={actionHref} className="btn-utama mt-6">
           {actionLabel}
         </Link>
       )}

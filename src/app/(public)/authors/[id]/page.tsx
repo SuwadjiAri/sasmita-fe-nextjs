@@ -1,15 +1,14 @@
 import Link from 'next/link';
-import { Calendar, BookOpen, PenLine } from 'lucide-react';
+import { Calendar, PenLine } from 'lucide-react';
 
 interface Props {
   params: Promise<{ id: string }>;
 }
 
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+
 async function getUser(id: string) {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/users/${id}`,
-    { next: { revalidate: 60 } }
-  );
+  const res = await fetch(`${API}/users/${id}`, { next: { revalidate: 60 } });
   if (!res.ok) return null;
   const json = await res.json();
   return json.data;
@@ -21,53 +20,56 @@ export default async function AuthorProfilePage({ params }: Props) {
 
   if (!user) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-20 text-center">
-        <div className="w-20 h-20 bg-gray-100 rounded-3xl flex items-center justify-center mx-auto mb-4">
-          <PenLine className="w-10 h-10 text-gray-300" />
-        </div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Penulis Tidak Ditemukan</h1>
-        <Link href="/" className="text-indigo-600 hover:underline">Kembali ke beranda</Link>
+      <div className="mx-auto max-w-3xl px-4 py-24 text-center">
+        <PenLine className="mx-auto h-10 w-10 text-tinta-300" />
+        <h1 className="mt-5 text-2xl font-semibold text-tinta-900">Penulis tidak ditemukan</h1>
+        <p className="mt-2 text-tinta-600">Profil yang Anda cari tidak ada atau sudah dihapus.</p>
+        <Link href="/" className="btn-utama mt-6">
+          Kembali ke beranda
+        </Link>
       </div>
     );
   }
 
+  const bergabung = new Date(user.created_at).toLocaleDateString('id-ID', {
+    month: 'long',
+    year: 'numeric',
+  });
+
   return (
-    <div className="max-w-3xl mx-auto px-4 py-16">
-      {/* Profile Card */}
-      <div className="bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm">
-        {/* Banner */}
-        <div className="h-32 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 relative">
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl" />
-            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-purple-300/10 rounded-full blur-2xl" />
+    <div className="mx-auto max-w-3xl px-4 py-16">
+      <div className="kartu overflow-hidden">
+        <div className="bg-tinta-950 px-8 py-10">
+          <div className="flex items-start gap-5">
+            {user.avatar ? (
+              <img
+                src={`${API}${user.avatar}`}
+                alt=""
+                className="h-20 w-20 shrink-0 rounded-xl object-cover"
+              />
+            ) : (
+              <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl border border-emas-400/30 bg-white/[0.06] font-serif text-3xl font-semibold text-emas-300">
+                {user.name.charAt(0).toUpperCase()}
+              </span>
+            )}
+
+            <div className="min-w-0 pt-1">
+              <p className="label-mikro text-emas-300">Penulis</p>
+              <h1 className="mt-2 text-2xl font-semibold text-white">{user.name}</h1>
+              <p className="mt-2 inline-flex items-center gap-1.5 text-sm text-tinta-400">
+                <Calendar className="h-3.5 w-3.5" />
+                Bergabung {bergabung}
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Avatar + Info */}
-        <div className="px-8 pb-8 -mt-12 text-center">
-          <div className="w-24 h-24 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto border-4 border-white shadow-lg">
-            <span className="text-3xl font-bold text-white">
-              {user.name.charAt(0).toUpperCase()}
-            </span>
+        {user.bio && (
+          <div className="px-8 py-8">
+            <h2 className="label-mikro">Tentang</h2>
+            <p className="mt-3 font-serif leading-relaxed text-tinta-700">{user.bio}</p>
           </div>
-
-          <h1 className="text-2xl font-bold text-gray-900 mt-4">{user.name}</h1>
-
-          {user.bio && (
-            <p className="text-gray-500 mt-2 max-w-md mx-auto leading-relaxed">{user.bio}</p>
-          )}
-
-          <div className="flex items-center justify-center gap-4 mt-4 text-sm text-gray-400">
-            <span className="inline-flex items-center gap-1.5">
-              <Calendar className="w-4 h-4" />
-              Bergabung {new Date(user.created_at).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <BookOpen className="w-4 h-4" />
-              Penulis SASMITA
-            </span>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

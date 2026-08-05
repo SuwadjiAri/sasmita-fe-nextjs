@@ -52,20 +52,20 @@ export default function TiptapEditor({ content, onChange, placeholder = 'Mulai m
       title={title}
       className={`p-2 rounded-lg transition-all ${
         active
-          ? 'bg-indigo-100 text-indigo-700 shadow-sm'
-          : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+          ? 'bg-emas-100 text-emas-800 shadow-sm'
+          : 'text-tinta-500 hover:bg-tinta-100 hover:text-tinta-700'
       }`}
     >
       <Icon className="w-4 h-4" />
     </button>
   );
 
-  const Divider = () => <span className="w-px h-6 bg-gray-200 mx-0.5" />;
+  const Divider = () => <span className="w-px h-6 bg-tinta-200 mx-0.5" />;
 
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm resize-y" style={{ minHeight: '500px', overflow: 'auto' }}>
+    <div className="border border-tinta-200 rounded-xl overflow-hidden bg-white shadow-sm resize-y" style={{ minHeight: '500px', overflow: 'auto' }}>
       {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-0.5 px-2 py-1.5 border-b border-gray-100 bg-gray-50/80">
+      <div className="flex flex-wrap items-center gap-0.5 px-2 py-1.5 border-b border-tinta-200/70 bg-tinta-50/80">
         {/* Text formatting */}
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBold().run()}
@@ -167,7 +167,7 @@ export default function TiptapEditor({ content, onChange, placeholder = 'Mulai m
       <EditorContent editor={editor} />
 
       {/* Footer - word count */}
-      <div className="px-4 py-2 border-t border-gray-100 bg-gray-50/50 text-xs text-gray-400 flex justify-between">
+      <div className="px-4 py-2 border-t border-tinta-200/70 bg-tinta-50/50 text-xs text-tinta-400 flex justify-between">
         <span>{editor.storage.characterCount?.characters?.() ?? editor.getText().length} karakter</span>
         <span>{editor.storage.characterCount?.words?.() ?? editor.getText().split(/\s+/).filter(Boolean).length} kata</span>
       </div>

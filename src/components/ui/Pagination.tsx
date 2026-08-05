@@ -23,20 +23,20 @@ export default function Pagination({
   const end = Math.min(page * perPage, total);
 
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-4 mt-6">
+    <div className="bg-white border border-tinta-200/70 rounded-xl p-4 mt-6">
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
         {/* Left: info + per page */}
         <div className="flex flex-wrap items-center gap-3">
-          <p className="text-sm text-gray-500">
-            Menampilkan <span className="font-semibold text-gray-900">{start}-{end}</span> dari <span className="font-semibold text-gray-900">{total}</span>
+          <p className="text-sm text-tinta-500">
+            Menampilkan <span className="font-semibold text-tinta-900">{start}-{end}</span> dari <span className="font-semibold text-tinta-900">{total}</span>
           </p>
           {onPerPageChange && (
-            <div className="flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-1.5">
-              <Rows3 className="w-3.5 h-3.5 text-gray-400" />
+            <div className="flex items-center gap-2 bg-tinta-50 rounded-xl px-3 py-1.5">
+              <Rows3 className="w-3.5 h-3.5 text-tinta-400" />
               <select
                 value={perPage}
                 onChange={(e) => onPerPageChange(parseInt(e.target.value))}
-                className="text-sm bg-transparent text-gray-700 font-medium focus:outline-none cursor-pointer"
+                className="text-sm bg-transparent text-tinta-700 font-medium focus:outline-none cursor-pointer"
               >
                 {perPageOptions.map((opt) => (
                   <option key={opt} value={opt}>{opt} / halaman</option>
@@ -53,7 +53,7 @@ export default function Pagination({
             <button
               onClick={() => onPageChange(1)}
               disabled={page <= 1}
-              className="p-2 rounded-xl text-gray-400 hover:bg-indigo-50 hover:text-indigo-600 disabled:opacity-20 disabled:hover:bg-transparent transition-all"
+              className="p-2 rounded-xl text-tinta-400 hover:bg-emas-50 hover:text-emas-700 disabled:opacity-20 disabled:hover:bg-transparent transition-all"
               title="Halaman pertama"
             >
               <ChevronsLeft className="w-4 h-4" />
@@ -63,7 +63,7 @@ export default function Pagination({
             <button
               onClick={() => onPageChange(page - 1)}
               disabled={page <= 1}
-              className="p-2 rounded-xl text-gray-400 hover:bg-indigo-50 hover:text-indigo-600 disabled:opacity-20 disabled:hover:bg-transparent transition-all"
+              className="p-2 rounded-xl text-tinta-400 hover:bg-emas-50 hover:text-emas-700 disabled:opacity-20 disabled:hover:bg-transparent transition-all"
               title="Sebelumnya"
             >
               <ChevronLeft className="w-4 h-4" />
@@ -80,15 +80,15 @@ export default function Pagination({
                 }, [])
                 .map((p, i) =>
                   typeof p === 'string' ? (
-                    <span key={`dot-${i}`} className="px-1.5 text-gray-300 text-sm">...</span>
+                    <span key={`dot-${i}`} className="px-1.5 text-tinta-300 text-sm">...</span>
                   ) : (
                     <button
                       key={p}
                       onClick={() => onPageChange(p)}
                       className={`w-9 h-9 rounded-xl text-sm font-medium transition-all ${
                         p === page
-                          ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/25 scale-105'
-                          : 'text-gray-500 hover:bg-indigo-50 hover:text-indigo-600'
+                          ? 'bg-tinta-900 text-white shadow-lg shadow-emas-600/25 scale-105'
+                          : 'text-tinta-500 hover:bg-emas-50 hover:text-emas-700'
                       }`}
                     >
                       {p}
@@ -101,7 +101,7 @@ export default function Pagination({
             <button
               onClick={() => onPageChange(page + 1)}
               disabled={page >= lastPage}
-              className="p-2 rounded-xl text-gray-400 hover:bg-indigo-50 hover:text-indigo-600 disabled:opacity-20 disabled:hover:bg-transparent transition-all"
+              className="p-2 rounded-xl text-tinta-400 hover:bg-emas-50 hover:text-emas-700 disabled:opacity-20 disabled:hover:bg-transparent transition-all"
               title="Selanjutnya"
             >
               <ChevronRight className="w-4 h-4" />
@@ -111,7 +111,7 @@ export default function Pagination({
             <button
               onClick={() => onPageChange(lastPage)}
               disabled={page >= lastPage}
-              className="p-2 rounded-xl text-gray-400 hover:bg-indigo-50 hover:text-indigo-600 disabled:opacity-20 disabled:hover:bg-transparent transition-all"
+              className="p-2 rounded-xl text-tinta-400 hover:bg-emas-50 hover:text-emas-700 disabled:opacity-20 disabled:hover:bg-transparent transition-all"
               title="Halaman terakhir"
             >
               <ChevronsRight className="w-4 h-4" />

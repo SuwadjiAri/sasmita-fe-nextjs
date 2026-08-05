@@ -8,21 +8,21 @@ import { useRouter } from 'next/navigation';
 import {
   LayoutDashboard, FileText, Bookmark, CreditCard, BarChart3,
   Bell, ClipboardCheck, Users, FolderOpen, Megaphone,
-  LogOut, ChevronRight, Menu, X, ChevronDown, Settings
+  LogOut, Menu, X, ChevronDown, Settings
 } from 'lucide-react';
 import api from '@/lib/api';
 
 const memberMenus = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/dashboard', label: 'Ringkasan', icon: LayoutDashboard },
   { href: '/dashboard/articles', label: 'Karya Saya', icon: FileText },
-  { href: '/dashboard/bookmarks', label: 'Bookmarks', icon: Bookmark },
-  { href: '/dashboard/subscription', label: 'Subscription', icon: CreditCard },
-  { href: '/dashboard/statistics', label: 'Statistics', icon: BarChart3 },
-  { href: '/dashboard/notifications', label: 'Notifications', icon: Bell },
+  { href: '/dashboard/bookmarks', label: 'Tersimpan', icon: Bookmark },
+  { href: '/dashboard/subscription', label: 'Langganan', icon: CreditCard },
+  { href: '/dashboard/statistics', label: 'Statistik', icon: BarChart3 },
+  { href: '/dashboard/notifications', label: 'Notifikasi', icon: Bell },
 ];
 
 const redaksiMenus = [
-  { href: '/dashboard/reviews', label: 'Review Artikel', icon: ClipboardCheck },
+  { href: '/dashboard/reviews', label: 'Tinjau Naskah', icon: ClipboardCheck },
 ];
 
 const adminMenus = [
@@ -73,7 +73,6 @@ export default function DashboardLayout({
     return () => clearInterval(interval);
   }, [loadUser, router, fetchBadges]);
 
-  // Fetch pending reviews for redaksi
   useEffect(() => {
     if (user?.is_redaksi) {
       fetchPendingReviews();
@@ -84,17 +83,17 @@ export default function DashboardLayout({
 
   if (!user) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-50">
+      <div className="flex min-h-screen flex-col items-center justify-center bg-tinta-950">
         <img
           src="/logo-sasmita.png"
           alt="SASMITA.com"
           width={1048}
           height={225}
-          className="h-10 w-auto mb-6"
+          className="mb-8 h-9 w-auto brightness-0 invert"
         />
         <div className="flex items-center gap-3">
-          <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
-          <p className="text-gray-500 text-sm">Memuat dashboard...</p>
+          <div className="h-5 w-5 animate-spin rounded-full border-2 border-white/20 border-t-emas-400" />
+          <p className="text-sm text-tinta-400">Memuat dashboard...</p>
         </div>
       </div>
     );
@@ -106,58 +105,77 @@ export default function DashboardLayout({
     ...(user.is_admin ? [{ section: 'Admin', items: adminMenus }] : []),
   ];
 
+  // Dipakai dua kali: latar gelap di layar lebar, putih di laci layar sempit.
   const sidebarContent = (mobile: boolean) => (
     <>
-      {/* Logo */}
-      <div className={`p-5 ${mobile ? 'border-b border-gray-100' : 'border-b border-white/10'}`}>
-        <Link href="/" className="inline-flex items-center group">
+      <div className={`p-5 ${mobile ? 'border-b border-tinta-200/70' : 'border-b border-white/10'}`}>
+        <Link href="/" className="inline-flex items-center">
           <img
             src="/logo-sasmita.png"
             alt="SASMITA.com"
             width={1048}
             height={225}
-            className={`h-7 w-auto transition-transform group-hover:scale-105 ${mobile ? '' : 'brightness-0 invert'}`}
+            className={`h-7 w-auto ${mobile ? '' : 'brightness-0 invert'}`}
           />
         </Link>
       </div>
 
-      {/* User info - clickable dropdown */}
-      <div className={`px-3 py-3 ${mobile ? 'border-b border-gray-100' : 'border-b border-white/10'} relative`}>
+      <div className={`relative px-3 py-3 ${mobile ? 'border-b border-tinta-200/70' : 'border-b border-white/10'}`}>
         <button
           onClick={() => setUserMenuOpen(!userMenuOpen)}
-          className={`w-full flex items-center gap-3 p-2.5 rounded-2xl transition-all ${
-            userMenuOpen
-              ? mobile ? 'bg-gradient-to-r from-indigo-50 to-purple-50 shadow-sm' : 'bg-white/10'
-              : mobile ? 'hover:bg-gray-50' : 'hover:bg-white/5'
+          aria-expanded={userMenuOpen}
+          className={`flex w-full items-center gap-3 rounded-lg p-2.5 transition-colors ${
+            mobile
+              ? userMenuOpen ? 'bg-tinta-100' : 'hover:bg-tinta-50'
+              : userMenuOpen ? 'bg-white/10' : 'hover:bg-white/5'
           }`}
         >
-          <div className="w-11 h-11 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-indigo-500/30">
-            <span className="text-base font-bold text-white">{user.name.charAt(0).toUpperCase()}</span>
+          <span
+            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg font-serif text-base font-semibold ${
+              mobile ? 'bg-tinta-900 text-emas-300' : 'bg-white/10 text-emas-300'
+            }`}
+          >
+            {user.name.charAt(0).toUpperCase()}
+          </span>
+
+          <div className="min-w-0 flex-1 text-left">
+            <p className={`truncate text-sm font-semibold ${mobile ? 'text-tinta-900' : 'text-white'}`}>
+              {user.name}
+            </p>
+            <p className="truncate text-[11px] text-tinta-400">{user.email}</p>
           </div>
-          <div className="flex-1 min-w-0 text-left">
-            <p className={`text-sm font-semibold truncate ${mobile ? 'text-gray-900' : 'text-white'}`}>{user.name}</p>
-            <p className={`text-[11px] truncate ${mobile ? 'text-gray-400' : 'text-slate-400'}`}>{user.email}</p>
-          </div>
-          <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${userMenuOpen ? 'rotate-180' : ''} ${mobile ? 'text-gray-400' : 'text-slate-400'}`} />
+
+          <ChevronDown
+            className={`h-4 w-4 text-tinta-400 transition-transform duration-200 ${userMenuOpen ? 'rotate-180' : ''}`}
+          />
         </button>
 
-        {/* Dropdown */}
         {userMenuOpen && (
-          <div className={`mx-2 mt-2 rounded-2xl shadow-xl overflow-hidden animate-fade-in ${mobile ? 'bg-white border border-gray-100 shadow-gray-200/50' : 'bg-slate-700 border border-slate-600'}`}>
+          <div
+            className={`mx-2 mt-2 animate-fade-in overflow-hidden rounded-lg border ${
+              mobile ? 'border-tinta-200 bg-white' : 'border-white/10 bg-tinta-800'
+            }`}
+          >
             <div className="p-1.5">
               <Link
                 href="/dashboard/profile"
                 onClick={() => { setUserMenuOpen(false); if (mobile) setMobileOpen(false); }}
-                className={`flex items-center gap-2.5 px-3 py-2.5 text-sm rounded-xl transition-all ${mobile ? 'text-gray-600 hover:bg-indigo-50 hover:text-indigo-600' : 'text-slate-200 hover:bg-white/10'}`}
+                className={`flex items-center gap-2.5 rounded-md px-3 py-2.5 text-sm transition-colors ${
+                  mobile
+                    ? 'text-tinta-700 hover:bg-tinta-50'
+                    : 'text-tinta-200 hover:bg-white/10 hover:text-white'
+                }`}
               >
-                <Settings className="w-4 h-4" />
-                Edit Profil
+                <Settings className="h-4 w-4" />
+                Ubah Profil
               </Link>
               <button
                 onClick={() => { handleLogout(); setUserMenuOpen(false); }}
-                className={`flex items-center gap-2.5 w-full px-3 py-2.5 text-sm rounded-xl transition-all ${mobile ? 'text-red-500 hover:bg-red-50' : 'text-red-400 hover:bg-red-500/10'}`}
+                className={`flex w-full items-center gap-2.5 rounded-md px-3 py-2.5 text-sm transition-colors ${
+                  mobile ? 'text-red-700 hover:bg-red-50' : 'text-red-300 hover:bg-red-500/10'
+                }`}
               >
-                <LogOut className="w-4 h-4" />
+                <LogOut className="h-4 w-4" />
                 Keluar
               </button>
             </div>
@@ -165,14 +183,17 @@ export default function DashboardLayout({
         )}
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto p-3 space-y-6">
+      <nav className="flex-1 space-y-6 overflow-y-auto p-3">
         {allMenus.map((group) => (
           <div key={group.section}>
-            <p className={`px-3 mb-2 text-[10px] font-semibold uppercase tracking-widest ${mobile ? 'text-gray-400' : 'text-slate-500'}`}>{group.section}</p>
+            <p className={`mb-2 px-3 text-[10px] font-semibold uppercase tracking-widest ${mobile ? 'text-tinta-400' : 'text-tinta-500'}`}>
+              {group.section}
+            </p>
+
             <div className="space-y-0.5">
               {group.items.map((menu) => {
                 const isActive = pathname === menu.href;
+
                 return (
                   <Link
                     key={menu.href}
@@ -185,29 +206,35 @@ export default function DashboardLayout({
                         router.refresh();
                       }
                     }}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
+                    aria-current={isActive ? 'page' : undefined}
+                    className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ${
                       mobile
-                        ? isActive ? 'bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-700 font-medium shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                        : isActive ? 'bg-white/10 text-white font-medium' : 'text-slate-400 hover:bg-white/5 hover:text-white'
+                        ? isActive
+                          ? 'bg-tinta-100 font-medium text-tinta-900'
+                          : 'text-tinta-600 hover:bg-tinta-50 hover:text-tinta-900'
+                        : isActive
+                          ? 'bg-white/10 font-medium text-white'
+                          : 'text-tinta-400 hover:bg-white/5 hover:text-white'
                     }`}
                   >
-                    <menu.icon className={`w-4 h-4 flex-shrink-0 ${
-                      mobile
-                        ? isActive ? 'text-indigo-600' : 'text-gray-400'
-                        : isActive ? 'text-indigo-400' : 'text-slate-500'
-                    }`} />
+                    <menu.icon
+                      className={`h-4 w-4 shrink-0 ${
+                        isActive ? (mobile ? 'text-emas-700' : 'text-emas-400') : 'text-tinta-400'
+                      }`}
+                    />
                     <span className="flex-1">{menu.label}</span>
+
                     {menu.href === '/dashboard/notifications' && unreadCount > 0 && (
-                      <span className="bg-red-500 text-white text-[10px] font-bold min-w-[18px] h-[18px] flex items-center justify-center rounded-full px-1 animate-pulse">
+                      <span className="flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-red-700 px-1 text-[10px] font-bold text-white">
                         {unreadCount > 99 ? '99+' : unreadCount}
                       </span>
                     )}
+
                     {menu.href === '/dashboard/reviews' && pendingReviews > 0 && (
-                      <span className="bg-yellow-500 text-white text-[10px] font-bold min-w-[18px] h-[18px] flex items-center justify-center rounded-full px-1 animate-pulse">
+                      <span className="flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-emas-700 px-1 text-[10px] font-bold text-white">
                         {pendingReviews > 99 ? '99+' : pendingReviews}
                       </span>
                     )}
-                    {isActive && menu.href !== '/dashboard/notifications' && menu.href !== '/dashboard/reviews' && <ChevronRight className={`w-3 h-3 ${mobile ? 'text-indigo-400' : 'text-slate-500'}`} />}
                   </Link>
                 );
               })}
@@ -215,67 +242,69 @@ export default function DashboardLayout({
           </div>
         ))}
       </nav>
-
     </>
   );
 
   return (
-    <div className="min-h-screen flex bg-gray-100/80">
-      {/* Mobile Header */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-40 bg-white border-b border-gray-100 px-4 h-14 flex items-center justify-between">
+    <div className="flex min-h-screen bg-kertas">
+      {/* Kepala layar sempit */}
+      <div className="fixed inset-x-0 top-0 z-40 flex h-14 items-center justify-between border-b border-tinta-200/70 bg-white px-4 md:hidden">
         <Link href="/" className="inline-flex items-center">
-          <img
-            src="/logo-sasmita.png"
-            alt="SASMITA.com"
-            width={1048}
-            height={225}
-            className="h-7 w-auto"
-          />
+          <img src="/logo-sasmita.png" alt="SASMITA.com" width={1048} height={225} className="h-7 w-auto" />
         </Link>
+
         <div className="flex items-center gap-2">
-          <Link href="/dashboard/notifications" className="p-2 rounded-lg hover:bg-gray-100 relative">
-            <Bell className="w-5 h-5 text-gray-600" />
+          <Link href="/dashboard/notifications" className="relative rounded-lg p-2 hover:bg-tinta-100">
+            <Bell className="h-5 w-5 text-tinta-600" />
             {unreadCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[9px] font-bold min-w-[16px] h-[16px] flex items-center justify-center rounded-full px-0.5 animate-pulse">
+              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-700 px-0.5 text-[9px] font-bold text-white">
                 {unreadCount > 99 ? '99+' : unreadCount}
               </span>
             )}
           </Link>
-          <button onClick={() => setMobileOpen(!mobileOpen)} className="p-2 rounded-lg hover:bg-gray-100">
-            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label={mobileOpen ? 'Tutup menu' : 'Buka menu'}
+            className="rounded-lg p-2 hover:bg-tinta-100"
+          >
+            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Sidebar Overlay */}
+      {/* Laci layar sempit */}
       {mobileOpen && (
         <>
-          <div className="md:hidden fixed inset-0 bg-black/50 z-40" onClick={() => setMobileOpen(false)} />
-          <aside className="md:hidden fixed top-0 left-0 bottom-0 w-72 bg-white z-50 flex flex-col animate-slide-in-left">
+          <div className="fixed inset-0 z-40 bg-black/50 md:hidden" onClick={() => setMobileOpen(false)} />
+          <aside className="fixed bottom-0 left-0 top-0 z-50 flex w-72 animate-slide-in-left flex-col bg-white md:hidden">
             {sidebarContent(true)}
           </aside>
         </>
       )}
 
-      {/* Desktop Sidebar */}
-      <aside className="w-64 bg-gradient-to-b from-slate-900 to-slate-800 hidden md:flex flex-col">
+      {/* Bilah samping layar lebar */}
+      <aside className="hidden w-64 flex-col bg-tinta-950 md:flex">
         {sidebarContent(false)}
       </aside>
 
-      {/* Main Content */}
-      <div className="flex-1 min-w-0 overflow-auto">
-        <main className="flex-1 p-6 pt-20 md:p-8 animate-fade-in">
-          {/* Desktop Bell */}
-          <div className="hidden md:flex justify-end mb-4 -mt-2">
-            <Link href="/dashboard/notifications" className="p-2.5 rounded-xl bg-white border border-gray-100 shadow-sm hover:shadow-md hover:border-gray-200 relative transition-all">
-              <Bell className="w-5 h-5 text-gray-500" />
+      <div className="min-w-0 flex-1 overflow-auto">
+        <main className="animate-fade-in flex-1 p-6 pt-20 md:p-8">
+          <div className="mb-4 -mt-2 hidden justify-end md:flex">
+            <Link
+              href="/dashboard/notifications"
+              aria-label="Notifikasi"
+              className="relative rounded-lg border border-tinta-200/70 bg-white p-2.5 transition-colors hover:border-tinta-300 hover:bg-tinta-50"
+            >
+              <Bell className="h-5 w-5 text-tinta-500" />
               {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold min-w-[18px] h-[18px] flex items-center justify-center rounded-full px-0.5 animate-pulse">
+                <span className="absolute -right-1 -top-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-red-700 px-0.5 text-[9px] font-bold text-white">
                   {unreadCount > 99 ? '99+' : unreadCount}
                 </span>
               )}
             </Link>
           </div>
+
           {children}
         </main>
       </div>

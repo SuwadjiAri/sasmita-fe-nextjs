@@ -24,10 +24,10 @@ export default function ForgotPasswordPage() {
       if (res.data.data?.token) {
         setToken(res.data.data.token);
         setStep('reset');
-        setSuccess('Token reset berhasil digenerate. Silakan masukkan password baru.');
+        setSuccess('Token berhasil dibuat. Silakan masukkan kata sandi baru.');
       }
     } catch (err: unknown) {
-      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Gagal mengirim request';
+      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Gagal mengirim permintaan';
       setError(message);
     } finally {
       setLoading(false);
@@ -39,7 +39,7 @@ export default function ForgotPasswordPage() {
     setError('');
 
     if (password !== confirmPassword) {
-      setError('Password tidak cocok');
+      setError('Kata sandi tidak cocok');
       return;
     }
 
@@ -47,14 +47,14 @@ export default function ForgotPasswordPage() {
 
     try {
       await api.post('/auth/reset-password', { email, token, password });
-      setSuccess('Password berhasil direset! Silakan login.');
+      setSuccess('Kata sandi berhasil diganti. Silakan masuk.');
       setStep('email');
       setEmail('');
       setToken('');
       setPassword('');
       setConfirmPassword('');
     } catch (err: unknown) {
-      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Gagal reset password';
+      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Gagal mengganti kata sandi';
       setError(message);
     } finally {
       setLoading(false);
@@ -62,81 +62,86 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="w-full">
-      <div className="bg-white rounded-2xl shadow-lg shadow-gray-200/50 border border-gray-100 p-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-1">Lupa Password</h1>
-        <p className="text-gray-500 mb-8">
-          {step === 'email' ? 'Masukkan email untuk reset password' : 'Masukkan password baru'}
+    <div className="kartu p-8">
+      <h1 className="text-2xl font-semibold text-tinta-900">Lupa Kata Sandi</h1>
+      <p className="mt-1.5 text-tinta-500">
+        {step === 'email'
+          ? 'Masukkan email akun Anda untuk memulai penggantian.'
+          : 'Masukkan kata sandi baru Anda.'}
+      </p>
+
+      {error && (
+        <p role="alert" className="mt-6 rounded-lg bg-red-50 px-3.5 py-3 text-sm text-red-700">
+          {error}
         </p>
-
-        {error && (
-          <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg mb-4">{error}</div>
-        )}
-        {success && (
-          <div className="bg-green-50 text-green-600 text-sm p-3 rounded-lg mb-4">{success}</div>
-        )}
-
-        {step === 'email' ? (
-          <form onSubmit={handleRequestToken} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                required
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-xl font-medium hover:shadow-lg hover:shadow-indigo-500/25 transition-all disabled:opacity-50"
-            >
-              {loading ? 'Memproses...' : 'Reset Password'}
-            </button>
-          </form>
-        ) : (
-          <form onSubmit={handleResetPassword} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Password Baru</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                placeholder="Minimal 8 karakter"
-                required
-                minLength={8}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Konfirmasi Password</label>
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                required
-                minLength={8}
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-xl font-medium hover:shadow-lg hover:shadow-indigo-500/25 transition-all disabled:opacity-50"
-            >
-              {loading ? 'Memproses...' : 'Simpan Password Baru'}
-            </button>
-          </form>
-        )}
-
-        <p className="text-center text-sm text-gray-500 mt-6">
-          <Link href="/login" className="text-indigo-600 hover:underline">
-            Kembali ke Login
-          </Link>
+      )}
+      {success && (
+        <p role="status" className="mt-6 rounded-lg bg-green-50 px-3.5 py-3 text-sm text-green-800">
+          {success}
         </p>
-      </div>
+      )}
+
+      {step === 'email' ? (
+        <form onSubmit={handleRequestToken} className="mt-6 space-y-4">
+          <div>
+            <label htmlFor="email" className="label-input">Email</label>
+            <input
+              id="email"
+              type="email"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="kolom-isian"
+              required
+            />
+          </div>
+
+          <button type="submit" disabled={loading} className="btn-utama w-full py-3">
+            {loading ? 'Memproses...' : 'Lanjutkan'}
+          </button>
+        </form>
+      ) : (
+        <form onSubmit={handleResetPassword} className="mt-6 space-y-4">
+          <div>
+            <label htmlFor="password" className="label-input">Kata Sandi Baru</label>
+            <input
+              id="password"
+              type="password"
+              autoComplete="new-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="kolom-isian"
+              placeholder="Minimal 8 karakter"
+              required
+              minLength={8}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="confirmPassword" className="label-input">Ulangi Kata Sandi</label>
+            <input
+              id="confirmPassword"
+              type="password"
+              autoComplete="new-password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="kolom-isian"
+              required
+              minLength={8}
+            />
+          </div>
+
+          <button type="submit" disabled={loading} className="btn-utama w-full py-3">
+            {loading ? 'Memproses...' : 'Simpan Kata Sandi Baru'}
+          </button>
+        </form>
+      )}
+
+      <p className="mt-6 text-center text-sm">
+        <Link href="/login" className="text-emas-700 hover:underline">
+          Kembali ke halaman masuk
+        </Link>
+      </p>
     </div>
   );
 }

@@ -92,28 +92,28 @@ export default function AdminAdsPage() {
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Kelola Slot Iklan</h1>
-          <p className="text-gray-500 text-sm mt-1">{ads.length} slot iklan</p>
+          <h1 className="text-2xl font-semibold text-tinta-900">Kelola Slot Iklan</h1>
+          <p className="text-tinta-500 text-sm mt-1">{ads.length} slot iklan</p>
         </div>
         {!showForm && (
-          <button onClick={openCreate} className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-indigo-500/25 transition-all">
+          <button onClick={openCreate} className="btn-utama hover:shadow-lg transition-all">
             <Plus className="w-4 h-4" /> Tambah Slot
           </button>
         )}
       </div>
 
       {showForm && (
-        <div className="bg-white border border-gray-100 rounded-2xl p-6 mb-8 animate-fade-in">
+        <div className="bg-white border border-tinta-200/70 rounded-xl p-6 mb-8 animate-fade-in">
           <div className="flex items-center justify-between mb-5">
             <div className="flex items-center gap-2">
-              <Megaphone className="w-5 h-5 text-indigo-600" />
-              <h2 className="font-semibold text-gray-900">{editingId ? 'Edit Slot Iklan' : 'Tambah Slot Iklan'}</h2>
+              <Megaphone className="w-5 h-5 text-emas-700" />
+              <h2 className="font-semibold text-tinta-900">{editingId ? 'Edit Slot Iklan' : 'Tambah Slot Iklan'}</h2>
             </div>
-            <button onClick={resetForm} className="p-1.5 hover:bg-gray-100 rounded-lg"><X className="w-4 h-4 text-gray-400" /></button>
+            <button onClick={resetForm} className="p-1.5 hover:bg-tinta-100 rounded-lg"><X className="w-4 h-4 text-tinta-400" /></button>
           </div>
           <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Nama slot (misal: Header Banner)" className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required />
-            <select value={position} onChange={(e) => setPosition(e.target.value)} className="px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+            <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Nama slot (misal: Header Banner)" className="kolom-isian flex-1" required />
+            <select value={position} onChange={(e) => setPosition(e.target.value)} className="px-4 py-2.5 border border-tinta-200 rounded-xl focus:ring-2 focus:ring-emas-600 focus:border-transparent">
               <option value="header">Header</option>
               <option value="sidebar_left">Sidebar Kiri</option>
               <option value="sidebar_right">Sidebar Kanan</option>
@@ -121,7 +121,7 @@ export default function AdminAdsPage() {
               <option value="footer">Footer</option>
             </select>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Gambar Banner</label>
+              <label className="block text-sm font-medium text-tinta-700 mb-1">Gambar Banner</label>
               <input type="file" accept="image/*" onChange={async (e) => {
                 const file = e.target.files?.[0];
                 if (!file) return;
@@ -135,17 +135,17 @@ export default function AdminAdsPage() {
                   toast.show('Gambar berhasil diupload', 'success');
                 } catch { toast.show('Gagal upload gambar', 'error'); }
                 finally { setUploading(false); }
-              }} className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
-              {uploading && <p className="text-sm text-gray-500 mt-1">Mengupload...</p>}
+              }} className="w-full text-sm text-tinta-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-emas-50 file:text-emas-800 hover:file:bg-emas-100" />
+              {uploading && <p className="text-sm text-tinta-500 mt-1">Mengupload...</p>}
               {imageUrl && (
                 <div className="mt-2">
                   <img src={imageUrl} alt="Preview" className="h-20 rounded-lg object-cover" />
                 </div>
               )}
             </div>
-            <input type="url" value={linkUrl} onChange={(e) => setLinkUrl(e.target.value)} placeholder="URL Tujuan saat diklik (misal: https://example.com)" className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
-            <input type="text" value={slotId} onChange={(e) => setSlotId(e.target.value)} placeholder="Slot ID / kode AdSense (opsional)" className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
-            <button type="submit" disabled={saving} className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2.5 rounded-xl font-medium hover:shadow-lg hover:shadow-indigo-500/25 transition-all disabled:opacity-50 whitespace-nowrap">
+            <input type="url" value={linkUrl} onChange={(e) => setLinkUrl(e.target.value)} placeholder="URL Tujuan saat diklik (misal: https://example.com)" className="kolom-isian flex-1" />
+            <input type="text" value={slotId} onChange={(e) => setSlotId(e.target.value)} placeholder="Slot ID / kode AdSense (opsional)" className="kolom-isian flex-1" />
+            <button type="submit" disabled={saving} className="btn-utama whitespace-nowrap">
               {editingId ? (
                 <>{saving ? 'Menyimpan...' : <><Pencil className="w-4 h-4" /> Simpan</>}</>
               ) : (
@@ -163,29 +163,29 @@ export default function AdminAdsPage() {
       ) : (
         <div className="space-y-3 stagger-children">
           {ads.map((ad) => (
-            <div key={ad.id} className="card-hover bg-white border border-gray-100 rounded-2xl p-5 flex items-center gap-4">
+            <div key={ad.id} className="kartu-tautan bg-white border border-tinta-200/70 rounded-xl p-5 flex items-center gap-4">
               {ad.imageUrl ? (
                 <img src={ad.imageUrl} alt={ad.name} className="w-16 h-12 rounded-lg object-cover flex-shrink-0" />
               ) : (
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${ad.isActive ? 'bg-green-100' : 'bg-gray-100'}`}>
-                  <Megaphone className={`w-5 h-5 ${ad.isActive ? 'text-green-600' : 'text-gray-400'}`} />
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${ad.isActive ? 'bg-green-100' : 'bg-tinta-100'}`}>
+                  <Megaphone className={`w-5 h-5 ${ad.isActive ? 'text-green-600' : 'text-tinta-400'}`} />
                 </div>
               )}
               <div className="flex-1 min-w-0">
-                <p className="font-semibold text-gray-900">{ad.name}</p>
-                <p className="flex flex-wrap items-center gap-1.5 text-xs text-gray-400 mt-0.5">
+                <p className="font-semibold text-tinta-900">{ad.name}</p>
+                <p className="flex flex-wrap items-center gap-1.5 text-xs text-tinta-400 mt-0.5">
                   <MapPin className="w-3 h-3" /> {positionLabel[ad.position] || ad.position}
-                  {ad.linkUrl && <span>· <a href={ad.linkUrl} target="_blank" rel="noopener" className="text-indigo-500 hover:underline">{ad.linkUrl.substring(0, 30)}...</a></span>}
+                  {ad.linkUrl && <span>/ <a href={ad.linkUrl} target="_blank" rel="noopener" className="text-emas-600 hover:underline">{ad.linkUrl.substring(0, 30)}...</a></span>}
                 </p>
               </div>
               <div className="flex items-center gap-1.5 flex-shrink-0">
-                <button onClick={() => openEdit(ad)} className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all">
+                <button onClick={() => openEdit(ad)} className="p-2 text-tinta-400 hover:text-emas-700 hover:bg-emas-50 rounded-xl transition-all">
                   <Pencil className="w-4 h-4" />
                 </button>
-                <button onClick={() => toggleActive(ad.id, ad.isActive)} className={`p-2 rounded-xl transition-all ${ad.isActive ? 'text-green-600 hover:bg-green-50' : 'text-gray-400 hover:bg-gray-100'}`}>
+                <button onClick={() => toggleActive(ad.id, ad.isActive)} className={`p-2 rounded-xl transition-all ${ad.isActive ? 'text-green-600 hover:bg-green-50' : 'text-tinta-400 hover:bg-tinta-100'}`}>
                   {ad.isActive ? <ToggleRight className="w-5 h-5" /> : <ToggleLeft className="w-5 h-5" />}
                 </button>
-                <button onClick={() => handleDelete(ad.id, ad.name)} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all">
+                <button onClick={() => handleDelete(ad.id, ad.name)} className="p-2 text-tinta-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all">
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>

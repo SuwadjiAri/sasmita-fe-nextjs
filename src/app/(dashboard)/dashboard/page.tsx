@@ -24,77 +24,70 @@ export default function DashboardPage() {
 
   const statCards = stats
     ? [
-        { label: 'Total Artikel', value: stats.total_articles, icon: FileText, color: 'from-blue-500 to-blue-600' },
-        { label: 'Terbit', value: stats.published_articles, icon: CheckCircle, color: 'from-green-500 to-green-600' },
-        { label: 'Total Pembaca', value: stats.total_views, icon: Eye, color: 'from-purple-500 to-purple-600' },
-        { label: 'Komentar', value: stats.total_comments, icon: MessageCircle, color: 'from-orange-500 to-orange-600' },
-        { label: 'Bookmark', value: stats.total_bookmarks, icon: Bookmark, color: 'from-pink-500 to-pink-600' },
+        { label: 'Total Karya', value: stats.total_articles, icon: FileText },
+        { label: 'Terbit', value: stats.published_articles, icon: CheckCircle },
+        { label: 'Pembaca', value: stats.total_views, icon: Eye },
+        { label: 'Komentar', value: stats.total_comments, icon: MessageCircle },
+        { label: 'Tersimpan', value: stats.total_bookmarks, icon: Bookmark },
       ]
     : [];
 
   return (
     <div className="animate-fade-in-up">
-      {/* Welcome */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">
-          Selamat datang, {user?.name?.split(' ')[0]}!
+      <header className="mb-8">
+        <p className="label-mikro">Ringkasan</p>
+        <h1 className="mt-2 text-2xl font-semibold text-tinta-900">
+          Selamat datang, {user?.name?.split(' ')[0]}
         </h1>
-        <p className="text-gray-500 mt-1">Berikut ringkasan aktivitas anda di SASMITA</p>
-      </div>
+        <p className="mt-1 text-tinta-500">Berikut ringkasan aktivitas Anda di SASMITA.</p>
+      </header>
 
-      {/* Stats */}
       {stats ? (
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-10 stagger-children">
+        <div className="mb-10 grid grid-cols-2 gap-4 stagger-children md:grid-cols-5">
           {statCards.map((card) => (
-            <div key={card.label} className="bg-white rounded-2xl border border-gray-100 p-5 card-hover">
-              <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${card.color} flex items-center justify-center mb-3`}>
-                <card.icon className="w-5 h-5 text-white" />
-              </div>
-              <p className="text-2xl font-bold text-gray-900">{card.value}</p>
-              <p className="text-xs text-gray-500 mt-0.5">{card.label}</p>
+            <div key={card.label} className="kartu p-5">
+              <card.icon className="h-5 w-5 text-tinta-400" />
+              <p className="mt-4 font-serif text-3xl font-semibold text-tinta-900">{card.value}</p>
+              <p className="label-mikro mt-1">{card.label}</p>
             </div>
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-10">
+        <div className="mb-10 grid grid-cols-2 gap-4 md:grid-cols-5">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="bg-white rounded-2xl border border-gray-100 p-5 animate-pulse">
-              <div className="w-10 h-10 rounded-xl bg-gray-200 mb-3" />
-              <div className="h-7 w-12 bg-gray-200 rounded mb-1" />
-              <div className="h-3 w-20 bg-gray-100 rounded" />
+            <div key={i} className="kartu animate-pulse p-5">
+              <div className="h-5 w-5 rounded bg-tinta-200" />
+              <div className="mt-4 h-8 w-12 rounded bg-tinta-200" />
+              <div className="mt-2 h-3 w-20 rounded bg-tinta-100" />
             </div>
           ))}
         </div>
       )}
 
-      {/* Quick actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Link
           href="/dashboard/articles/create"
-          className="group flex items-center gap-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-6 rounded-2xl hover:shadow-xl hover:shadow-indigo-500/20 transition-all"
+          className="group flex items-center gap-4 rounded-xl bg-tinta-900 p-6 text-white transition-colors hover:bg-tinta-800"
         >
-          <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-            <PenLine className="w-6 h-6" />
-          </div>
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-white/10">
+            <PenLine className="h-6 w-6 text-emas-300" />
+          </span>
           <div className="flex-1">
-            <p className="font-semibold text-lg">Tulis Artikel Baru</p>
-            <p className="text-indigo-200 text-sm">Mulai menulis karya sastra anda</p>
+            <p className="text-lg font-semibold">Tulis Karya Baru</p>
+            <p className="text-sm text-tinta-300">Mulai menyusun naskah Anda</p>
           </div>
-          <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+          <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
         </Link>
 
-        <Link
-          href="/dashboard/articles"
-          className="group flex items-center gap-4 bg-white border border-gray-100 p-6 rounded-2xl card-hover"
-        >
-          <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center">
-            <FileText className="w-6 h-6 text-indigo-600" />
-          </div>
+        <Link href="/dashboard/articles" className="kartu-tautan group flex items-center gap-4 p-6">
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-emas-50">
+            <FileText className="h-6 w-6 text-emas-700" />
+          </span>
           <div className="flex-1">
-            <p className="font-semibold text-lg text-gray-900">Kelola Karya</p>
-            <p className="text-gray-500 text-sm">Lihat dan edit artikel anda</p>
+            <p className="text-lg font-semibold text-tinta-900">Kelola Karya</p>
+            <p className="text-sm text-tinta-500">Lihat, sunting, dan kirim naskah</p>
           </div>
-          <ArrowRight className="w-5 h-5 text-gray-400 group-hover:translate-x-1 group-hover:text-indigo-600 transition-all" />
+          <ArrowRight className="h-5 w-5 text-tinta-400 transition-all group-hover:translate-x-1 group-hover:text-emas-700" />
         </Link>
       </div>
     </div>

@@ -31,66 +31,69 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="w-full">
-      <div className="bg-white rounded-2xl shadow-lg shadow-gray-200/50 border border-gray-100 p-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-1">Buat akun baru</h1>
-        <p className="text-gray-500 mb-8">Bergabung dengan komunitas penulis SASMITA</p>
+    <div className="kartu p-8">
+      <h1 className="text-2xl font-semibold text-tinta-900">Buat akun baru</h1>
+      <p className="mt-1.5 text-tinta-500">Gratis, untuk menulis maupun membaca.</p>
 
-        {error && (
-          <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg mb-4">
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-              placeholder="Minimal 8 karakter"
-              required
-              minLength={8}
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-xl font-medium hover:shadow-lg hover:shadow-indigo-500/25 transition-all disabled:opacity-50"
-          >
-            {loading ? 'Memproses...' : 'Daftar'}
-          </button>
-        </form>
-
-        <p className="text-center text-sm text-gray-500 mt-6">
-          Sudah punya akun?{' '}
-          <Link href="/login" className="text-indigo-600 hover:underline">
-            Masuk
-          </Link>
+      {error && (
+        <p role="alert" className="mt-6 rounded-lg bg-red-50 px-3.5 py-3 text-sm text-red-700">
+          {error}
         </p>
-      </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+        <div>
+          <label htmlFor="name" className="label-input">Nama Lengkap</label>
+          <input
+            id="name"
+            type="text"
+            autoComplete="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="kolom-isian"
+            required
+          />
+        </div>
+
+        <div>
+          <label htmlFor="email" className="label-input">Email</label>
+          <input
+            id="email"
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="kolom-isian"
+            required
+          />
+        </div>
+
+        <div>
+          <label htmlFor="password" className="label-input">Kata Sandi</label>
+          <input
+            id="password"
+            type="password"
+            autoComplete="new-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="kolom-isian"
+            placeholder="Minimal 8 karakter"
+            required
+            minLength={8}
+          />
+        </div>
+
+        <button type="submit" disabled={loading} className="btn-utama w-full py-3">
+          {loading ? 'Memproses...' : 'Daftar'}
+        </button>
+      </form>
+
+      <p className="mt-6 text-center text-sm text-tinta-500">
+        Sudah punya akun?{' '}
+        <Link href="/login" className="font-medium text-emas-700 hover:underline">
+          Masuk
+        </Link>
+      </p>
     </div>
   );
 }

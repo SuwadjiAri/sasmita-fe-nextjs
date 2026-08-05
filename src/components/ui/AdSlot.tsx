@@ -54,7 +54,7 @@ export default function AdSlot({ position }: { position: string }) {
 
   return (
     <div className="my-6 text-center">
-      <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Iklan</p>
+      <p className="text-[10px] text-tinta-400 uppercase tracking-wider mb-1">Iklan</p>
       {ad.imageUrl ? (
         ad.linkUrl ? (
           <a href={ad.linkUrl} target="_blank" rel="noopener noreferrer sponsored" className="inline-block rounded-xl overflow-hidden hover:shadow-lg transition-shadow">
@@ -66,7 +66,7 @@ export default function AdSlot({ position }: { position: string }) {
           </div>
         )
       ) : ad.slotId ? (
-        <div className="bg-gray-50 border border-gray-200 rounded-xl p-4" dangerouslySetInnerHTML={{ __html: ad.slotId }} />
+        <div className="bg-tinta-50 border border-tinta-200 rounded-xl p-4" dangerouslySetInnerHTML={{ __html: ad.slotId }} />
       ) : null}
     </div>
   );

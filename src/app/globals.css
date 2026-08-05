@@ -1,43 +1,157 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* Palet SASMITA: tinta sebagai warna utama, emas hangat sebagai aksen. */
+  --color-tinta-50: #f5f7fa;
+  --color-tinta-100: #e9eef4;
+  --color-tinta-200: #ced9e6;
+  --color-tinta-300: #a8bad0;
+  --color-tinta-400: #7c95b4;
+  --color-tinta-500: #5a769a;
+  --color-tinta-600: #465e80;
+  --color-tinta-700: #3a4c68;
+  --color-tinta-800: #2e3c53;
+  --color-tinta-900: #1c2637;
+  --color-tinta-950: #10161f;
+
+  --color-emas-50: #fbf8f0;
+  --color-emas-100: #f6efdc;
+  --color-emas-200: #ebdcb4;
+  --color-emas-300: #dcc182;
+  --color-emas-400: #cea658;
+  --color-emas-500: #c08d3c;
+  --color-emas-600: #a67231;
+  --color-emas-700: #85562b;
+  --color-emas-800: #6d4527;
+  --color-emas-900: #5a3922;
+
+  /* Kertas, dipakai sebagai latar halaman supaya tidak seputih layar. */
+  --color-kertas: #fbfaf8;
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-lora), Georgia, 'Times New Roman', serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
-.dark {
-  --background: #0f172a;
-  --foreground: #e2e8f0;
+@layer base {
+  body {
+    @apply bg-kertas text-tinta-900 antialiased;
+  }
+
+  /* Serif pada judul, penentu utama kesan terbitan sastra. */
+  h1, h2, h3 {
+    @apply font-serif;
+  }
+
+  ::selection {
+    @apply bg-emas-200 text-tinta-900;
+  }
+
+  button, [role="button"], a, select, input[type="file"] {
+    cursor: pointer;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-emas-600;
+  }
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@layer components {
+  /* Tailwind v4 melarang @apply pada kelas sendiri, jadi dasarnya diulang. */
+  .btn,
+  .btn-utama,
+  .btn-emas,
+  .btn-garis,
+  .btn-lembut,
+  .btn-bahaya {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold
+           transition disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  /* Tindakan utama di seluruh aplikasi. */
+  .btn-utama {
+    @apply bg-tinta-900 text-white hover:bg-tinta-800;
+  }
+
+  /* Ajakan bertindak yang perlu menonjol, terutama di atas latar tinta. */
+  .btn-emas {
+    @apply bg-emas-700 text-white hover:bg-emas-800;
+  }
+
+  .btn-garis {
+    @apply border border-tinta-300 bg-white text-tinta-800 hover:border-tinta-400 hover:bg-tinta-50;
+  }
+
+  .btn-lembut {
+    @apply bg-tinta-100 text-tinta-800 hover:bg-tinta-200;
+  }
+
+  .btn-bahaya {
+    @apply bg-red-700 text-white hover:bg-red-800;
+  }
+
+  .btn-kecil {
+    @apply rounded-md px-3 py-1.5 text-xs;
+  }
+
+  .kartu {
+    @apply rounded-xl border border-tinta-200/70 bg-white;
+  }
+
+  .kartu-tautan {
+    @apply rounded-xl border border-tinta-200/70 bg-white transition
+           hover:-translate-y-0.5 hover:border-emas-300 hover:shadow-[0_8px_24px_-12px_rgba(28,38,55,0.35)];
+  }
+
+  .label-input {
+    @apply mb-1.5 block text-sm font-medium text-tinta-700;
+  }
+
+  .kolom-isian {
+    @apply block w-full rounded-lg border border-tinta-200 bg-white px-3.5 py-2.5 text-sm text-tinta-900
+           placeholder:text-tinta-400 focus:border-emas-500 focus:outline-none focus:ring-1
+           focus:ring-emas-500 disabled:bg-tinta-50;
+  }
+
+  .galat-input {
+    @apply mt-1 text-xs font-medium text-red-700;
+  }
+
+  .lencana {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold;
+  }
+
+  /* Label mikro di atas judul bagian atau angka statistik. */
+  .label-mikro {
+    @apply text-[11px] font-semibold uppercase tracking-[0.14em] text-tinta-500;
+  }
+
+  .tabel {
+    @apply min-w-full divide-y divide-tinta-100 text-sm;
+  }
+
+  .tabel thead th {
+    @apply bg-tinta-50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-tinta-600;
+  }
+
+  .tabel tbody td {
+    @apply px-4 py-3 align-top text-tinta-800;
+  }
+
+  .tabel tbody tr {
+    @apply border-b border-tinta-50 last:border-0 hover:bg-tinta-50/60;
+  }
+
+  /* Garis rambut pemisah bagian, pengganti bayangan tebal. */
+  .garis-halus {
+    @apply border-t border-tinta-200/70;
+  }
 }
 
-button, [role="button"], a, select, input[type="file"], .card-hover {
-  cursor: pointer !important;
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-/* Smooth animations */
+/* Animasi seperlunya saja, cukup untuk melembutkan pemuatan. */
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fadeIn {
@@ -46,84 +160,69 @@ body {
 }
 
 @keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(-16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.25s ease-out forwards;
 }
 
 .animate-fade-in-up {
-  animation: fadeInUp 0.5s ease-out forwards;
+  animation: fadeInUp 0.45s ease-out forwards;
 }
 
 .animate-fade-in {
   animation: fadeIn 0.3s ease-out forwards;
 }
 
-.animate-slide-in-left {
-  animation: slideInLeft 0.4s ease-out forwards;
-}
-
-/* Stagger children animation */
 .stagger-children > * {
   opacity: 0;
-  animation: fadeInUp 0.5s ease-out forwards;
+  animation: fadeInUp 0.45s ease-out forwards;
 }
 
-.stagger-children > *:nth-child(1) { animation-delay: 0.05s; }
-.stagger-children > *:nth-child(2) { animation-delay: 0.1s; }
-.stagger-children > *:nth-child(3) { animation-delay: 0.15s; }
-.stagger-children > *:nth-child(4) { animation-delay: 0.2s; }
-.stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
-.stagger-children > *:nth-child(6) { animation-delay: 0.3s; }
-.stagger-children > *:nth-child(7) { animation-delay: 0.35s; }
-.stagger-children > *:nth-child(8) { animation-delay: 0.4s; }
-.stagger-children > *:nth-child(9) { animation-delay: 0.45s; }
+.stagger-children > *:nth-child(1) { animation-delay: 0.04s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.08s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.12s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.16s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.20s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.24s; }
+.stagger-children > *:nth-child(7) { animation-delay: 0.28s; }
+.stagger-children > *:nth-child(8) { animation-delay: 0.32s; }
+.stagger-children > *:nth-child(9) { animation-delay: 0.36s; }
 
-/* Card hover effect */
-.card-hover {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in-up,
+  .animate-fade-in,
+  .animate-slide-in-left,
+  .stagger-children > * {
+    animation: none;
+    opacity: 1;
+  }
 }
 
-.card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+/* Isi artikel: serif, ukuran dan jarak baris lebih longgar dari teks antarmuka. */
+.prose {
+  @apply font-serif text-[17px] leading-[1.85] text-tinta-800;
 }
 
-/* Gradient text */
-.gradient-text {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.prose h1,
+.prose h2,
+.prose h3 {
+  @apply font-serif font-semibold text-tinta-900;
 }
 
-/* Glass effect */
-.glass {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
+.prose h1 { @apply mt-10 mb-4 text-3xl; }
+.prose h2 { @apply mt-9 mb-3 text-2xl; }
+.prose h3 { @apply mt-7 mb-2 text-xl; }
+.prose p { @apply mb-6; }
+.prose a { @apply text-emas-700 underline underline-offset-2 hover:text-emas-800; }
+.prose ul { @apply mb-6 list-disc space-y-2 pl-6; }
+.prose ol { @apply mb-6 list-decimal space-y-2 pl-6; }
+.prose strong { @apply font-semibold text-tinta-900; }
+.prose img { @apply my-8 rounded-lg; }
+.prose hr { @apply my-10 border-tinta-200; }
 
-.dark .glass {
-  background: rgba(15, 23, 42, 0.8);
-}
-
-.dark .card-hover:hover {
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-}
-
-/* Prose styling for article content */
-.prose h2 { margin-top: 2em; margin-bottom: 0.5em; }
-.prose h3 { margin-top: 1.5em; margin-bottom: 0.5em; }
-.prose p { margin-bottom: 1.2em; line-height: 1.8; }
 .prose blockquote {
-  border-left: 4px solid #6366f1;
-  padding-left: 1em;
-  font-style: italic;
-  color: #4b5563;
+  @apply my-8 border-l-2 border-emas-400 pl-5 italic text-tinta-600;
 }

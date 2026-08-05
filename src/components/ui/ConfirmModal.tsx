@@ -33,21 +33,21 @@ export const useConfirm = create<ConfirmState>((set) => ({
 }));
 
 const buttonStyles = {
-  danger: 'bg-red-600 hover:bg-red-700 hover:shadow-red-500/25',
-  warning: 'bg-yellow-500 hover:bg-yellow-600 hover:shadow-yellow-500/25',
-  info: 'bg-indigo-600 hover:bg-indigo-700 hover:shadow-indigo-500/25',
+  danger: 'btn-bahaya',
+  warning: 'btn-emas',
+  info: 'btn-utama',
 };
 
 const iconBg = {
-  danger: 'bg-red-100',
-  warning: 'bg-yellow-100',
-  info: 'bg-indigo-100',
+  danger: 'bg-red-50',
+  warning: 'bg-emas-50',
+  info: 'bg-tinta-100',
 };
 
 const iconColor = {
-  danger: 'text-red-600',
-  warning: 'text-yellow-600',
-  info: 'text-indigo-600',
+  danger: 'text-red-700',
+  warning: 'text-emas-700',
+  info: 'text-tinta-700',
 };
 
 export default function ConfirmModal() {
@@ -65,34 +65,31 @@ export default function ConfirmModal() {
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={hide} />
 
-      {/* Modal */}
-      <div className="relative bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 animate-fade-in-up">
-        {/* Close */}
-        <button onClick={hide} className="absolute top-4 right-4 p-1 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
-          <X className="w-4 h-4" />
+      <div
+        role="dialog"
+        aria-modal="true"
+        className="relative w-full max-w-sm animate-fade-in-up rounded-xl bg-white p-6 shadow-[0_24px_60px_-20px_rgba(28,38,55,0.5)]"
+      >
+        <button
+          onClick={hide}
+          aria-label="Tutup"
+          className="absolute right-4 top-4 rounded-lg p-1 text-tinta-400 transition-colors hover:bg-tinta-100 hover:text-tinta-700"
+        >
+          <X className="h-4 w-4" />
         </button>
 
-        {/* Icon */}
-        <div className={`w-12 h-12 ${iconBg[type]} rounded-2xl flex items-center justify-center mb-4`}>
-          <AlertTriangle className={`w-6 h-6 ${iconColor[type]}`} />
-        </div>
+        <span className={`flex h-12 w-12 items-center justify-center rounded-xl ${iconBg[type]}`}>
+          <AlertTriangle className={`h-6 w-6 ${iconColor[type]}`} />
+        </span>
 
-        {/* Content */}
-        <h3 className="text-lg font-bold text-gray-900 mb-2">{title}</h3>
-        <p className="text-sm text-gray-500 mb-6 leading-relaxed">{message}</p>
+        <h3 className="mt-4 text-lg font-semibold text-tinta-900">{title}</h3>
+        <p className="mt-2 text-sm leading-relaxed text-tinta-600">{message}</p>
 
-        {/* Actions */}
-        <div className="flex gap-3">
-          <button
-            onClick={hide}
-            className="flex-1 px-4 py-2.5 border border-gray-200 text-gray-700 text-sm font-medium rounded-xl hover:bg-gray-50 transition-all"
-          >
+        <div className="mt-6 flex gap-3">
+          <button onClick={hide} className="btn-garis flex-1">
             Batal
           </button>
-          <button
-            onClick={handleConfirm}
-            className={`flex-1 px-4 py-2.5 text-white text-sm font-medium rounded-xl hover:shadow-lg transition-all ${buttonStyles[type]}`}
-          >
+          <button onClick={handleConfirm} className={`${buttonStyles[type]} flex-1`}>
             {confirmLabel}
           </button>
         </div>

@@ -19,7 +19,7 @@ interface Article {
 export default function ArticleContent({ article }: { article: Article }) {
   const contentBlock = (
     <div
-      className="prose prose-lg max-w-none"
+      className="prose max-w-none"
       dangerouslySetInnerHTML={{ __html: article.content }}
     />
   );
@@ -36,13 +36,9 @@ export default function ArticleContent({ article }: { article: Article }) {
 
       {/* Konten Artikel */}
       <div className="flex-1 min-w-0 max-w-3xl mx-auto">
-        <div className="flex items-center gap-3 mb-8">
+        {/* Lencana premium sudah tampil di kepala artikel. */}
+        <div className="mb-8 flex items-center gap-3">
           <BookmarkButton articleId={article.id} />
-          {article.isPremium && (
-            <span className="bg-yellow-100 text-yellow-700 text-xs px-3 py-1 rounded-full font-medium">
-              Premium
-            </span>
-          )}
         </div>
 
         <AdSlot position="header" />

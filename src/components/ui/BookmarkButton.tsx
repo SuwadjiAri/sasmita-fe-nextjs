@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Bookmark } from 'lucide-react';
 import api from '@/lib/api';
 import { useAuthStore } from '@/stores/auth-store';
 
@@ -34,13 +35,15 @@ export default function BookmarkButton({ articleId }: { articleId: number }) {
     <button
       onClick={toggle}
       disabled={loading}
-      className={`cursor-pointer inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
+      aria-pressed={bookmarked}
+      className={`btn btn-kecil px-4 py-2 text-sm ${
         bookmarked
-          ? 'bg-indigo-50 border-indigo-300 text-indigo-700 hover:bg-indigo-100'
-          : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50 hover:border-gray-400'
-      } disabled:opacity-50 disabled:cursor-not-allowed`}
+          ? 'border border-emas-300 bg-emas-50 text-emas-800 hover:bg-emas-100'
+          : 'border border-tinta-300 bg-white text-tinta-700 hover:border-tinta-400 hover:bg-tinta-50'
+      }`}
     >
-      {bookmarked ? '★ Bookmarked' : '☆ Bookmark'}
+      <Bookmark className={`h-4 w-4 ${bookmarked ? 'fill-current' : ''}`} />
+      {bookmarked ? 'Tersimpan' : 'Simpan'}
     </button>
   );
 }

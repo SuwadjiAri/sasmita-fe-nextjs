@@ -30,60 +30,60 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="w-full">
-      <div className="bg-white rounded-2xl shadow-lg shadow-gray-200/50 border border-gray-100 p-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-1">Selamat datang kembali</h1>
-        <p className="text-gray-500 mb-8">Masuk ke akun SASMITA.COM anda</p>
+    <div className="kartu p-8">
+      <h1 className="text-2xl font-semibold text-tinta-900">Selamat datang kembali</h1>
+      <p className="mt-1.5 text-tinta-500">Masuk ke akun SASMITA.COM Anda.</p>
 
-        {error && (
-          <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg mb-4">
-            {error}
-          </div>
-        )}
+      {error && (
+        <p role="alert" className="mt-6 rounded-lg bg-red-50 px-3.5 py-3 text-sm text-red-700">
+          {error}
+        </p>
+      )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-xl font-medium hover:shadow-lg hover:shadow-indigo-500/25 transition-all disabled:opacity-50"
-          >
-            {loading ? 'Memproses...' : 'Masuk'}
-          </button>
-        </form>
-
-        <div className="text-center text-sm text-gray-500 mt-6 space-y-2">
-          <p>
-            <Link href="/forgot-password" className="text-indigo-600 hover:underline">
-              Lupa password?
-            </Link>
-          </p>
-          <p>
-            Belum punya akun?{' '}
-            <Link href="/register" className="text-indigo-600 hover:underline">
-              Daftar
-            </Link>
-          </p>
+      <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+        <div>
+          <label htmlFor="email" className="label-input">Email</label>
+          <input
+            id="email"
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="kolom-isian"
+            required
+          />
         </div>
+
+        <div>
+          <label htmlFor="password" className="label-input">Kata Sandi</label>
+          <input
+            id="password"
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="kolom-isian"
+            required
+          />
+        </div>
+
+        <button type="submit" disabled={loading} className="btn-utama w-full py-3">
+          {loading ? 'Memproses...' : 'Masuk'}
+        </button>
+      </form>
+
+      <div className="mt-6 space-y-2 text-center text-sm text-tinta-500">
+        <p>
+          <Link href="/forgot-password" className="text-emas-700 hover:underline">
+            Lupa kata sandi?
+          </Link>
+        </p>
+        <p>
+          Belum punya akun?{' '}
+          <Link href="/register" className="font-medium text-emas-700 hover:underline">
+            Daftar
+          </Link>
+        </p>
       </div>
     </div>
   );

@@ -18,26 +18,44 @@ interface Notification {
   created_at: string;
 }
 
+// Yang sudah dibaca berlatar putih, yang belum memakai warna status.
 function getNotifStyle(title: string, isRead: boolean) {
+  const netral = { latar: 'bg-white', garis: 'border-tinta-200/70' };
+
   if (title === 'Artikel Disetujui') return {
-    icon: Check, bg: isRead ? 'bg-green-50' : 'bg-green-100', color: 'text-green-600',
-    border: isRead ? 'border-gray-100' : 'border-green-200', gradient: isRead ? '' : 'from-green-50 to-emerald-50',
-    actionText: 'Lihat karya →', actionColor: 'text-green-600',
+    icon: Check,
+    bg: isRead ? 'bg-tinta-100' : 'bg-green-100',
+    color: isRead ? 'text-tinta-400' : 'text-green-700',
+    latar: isRead ? netral.latar : 'bg-green-50',
+    garis: isRead ? netral.garis : 'border-green-200',
+    actionText: 'Lihat karya', actionColor: 'text-green-800',
   };
+
   if (title === 'Artikel Perlu Revisi') return {
-    icon: AlertTriangle, bg: isRead ? 'bg-yellow-50' : 'bg-yellow-100', color: 'text-yellow-600',
-    border: isRead ? 'border-gray-100' : 'border-yellow-200', gradient: isRead ? '' : 'from-yellow-50 to-amber-50',
-    actionText: 'Edit artikel →', actionColor: 'text-yellow-600',
+    icon: AlertTriangle,
+    bg: isRead ? 'bg-tinta-100' : 'bg-emas-100',
+    color: isRead ? 'text-tinta-400' : 'text-emas-700',
+    latar: isRead ? netral.latar : 'bg-emas-50',
+    garis: isRead ? netral.garis : 'border-emas-200',
+    actionText: 'Sunting naskah', actionColor: 'text-emas-800',
   };
+
   if (title === 'Artikel Ditolak') return {
-    icon: XCircle, bg: isRead ? 'bg-red-50' : 'bg-red-100', color: 'text-red-600',
-    border: isRead ? 'border-gray-100' : 'border-red-200', gradient: isRead ? '' : 'from-red-50 to-rose-50',
-    actionText: 'Edit artikel →', actionColor: 'text-red-600',
+    icon: XCircle,
+    bg: isRead ? 'bg-tinta-100' : 'bg-red-100',
+    color: isRead ? 'text-tinta-400' : 'text-red-700',
+    latar: isRead ? netral.latar : 'bg-red-50',
+    garis: isRead ? netral.garis : 'border-red-200',
+    actionText: 'Sunting naskah', actionColor: 'text-red-800',
   };
+
   return {
-    icon: Bell, bg: isRead ? 'bg-gray-100' : 'bg-indigo-100', color: isRead ? 'text-gray-400' : 'text-indigo-600',
-    border: isRead ? 'border-gray-100' : 'border-indigo-200', gradient: isRead ? '' : 'from-indigo-50 to-purple-50',
-    actionText: '', actionColor: 'text-indigo-600',
+    icon: Bell,
+    bg: isRead ? 'bg-tinta-100' : 'bg-tinta-900',
+    color: isRead ? 'text-tinta-400' : 'text-emas-300',
+    latar: isRead ? netral.latar : 'bg-tinta-50',
+    garis: isRead ? netral.garis : 'border-tinta-300',
+    actionText: '', actionColor: 'text-tinta-700',
   };
 }
 
@@ -89,18 +107,21 @@ export default function NotificationsPage() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
+      <div className="mb-8 flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+          <p className="label-mikro">Kabar</p>
+          <h1 className="mt-2 flex items-center gap-2.5 text-2xl font-semibold text-tinta-900">
             Notifikasi
             {unread > 0 && (
-              <span className="text-xs bg-red-500 text-white px-2.5 py-1 rounded-full animate-pulse">{unread}</span>
+              <span className="rounded-full bg-red-700 px-2.5 py-0.5 text-xs font-semibold text-white">
+                {unread}
+              </span>
             )}
           </h1>
-          <p className="text-gray-500 text-sm mt-1">{meta.total} notifikasi</p>
+          <p className="mt-1 text-sm text-tinta-500">{meta.total} notifikasi</p>
         </div>
         {unread > 0 && (
-          <button onClick={markAllAsRead} className="inline-flex items-center gap-1.5 text-sm text-indigo-600 hover:text-indigo-800 font-medium transition-colors">
+          <button onClick={markAllAsRead} className="inline-flex items-center gap-1.5 text-sm text-emas-700 hover:text-emas-800 font-medium transition-colors">
             <CheckCheck className="w-4 h-4" />
             Tandai semua dibaca
           </button>
@@ -123,22 +144,27 @@ export default function NotificationsPage() {
                 <div
                   key={notif.id}
                   onClick={() => handleNotifClick(notif)}
-                  className={`card-hover flex items-start gap-4 p-5 rounded-2xl border cursor-pointer transition-all ${
-                    notif.is_read ? 'bg-white border-gray-100' : `bg-gradient-to-r ${style.gradient} ${style.border}`
-                  }`}
+                  className={`flex cursor-pointer items-start gap-4 rounded-xl border p-5 transition-colors hover:border-tinta-300 ${style.latar} ${style.garis}`}
                 >
-                  <div className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${style.bg}`}>
-                    <Icon className={`w-5 h-5 ${style.color} ${!notif.is_read ? 'animate-pulse' : ''}`} />
-                  </div>
-                  <div className="flex-1 min-w-0">
+                  <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg ${style.bg}`}>
+                    <Icon className={`h-5 w-5 ${style.color}`} />
+                  </span>
+
+                  <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <p className={`font-semibold text-sm ${notif.is_read ? 'text-gray-500' : 'text-gray-900'}`}>{notif.title}</p>
-                      {!notif.is_read && <span className="w-2 h-2 bg-indigo-500 rounded-full flex-shrink-0" />}
+                      <p className={`text-sm font-semibold ${notif.is_read ? 'text-tinta-500' : 'text-tinta-900'}`}>
+                        {notif.title}
+                      </p>
+                      {!notif.is_read && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-emas-600" />}
                     </div>
-                    <p className={`text-sm mt-1 leading-relaxed ${notif.is_read ? 'text-gray-400' : 'text-gray-600'}`}>{notif.message}</p>
-                    <div className="flex items-center gap-3 mt-2">
-                      <p className="flex items-center gap-1 text-xs text-gray-400">
-                        <Clock className="w-3 h-3" />
+
+                    <p className={`mt-1 text-sm leading-relaxed ${notif.is_read ? 'text-tinta-400' : 'text-tinta-600'}`}>
+                      {notif.message}
+                    </p>
+
+                    <div className="mt-2 flex flex-wrap items-center gap-3">
+                      <p className="flex items-center gap-1 text-xs text-tinta-400">
+                        <Clock className="h-3 w-3" />
                         {new Date(notif.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                       </p>
                       {hasLink && style.actionText && (

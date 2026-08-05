@@ -1,35 +1,23 @@
 import Link from 'next/link';
-import { BookOpen, ArrowLeft, ArrowRight } from 'lucide-react';
+import { BookOpen, ArrowLeft } from 'lucide-react';
+import ArticleCard, { type ArtikelKartu } from '@/components/ui/ArticleCard';
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
-const categoryStyles: Record<string, { emoji: string; gradient: string; bgLight: string }> = {
-  puisi: { emoji: '🎭', gradient: 'from-pink-500 to-rose-500', bgLight: 'from-pink-50 to-rose-50' },
-  cerpen: { emoji: '📖', gradient: 'from-blue-500 to-cyan-500', bgLight: 'from-blue-50 to-cyan-50' },
-  esai: { emoji: '📝', gradient: 'from-emerald-500 to-teal-500', bgLight: 'from-emerald-50 to-teal-50' },
-  novel: { emoji: '📚', gradient: 'from-purple-500 to-violet-500', bgLight: 'from-purple-50 to-violet-50' },
-  resensi: { emoji: '⭐', gradient: 'from-amber-500 to-orange-500', bgLight: 'from-amber-50 to-orange-50' },
-  'artikel-akademik': { emoji: '🎓', gradient: 'from-indigo-500 to-blue-600', bgLight: 'from-indigo-50 to-blue-50' },
-};
-
-const defaultStyle = { emoji: '📄', gradient: 'from-gray-500 to-gray-600', bgLight: 'from-gray-50 to-slate-50' };
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
 async function getCategoryArticles(slug: string) {
-  const catRes = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/categories`,
-    { next: { revalidate: 3600 } }
-  );
+  const catRes = await fetch(`${API}/categories`, { next: { revalidate: 3600 } });
   if (!catRes.ok) return { category: null, articles: [] };
   const { data: categories } = await catRes.json();
   const category = categories.find((c: { slug: string }) => c.slug === slug);
   if (!category) return { category: null, articles: [] };
 
-  const artRes = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/articles?category_id=${category.id}`,
-    { next: { revalidate: 60 } }
-  );
+  const artRes = await fetch(`${API}/articles?category_id=${category.id}`, {
+    next: { revalidate: 60 },
+  });
   if (!artRes.ok) return { category, articles: [] };
   const { data: articles } = await artRes.json();
   return { category, articles };
@@ -38,105 +26,70 @@ async function getCategoryArticles(slug: string) {
 export default async function CategoryDetailPage({ params }: Props) {
   const { slug } = await params;
   const { category, articles } = await getCategoryArticles(slug);
-  const style = categoryStyles[slug] || defaultStyle;
 
   if (!category) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-20 text-center">
-        <div className="w-20 h-20 bg-gray-100 rounded-3xl flex items-center justify-center mx-auto mb-4">
-          <BookOpen className="w-10 h-10 text-gray-300" />
-        </div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Kategori Tidak Ditemukan</h1>
-        <Link href="/categories" className="text-indigo-600 hover:underline">Lihat semua kategori</Link>
+      <div className="mx-auto max-w-3xl px-4 py-24 text-center">
+        <BookOpen className="mx-auto h-10 w-10 text-tinta-300" />
+        <h1 className="mt-5 text-2xl font-semibold text-tinta-900">Kategori tidak ditemukan</h1>
+        <p className="mt-2 text-tinta-600">Rubrik yang Anda cari tidak ada atau sudah dihapus.</p>
+        <Link href="/categories" className="btn-utama mt-6">
+          Lihat semua kategori
+        </Link>
       </div>
     );
   }
 
   return (
     <div>
-      {/* Hero Banner */}
-      <section className={`relative bg-gradient-to-r ${style.gradient} overflow-hidden`}>
-        <div className="absolute inset-0">
-          <div className="absolute -top-20 -right-20 w-60 h-60 bg-white/10 rounded-full blur-3xl" />
-          <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-white/5 rounded-full blur-3xl" />
-        </div>
-        <div className="relative max-w-7xl mx-auto px-4 py-16">
-          <Link href="/categories" className="inline-flex items-center gap-1.5 text-white/70 hover:text-white text-sm mb-6 transition-colors">
-            <ArrowLeft className="w-4 h-4" />
+      <header className="border-b border-tinta-200/70 bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+          <Link
+            href="/categories"
+            className="inline-flex items-center gap-1.5 text-sm text-tinta-500 transition-colors hover:text-emas-700"
+          >
+            <ArrowLeft className="h-4 w-4" />
             Semua Kategori
           </Link>
-          <div className="flex items-center gap-4">
-            <span className="text-5xl">{style.emoji}</span>
+
+          <div className="mt-6 flex items-start gap-5">
+            <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-emas-50 font-serif text-3xl font-semibold text-emas-700">
+              {category.name.charAt(0).toUpperCase()}
+            </span>
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-white">{category.name}</h1>
-              <p className="text-white/80 mt-1">{category.description || `Kumpulan karya ${category.name.toLowerCase()}`}</p>
+              <h1 className="text-3xl font-semibold text-tinta-900 md:text-4xl">{category.name}</h1>
+              <p className="mt-2 max-w-2xl leading-relaxed text-tinta-600">
+                {category.description || `Kumpulan karya ${category.name.toLowerCase()}.`}
+              </p>
             </div>
           </div>
-          <p className="text-white/60 text-sm mt-4">{articles.length} artikel</p>
-        </div>
-      </section>
 
-      {/* Articles */}
-      <section className={`bg-gradient-to-b ${style.bgLight} to-white min-h-[40vh]`}>
-        <div className="max-w-7xl mx-auto px-4 py-12">
-          {articles.length === 0 ? (
-            <div className="text-center py-16">
-              <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-sm">
-                <BookOpen className="w-10 h-10 text-gray-300" />
-              </div>
-              <p className="text-gray-900 font-semibold text-lg mb-1">Belum ada artikel</p>
-              <p className="text-gray-500">Belum ada karya {category.name.toLowerCase()} yang dipublikasikan.</p>
-              <Link href="/dashboard/articles/create" className="inline-block mt-4 text-indigo-600 font-medium hover:underline">
-                Tulis artikel pertama →
-              </Link>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 stagger-children">
-              {articles.map((article: { id: number; title: string; slug: string; excerpt?: string; publishedAt?: string; coverImage?: string }) => (
-                <Link
-                  key={article.id}
-                  href={`/articles/${article.slug}`}
-                  className="card-hover group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm"
-                >
-                  {/* Cover */}
-                  {article.coverImage ? (
-                    <div className="h-44 overflow-hidden">
-                      <img src={`${process.env.NEXT_PUBLIC_API_URL || ''}${article.coverImage}`} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    </div>
-                  ) : (
-                    <div className={`h-40 bg-gradient-to-br ${style.bgLight} flex items-center justify-center relative overflow-hidden`}>
-                      <div className="absolute inset-0 opacity-20">
-                        <div className="absolute top-4 left-4 w-12 h-12 border-2 border-current rounded-full opacity-30" />
-                        <div className="absolute bottom-4 right-4 w-20 h-20 border-2 border-current rounded-full opacity-20" />
-                      </div>
-                      <span className="text-4xl relative z-10 group-hover:scale-110 transition-transform">{style.emoji}</span>
-                    </div>
-                  )}
-
-                  <div className="p-5">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-indigo-600 transition-colors">
-                      {article.title}
-                    </h3>
-                    <p className="text-gray-500 text-sm line-clamp-2 mb-4">
-                      {article.excerpt || 'Baca selengkapnya...'}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <p className="text-xs text-gray-400">
-                        {article.publishedAt
-                          ? new Date(article.publishedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
-                          : ''}
-                      </p>
-                      <span className="inline-flex items-center gap-1 text-xs text-indigo-600 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                        Baca <ArrowRight className="w-3 h-3" />
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
+          <p className="label-mikro mt-8">
+            {articles.length} karya terbit
+          </p>
         </div>
-      </section>
+      </header>
+
+      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+        {articles.length === 0 ? (
+          <div className="rounded-xl border border-dashed border-tinta-300 px-6 py-20 text-center">
+            <BookOpen className="mx-auto h-10 w-10 text-tinta-300" />
+            <p className="mt-4 text-lg font-semibold text-tinta-900">Belum ada karya</p>
+            <p className="mt-1 text-tinta-500">
+              Belum ada karya {category.name.toLowerCase()} yang diterbitkan.
+            </p>
+            <Link href="/dashboard/articles/create" className="btn-utama mt-6">
+              Tulis karya pertama
+            </Link>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-6 stagger-children md:grid-cols-2 lg:grid-cols-3">
+            {(articles as ArtikelKartu[]).map((article) => (
+              <ArticleCard key={article.id} article={article} />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

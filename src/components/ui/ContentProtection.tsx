@@ -69,7 +69,7 @@ export default function ContentProtection({ children }: { children: React.ReactN
         {Array.from({ length: 8 }).map((_, i) => (
           <div
             key={i}
-            className="absolute whitespace-nowrap text-gray-300/20 font-bold text-sm select-none"
+            className="absolute whitespace-nowrap text-tinta-300/20 font-bold text-sm select-none"
             style={{
               transform: 'rotate(-35deg)',
               top: `${i * 120 + 20}px`,
