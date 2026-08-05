@@ -113,7 +113,8 @@ export default async function ArticleDetailPage({ params }: Props) {
             {article.title}
           </h1>
 
-          {article.excerpt && (
+          {/* Saat isi dikunci, cuplikan di bawah sudah memuat excerpt ini juga. */}
+          {article.excerpt && !article.contentLocked && (
             <p className="mt-5 font-serif text-lg leading-relaxed text-tinta-600">
               {article.excerpt}
             </p>
