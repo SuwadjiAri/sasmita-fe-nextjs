@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Calendar, PenLine } from 'lucide-react';
+import { ambilJson } from '@/lib/server-fetch';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -7,11 +8,13 @@ interface Props {
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
+type Penulis = { id: number; name: string; bio?: string; avatar?: string; created_at: string };
+
 async function getUser(id: string) {
-  const res = await fetch(`${API}/users/${id}`, { next: { revalidate: 60 } });
-  if (!res.ok) return null;
-  const json = await res.json();
-  return json.data;
+  const res = await ambilJson<{ data: Penulis }>(`${API}/users/${id}`, {
+    next: { revalidate: 60 },
+  });
+  return res?.data || null;
 }
 
 export default async function AuthorProfilePage({ params }: Props) {

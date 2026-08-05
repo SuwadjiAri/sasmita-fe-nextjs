@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ArrowRight, BookOpen } from 'lucide-react';
 import ArticleCard, { type ArtikelKartu } from '@/components/ui/ArticleCard';
+import { ambilJson } from '@/lib/server-fetch';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
@@ -14,21 +15,21 @@ type Kategori = {
 };
 
 async function getArticles() {
-  const res = await fetch(`${API}/articles?per_page=6`, { next: { revalidate: 60 } });
-  if (!res.ok) return { data: [] };
-  return res.json();
+  return ambilJson<{ data: Artikel[] }>(`${API}/articles?per_page=6`, {
+    next: { revalidate: 60 },
+  });
 }
 
 async function getCategories() {
-  const res = await fetch(`${API}/categories`, { next: { revalidate: 3600 } });
-  if (!res.ok) return { data: [] };
-  return res.json();
+  return ambilJson<{ data: Kategori[] }>(`${API}/categories`, {
+    next: { revalidate: 3600 },
+  });
 }
 
 export default async function HomePage() {
   const [articlesRes, categoriesRes] = await Promise.all([getArticles(), getCategories()]);
-  const articles: Artikel[] = articlesRes.data || [];
-  const categories: Kategori[] = categoriesRes.data || [];
+  const articles: Artikel[] = articlesRes?.data || [];
+  const categories: Kategori[] = categoriesRes?.data || [];
 
   const namaKategori = new Map(categories.map((k) => [k.id, k.name]));
 

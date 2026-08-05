@@ -3,8 +3,6 @@ import { Geist, Geist_Mono, Lora } from "next/font/google";
 import "./globals.css";
 import Toast from "@/components/ui/Toast";
 import ConfirmModal from "@/components/ui/ConfirmModal";
-import DevelopmentScreen from "@/components/DevelopmentScreen";
-import { isDevelopmentMode } from "@/config/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,8 +14,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Serif untuk judul dan isi artikel. Inilah yang memberi kesan terbitan
-// sastra, sementara Geist tetap dipakai untuk teks antarmuka.
+// Serif untuk judul dan isi artikel. Geist tetap untuk teks antarmuka.
 const lora = Lora({
   variable: "--font-lora",
   subsets: ["latin"],
@@ -43,16 +40,11 @@ export default function RootLayout({
       lang="id"
       className={`${geistSans.variable} ${geistMono.variable} ${lora.variable} h-full antialiased`}
     >
+      {/* Mode pengembangan ditangani src/middleware.ts, bukan di sini. */}
       <body className="min-h-full flex flex-col">
-        {isDevelopmentMode ? (
-          <DevelopmentScreen />
-        ) : (
-          <>
-            {children}
-            <Toast />
-            <ConfirmModal />
-          </>
-        )}
+        {children}
+        <Toast />
+        <ConfirmModal />
       </body>
     </html>
   );

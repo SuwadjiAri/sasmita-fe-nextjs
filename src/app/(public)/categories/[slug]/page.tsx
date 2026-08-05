@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { BookOpen, ArrowLeft } from 'lucide-react';
 import ArticleCard, { type ArtikelKartu } from '@/components/ui/ArticleCard';
+import { ambilJson } from '@/lib/server-fetch';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -8,19 +9,22 @@ interface Props {
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
-async function getCategoryArticles(slug: string) {
-  const catRes = await fetch(`${API}/categories`, { next: { revalidate: 3600 } });
-  if (!catRes.ok) return { category: null, articles: [] };
-  const { data: categories } = await catRes.json();
-  const category = categories.find((c: { slug: string }) => c.slug === slug);
-  if (!category) return { category: null, articles: [] };
+type Kategori = { id: number; name: string; slug: string; description?: string };
 
-  const artRes = await fetch(`${API}/articles?category_id=${category.id}`, {
-    next: { revalidate: 60 },
+async function getCategoryArticles(slug: string) {
+  const kategoriRes = await ambilJson<{ data: Kategori[] }>(`${API}/categories`, {
+    next: { revalidate: 3600 },
   });
-  if (!artRes.ok) return { category, articles: [] };
-  const { data: articles } = await artRes.json();
-  return { category, articles };
+
+  const category = kategoriRes?.data?.find((c) => c.slug === slug) || null;
+  if (!category) return { category: null, articles: [] as ArtikelKartu[] };
+
+  const artikelRes = await ambilJson<{ data: ArtikelKartu[] }>(
+    `${API}/articles?category_id=${category.id}`,
+    { next: { revalidate: 60 } }
+  );
+
+  return { category, articles: artikelRes?.data || [] };
 }
 
 export default async function CategoryDetailPage({ params }: Props) {
@@ -84,7 +88,7 @@ export default async function CategoryDetailPage({ params }: Props) {
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-6 stagger-children md:grid-cols-2 lg:grid-cols-3">
-            {(articles as ArtikelKartu[]).map((article) => (
+            {articles.map((article) => (
               <ArticleCard key={article.id} article={article} />
             ))}
           </div>

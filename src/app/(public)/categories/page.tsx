@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import { ambilJson } from '@/lib/server-fetch';
 
 type Kategori = {
   id: number;
@@ -9,18 +10,16 @@ type Kategori = {
 };
 
 async function getCategories() {
-  const res = await fetch(
+  return ambilJson<{ data: Kategori[] }>(
     `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/categories`,
     { next: { revalidate: 3600 } }
   );
-  if (!res.ok) return { data: [] };
-  return res.json();
 }
 
 export const metadata = { title: 'Kategori' };
 
 export default async function CategoriesPage() {
-  const { data: categories } = await getCategories();
+  const categories = (await getCategories())?.data || [];
 
   return (
     <div>
@@ -37,7 +36,7 @@ export default async function CategoriesPage() {
 
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-6 stagger-children md:grid-cols-2 lg:grid-cols-3">
-          {(categories as Kategori[]).map((cat) => (
+          {categories.map((cat) => (
             <Link key={cat.id} href={`/categories/${cat.slug}`} className="kartu-tautan group p-6">
               <div className="flex items-start gap-4">
                 <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-emas-50 font-serif text-2xl font-semibold text-emas-700">

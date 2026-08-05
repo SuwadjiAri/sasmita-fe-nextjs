@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Eye, Lock } from 'lucide-react';
 import ArticleContent from './ArticleContent';
+import { ambilJson } from '@/lib/server-fetch';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -9,28 +10,44 @@ interface Props {
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
+type Artikel = {
+  id: number;
+  userId: number;
+  categoryId: number;
+  title: string;
+  content: string;
+  excerpt?: string;
+  coverImage?: string;
+  isPremium: boolean;
+  contentLocked?: boolean;
+  publishedAt?: string;
+  viewCount: number;
+};
+
 async function getArticle(slug: string) {
-  const res = await fetch(`${API}/articles/${slug}`, { next: { revalidate: 60 } });
-  if (!res.ok) return null;
-  const json = await res.json();
-  return json.data;
+  const res = await ambilJson<{ data: Artikel }>(`${API}/articles/${slug}`, {
+    next: { revalidate: 60 },
+  });
+  return res?.data || null;
 }
 
 // Diambil terpisah karena endpoint artikel hanya memberi userId dan categoryId.
 async function getPenulis(id?: number) {
   if (!id) return null;
-  const res = await fetch(`${API}/users/${id}`, { next: { revalidate: 3600 } });
-  if (!res.ok) return null;
-  const json = await res.json();
-  return json.data as { id: number; name: string } | null;
+  const res = await ambilJson<{ data: { id: number; name: string } }>(
+    `${API}/users/${id}`,
+    { next: { revalidate: 3600 } }
+  );
+  return res?.data || null;
 }
 
 async function getKategori(id?: number) {
   if (!id) return null;
-  const res = await fetch(`${API}/categories`, { next: { revalidate: 3600 } });
-  if (!res.ok) return null;
-  const json = await res.json();
-  return (json.data as { id: number; name: string; slug: string }[]).find((k) => k.id === id) || null;
+  const res = await ambilJson<{ data: { id: number; name: string; slug: string }[] }>(
+    `${API}/categories`,
+    { next: { revalidate: 3600 } }
+  );
+  return res?.data?.find((k) => k.id === id) || null;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

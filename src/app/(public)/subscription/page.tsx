@@ -1,5 +1,6 @@
 import { Check } from 'lucide-react';
 import SubscribeButton from './SubscribeButton';
+import { ambilJson } from '@/lib/server-fetch';
 
 type Paket = {
   id: number;
@@ -10,12 +11,10 @@ type Paket = {
 };
 
 async function getPlans() {
-  const res = await fetch(
+  return ambilJson<{ data: Paket[] }>(
     `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/subscription-plans`,
     { next: { revalidate: 3600 } }
   );
-  if (!res.ok) return { data: [] };
-  return res.json();
 }
 
 export const metadata = { title: 'Langganan' };
@@ -27,10 +26,9 @@ const manfaat = [
 ];
 
 export default async function SubscriptionPage() {
-  const { data: plans } = await getPlans();
+  const plans = (await getPlans())?.data || [];
 
-  // Paket di tengah ditandai sebagai pilihan yang disarankan. Bila jumlah
-  // paketnya genap, penanda ini dilewatkan saja.
+  // Paket tengah disorot. Bila jumlahnya genap, penanda ini dilewatkan.
   const indeksSorotan = plans.length % 2 === 1 ? Math.floor(plans.length / 2) : -1;
 
   return (
@@ -48,7 +46,7 @@ export default async function SubscriptionPage() {
 
       <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6">
         <div className="grid grid-cols-1 gap-6 stagger-children md:grid-cols-3">
-          {(plans as Paket[]).map((plan, index) => {
+          {plans.map((plan, index) => {
             const disorot = index === indeksSorotan;
 
             return (
