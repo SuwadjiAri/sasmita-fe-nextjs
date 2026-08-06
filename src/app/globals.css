@@ -226,3 +226,11 @@
 .prose blockquote {
   @apply my-8 border-l-2 border-emas-400 pl-5 italic text-tinta-600;
 }
+
+/* Isi artikel tidak ikut tercetak. Yang disembunyikan seluruh pembungkusnya,
+   supaya lapisan watermark tidak tertinggal sebagai halaman kosong bergaris. */
+@media print {
+  .content-protection {
+    display: none !important;
+  }
+}
