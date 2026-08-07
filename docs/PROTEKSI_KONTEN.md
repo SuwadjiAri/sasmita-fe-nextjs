@@ -9,6 +9,8 @@ yang sengaja tidak dikejar.
 **Dipakai di:** `src/app/(public)/articles/[slug]/ArticleContent.tsx`
 
 Riwayat: tahap 1 sampai 3 diselesaikan pada commit `3f72aef` (6 Agustus 2026).
+Diuji di peramban pada 7 Agustus 2026, lalu penimpaan clipboard dan perbaikan
+watermark ditambahkan. Lihat bagian 8.
 
 ---
 
@@ -59,7 +61,8 @@ terbaca utuh.
 | Salin diblokir | `copy` | **wadah artikel saja** |
 | Ctrl+U, S, P, A dan F12, Ctrl+Shift+I/J/C diblokir | `keydown` | seluruh halaman, kecuali saat mengetik di input/textarea |
 | Teks tidak dapat diseleksi | `user-select: none` | wadah artikel |
-| Watermark email pembaca | selalu | |
+| Clipboard ditimpa teks | `keyup` PrintScreen | seluruh halaman, Chrome saja |
+| Watermark email pembaca | selalu, tidak ikut kabur | setinggi wadah artikel |
 | Isi hilang saat dicetak | `@media print` | seluruh wadah, watermark ikut hilang |
 
 Tahap 3 berlaku untuk **semua artikel**, bukan hanya premium. Ini keputusan
@@ -192,6 +195,10 @@ Belum dijalankan di peramban. Jalankan setelah deploy atau di lokal dengan
 - [ ] Di layar sentuh, ketukan tidak membuat artikel kabur
 - [ ] Cetak halaman, tidak ada isi dan tidak ada watermark yang tertinggal
 - [ ] Halaman tetap dapat dibaca pembantu baca layar
+- [ ] Tekan PrintScreen lalu tempel ke Paint, yang muncul teks penanda
+- [ ] Watermark tetap tajam dan terbaca saat isi artikel kabur
+- [ ] Watermark menutup sampai bagian bawah artikel yang panjang
+- [ ] Konsol tidak memunculkan galat clipboard di Firefox
 
 ---
 
@@ -200,10 +207,80 @@ Belum dijalankan di peramban. Jalankan setelah deploy atau di lokal dengan
 - **Memblokir PrintScreen.** Itu tombol sistem operasi. `preventDefault` tidak
   menghentikannya. Penanganan lewat `keydown` yang dulu ada bahkan tidak pernah
   berjalan, karena Windows hanya mengirim `keyup` untuk tombol itu ke peramban.
-  Sudah dihapus, jangan dipasang kembali.
+  Sudah dihapus, jangan dipasang kembali. Yang ada sekarang bukan blokir,
+  melainkan penimpaan clipboard setelah kejadian, lihat bagian 8.
+- **Memblokir pintasan aplikasi perekam layar, misalnya Alt+P milik Lightshot
+  atau Win+Shift+S milik Snipping Tool.** Aplikasi seperti itu mendaftarkan
+  hotkey global ke Windows lewat `RegisterHotKey`, jadi kombinasinya dicegat
+  sistem operasi dan halaman sering tidak menerima `keydown`-nya sama sekali.
+  Sekalipun menerima, `preventDefault` hanya membatalkan tindakan bawaan
+  peramban, bukan tindakan aplikasi lain.
 - **Mendeteksi Developer Tools terbuka.** Semua caranya berupa tebakan yang
   mudah salah, dan sering salah menuduh pembaca biasa.
 - **Mengaburkan lewat gambar atau kanvas.** Membuat artikel tidak dapat dicari
   mesin pencari, tidak dapat dibaca pembantu baca layar, dan tetap dapat direkam.
 - **Menonaktifkan tangkapan layar.** Tidak ada API peramban untuk itu. Yang ada
   hanya pada aplikasi native, misalnya `FLAG_SECURE` di Android.
+
+---
+
+## 8. Hasil Uji Peramban, 7 Agustus 2026
+
+Dua temuan dilaporkan dari pengujian di Chrome pada Windows:
+
+1. PrintScreen tetap berfungsi saat kursor berada di dalam artikel.
+2. Alt+P tetap memanggil Lightshot.
+
+**Keduanya bukan cacat.** Sudah dijelaskan di bagian 7 mengapa tidak dapat
+dicegah dari halaman web. Ringkasnya, PrintScreen disalin sistem operasi ke
+clipboard sebelum satu baris JavaScript pun berjalan, sedangkan Alt+P dicegat
+Windows dan diserahkan ke Lightshot tanpa melewati Chrome. Lightshot kemudian
+membekukan salinan layar lalu menampilkan lapisannya sendiri, jadi mengaburkan
+halaman sesudahnya tidak mengubah gambar yang sudah tertangkap.
+
+Dua penyesuaian dikerjakan sebagai tanggapan. Keduanya mengurangi kerugian,
+bukan mencegah kejadiannya.
+
+### Penimpaan clipboard setelah PrintScreen
+
+Pada `keyup` dengan `e.key === 'PrintScreen'`, isi clipboard ditimpa teks
+`TEKS_PENGGANTI_CLIPBOARD`. Gambar layarnya sudah terlanjur diambil, yang
+dipatahkan hanyalah alur tekan PrtScn lalu tempel ke Paint atau Word.
+
+Batasnya perlu diketahui sebelum menaruh harapan padanya:
+
+- **Chrome saja.** `navigator.clipboard.writeText` di Firefox dan Safari
+  menuntut gerak-gerik pengguna, dan `keyup` tidak dihitung sebagai gerak-gerik.
+  Panggilannya sengaja dibungkus `.catch(() => {})` supaya gagal diam-diam di
+  sana, bukan melempar galat ke konsol.
+- **Tidak berlaku untuk Lightshot, Snipping Tool, dan perekam layar lain.**
+  Aplikasi itu menyimpan gambarnya sendiri ke berkas atau ke penyimpanannya
+  sendiri, tidak menunggu clipboard sistem.
+- **Hanya berjalan bila jendela Chrome sedang mendapat fokus**, karena halaman
+  tidak menerima `keyup` apa pun saat tidak fokus.
+- **Menimpa apa pun yang sedang dipegang pembaca di clipboard.** Bila mereka
+  baru saja menyalin sesuatu dari aplikasi lain, salinan itu hilang.
+
+### Watermark tidak lagi ikut dikaburkan
+
+Sebelumnya lapisan watermark berada di dalam elemen yang diberi `filter: blur()`,
+sehingga ikut kabur. Akibatnya tangkapan layar yang diambil saat halaman kabur,
+yaitu keadaan yang paling mungkin terjadi ketika perekam layar sedang aktif,
+justru tidak membawa penanda pemiliknya sama sekali. Sekarang lapisannya
+dipindahkan menjadi saudara dari lapisan isi, di luar jangkauan filter.
+
+Dua perubahan lain menyertainya:
+
+- Opasitas dinaikkan dari `text-tinta-300/20` menjadi `text-tinta-500/25`.
+  Yang lama praktis tidak terbaca pada latar putih, jadi tidak berguna untuk
+  melacak siapa yang membocorkan.
+- Jumlah barisnya mengikuti tinggi wadah lewat `ResizeObserver`, bukan lagi
+  tetap 8 baris. Dengan 8 baris, artikel yang lebih panjang dari kira-kira
+  960 piksel tidak tertandai sama sekali di bagian bawahnya.
+
+### Yang tetap tidak berubah
+
+Perlindungan yang sesungguhnya untuk karya berbayar tetap `PremiumAccessPolicy`
+di repositori API. Naskah premium memang tidak pernah dikirim ke pembaca tanpa
+langganan, jadi tidak ada yang bisa ditangkap layar. Semua yang ada di berkas
+ini adalah penghalang bagi pembaca biasa dan penanda bahwa isi ini dijaga.

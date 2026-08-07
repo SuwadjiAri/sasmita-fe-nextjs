@@ -3,16 +3,19 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
 
-/**
- * Alasan isi artikel dikaburkan. Berupa himpunan, bukan satu boolean, karena
- * ketiganya bisa aktif bersamaan dan yang satu tidak boleh menjernihkan layar
- * selama yang lain masih menghendaki kabur.
- */
+// Alasan kabur berupa himpunan, bukan boolean: ketiganya bisa aktif bersamaan.
 type Alasan = 'fokus' | 'tab' | 'tetikus';
 
 const JEDA_KELUAR_MS = 400;
 
-/** Tombol yang menandakan pembaca sedang menggulir dengan papan ketik. */
+// Jarak antarbaris watermark, dipakai juga untuk menghitung jumlah barisnya.
+const JARAK_BARIS_WATERMARK = 120;
+
+// Ditulis ke clipboard setelah PrintScreen. Bukan pencegahan, lihat docs bagian 8.
+const TEKS_PENGGANTI_CLIPBOARD =
+  'Isi artikel SASMITA.COM dilindungi hak cipta. Tangkapan layar tidak disertakan.';
+
+// Tombol yang menandakan pembaca sedang menggulir dengan papan ketik.
 const TOMBOL_BACA = new Set([
   'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
   'PageUp', 'PageDown', 'Home', 'End', ' ',
@@ -28,6 +31,7 @@ function targetDapatDiketik(target: EventTarget | null): boolean {
 export default function ContentProtection({ children }: { children: React.ReactNode }) {
   const { user } = useAuthStore();
   const [alasan, setAlasan] = useState<ReadonlySet<Alasan>>(new Set());
+  const [tinggiWadah, setTinggiWadah] = useState(0);
   const wadahRef = useRef<HTMLDivElement>(null);
   const jedaKeluar = useRef<number | null>(null);
 
@@ -44,8 +48,7 @@ export default function ContentProtection({ children }: { children: React.ReactN
     });
   }, []);
 
-  // Fokus jendela dan perpindahan tab dipantau terpisah: berpindah tab tidak
-  // selalu memicu `blur`.
+  // Dipantau terpisah: berpindah tab tidak selalu memicu `blur`.
   useEffect(() => {
     const onBlur = () => tambahAlasan('fokus');
     const onFocus = () => hapusAlasan('fokus');
@@ -63,8 +66,7 @@ export default function ContentProtection({ children }: { children: React.ReactN
     };
   }, [tambahAlasan, hapusAlasan]);
 
-  // Kursor keluar area artikel. Hanya pada perangkat bertetikus; di layar
-  // sentuh, ketukan menghasilkan mouseenter/mouseleave tiruan.
+  // Hanya perangkat bertetikus: layar sentuh memicu mouseenter/mouseleave tiruan.
   useEffect(() => {
     const wadah = wadahRef.current;
     if (!wadah) return;
@@ -77,8 +79,7 @@ export default function ContentProtection({ children }: { children: React.ReactN
       }
     };
 
-    // Jeda menahan kabur saat kursor cuma melintas ke bilah gulir atau iklan
-    // samping. Tanpa itu layar berkedip-kedip.
+    // Jeda menahan kabur saat kursor cuma melintas ke bilah gulir atau iklan.
     const keluar = () => {
       batalkanJeda();
       jedaKeluar.current = window.setTimeout(() => {
@@ -92,8 +93,7 @@ export default function ContentProtection({ children }: { children: React.ReactN
       hapusAlasan('tetikus');
     };
 
-    // Jalan keluar untuk pembaca papan ketik: mereka tidak menyentuh tetikus
-    // sama sekali, jadi `mouseenter` tidak akan pernah terpicu.
+    // Jalan keluar pembaca papan ketik: `mouseenter` tidak akan pernah terpicu.
     const onKeyNav = (e: KeyboardEvent) => {
       if (TOMBOL_BACA.has(e.key)) masuk();
     };
@@ -110,9 +110,7 @@ export default function ContentProtection({ children }: { children: React.ReactN
     };
   }, [tambahAlasan, hapusAlasan]);
 
-  // Ctrl+C tidak diblokir di sini: `user-select: none` sudah menghalangi
-  // seleksi teks artikel, dan memblokirnya global hanya mematikan salin-tempel
-  // di kotak komentar. Penyalinan dari dalam artikel ditangani `onCopy`.
+  // Ctrl+C sengaja tidak diblokir, itu hanya mematikan salin di kotak komentar.
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (targetDapatDiketik(e.target)) return;
@@ -121,16 +119,42 @@ export default function ContentProtection({ children }: { children: React.ReactN
       if (e.ctrlKey && !e.shiftKey && ['u', 's', 'p', 'a'].includes(k)) e.preventDefault();
       if (e.ctrlKey && e.shiftKey && ['i', 'j', 'c'].includes(k)) e.preventDefault();
       if (e.key === 'F12') e.preventDefault();
-      // PrintScreen tidak ditangani: Windows hanya mengirim `keyup` untuk
-      // tombol itu, jadi penanganan lewat `keydown` tidak pernah berjalan.
+      // PrintScreen tidak di sini: Windows cuma mengirim `keyup` untuk tombol itu.
     };
 
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
   }, []);
 
+  // PrintScreen tak bisa dicegah, hanya alur tempel-ke-Paint yang dipatahkan.
+  useEffect(() => {
+    const onKeyUp = (e: KeyboardEvent) => {
+      if (e.key !== 'PrintScreen') return;
+      // Gagal diam-diam di Firefox dan Safari: `keyup` bukan gerak-gerik pengguna.
+      void navigator.clipboard?.writeText(TEKS_PENGGANTI_CLIPBOARD).catch(() => {});
+    };
+
+    document.addEventListener('keyup', onKeyUp);
+    return () => document.removeEventListener('keyup', onKeyUp);
+  }, []);
+
+  // Diukur supaya watermark menutup sampai bawah artikel yang panjang.
+  useEffect(() => {
+    const wadah = wadahRef.current;
+    if (!wadah) return;
+    const pengamat = new ResizeObserver(([entri]) => {
+      setTinggiWadah(entri.contentRect.height);
+    });
+    pengamat.observe(wadah);
+    return () => pengamat.disconnect();
+  }, []);
+
   const kabur = alasan.size > 0;
   const watermarkText = user?.email || 'SASMITA.COM';
+  const barisWatermark = Math.max(
+    8,
+    Math.ceil(tinggiWadah / JARAK_BARIS_WATERMARK) + 1,
+  );
   const petunjuk =
     alasan.has('tetikus') && !alasan.has('fokus') && !alasan.has('tab')
       ? 'Arahkan kursor ke artikel untuk melanjutkan membaca'
@@ -150,45 +174,44 @@ export default function ContentProtection({ children }: { children: React.ReactN
         className="relative transition-all duration-300"
         style={{ filter: kabur ? 'blur(20px)' : 'none' }}
       >
-        {/* Watermark */}
-        <div
-          className="absolute inset-0 z-10 pointer-events-none overflow-hidden"
-          aria-hidden="true"
-        >
-          <div className="absolute inset-0" style={{
-            backgroundImage: `repeating-linear-gradient(
-              -45deg,
-              transparent,
-              transparent 150px,
-              rgba(0,0,0,0.02) 150px,
-              rgba(0,0,0,0.02) 151px
-            )`,
-          }} />
-          {Array.from({ length: 8 }).map((_, i) => (
-            <div
-              key={i}
-              className="absolute whitespace-nowrap text-tinta-300/20 font-bold text-sm select-none"
-              style={{
-                transform: 'rotate(-35deg)',
-                top: `${i * 120 + 20}px`,
-                left: '-100px',
-                right: '-100px',
-                textAlign: 'center',
-                letterSpacing: '8px',
-              }}
-            >
-              {Array.from({ length: 5 }).map((_, j) => (
-                <span key={j} className="mx-16">{watermarkText}</span>
-              ))}
-            </div>
-          ))}
-        </div>
-
         <div className="content-protected">{children}</div>
       </div>
 
-      {/* Di luar lapisan yang dikaburkan. `aria-hidden` karena kabur hanya efek
-          visual, tidak menghalangi pembantu baca layar. */}
+      {/* Di luar lapisan kabur, supaya tetap terbaca pada tangkapan layar. */}
+      <div
+        className="absolute inset-0 z-10 pointer-events-none overflow-hidden"
+        aria-hidden="true"
+      >
+        <div className="absolute inset-0" style={{
+          backgroundImage: `repeating-linear-gradient(
+            -45deg,
+            transparent,
+            transparent 150px,
+            rgba(0,0,0,0.02) 150px,
+            rgba(0,0,0,0.02) 151px
+          )`,
+        }} />
+        {Array.from({ length: barisWatermark }).map((_, i) => (
+          <div
+            key={i}
+            className="absolute whitespace-nowrap text-tinta-500/25 font-bold text-sm select-none"
+            style={{
+              transform: 'rotate(-35deg)',
+              top: `${i * JARAK_BARIS_WATERMARK + 20}px`,
+              left: '-100px',
+              right: '-100px',
+              textAlign: 'center',
+              letterSpacing: '8px',
+            }}
+          >
+            {Array.from({ length: 5 }).map((_, j) => (
+              <span key={j} className="mx-16">{watermarkText}</span>
+            ))}
+          </div>
+        ))}
+      </div>
+
+      {/* `aria-hidden` karena kabur hanya efek visual, bukan penghalang baca. */}
       {kabur && (
         <div
           className="pointer-events-none absolute inset-0 z-20 flex items-start justify-center pt-24"
