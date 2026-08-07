@@ -179,12 +179,16 @@ lapisan keamanan.
 Belum dijalankan di peramban. Jalankan setelah deploy atau di lokal dengan
 `npm run dev -- --webpack`.
 
+Yang tercentang di bawah diperiksa pada 7 Agustus 2026 di Chrome, langsung pada
+situs terpasang `devsasmita.arifsuwadji.net`, lewat otomasi peramban. Sisanya
+belum pernah dijalankan.
+
 - [ ] Pindah ke tab lain, isi menjadi kabur
 - [ ] Kembali ke tab, isi jernih lagi
-- [ ] Klik jendela aplikasi lain, isi menjadi kabur
+- [x] Klik jendela aplikasi lain, isi menjadi kabur
 - [ ] Petunjuk terbaca jelas, tidak ikut kabur
 - [ ] Klik pada lapisan petunjuk tetap tembus ke halaman
-- [ ] Kursor keluar area artikel, isi kabur setelah kira-kira setengah detik
+- [x] Kursor keluar area artikel, isi kabur setelah kira-kira setengah detik
 - [ ] Kursor melintas cepat ke bilah gulir, isi tidak berkedip
 - [ ] Gulir dengan tombol panah tanpa menyentuh tetikus, isi tetap terbaca
 - [ ] Klik kanan di kotak komentar tetap berfungsi
@@ -196,9 +200,31 @@ Belum dijalankan di peramban. Jalankan setelah deploy atau di lokal dengan
 - [ ] Cetak halaman, tidak ada isi dan tidak ada watermark yang tertinggal
 - [ ] Halaman tetap dapat dibaca pembantu baca layar
 - [ ] Tekan PrintScreen lalu tempel ke Paint, yang muncul teks penanda
-- [ ] Watermark tetap tajam dan terbaca saat isi artikel kabur
-- [ ] Watermark menutup sampai bagian bawah artikel yang panjang
+- [x] Watermark tetap tajam dan terbaca saat isi artikel kabur
+- [x] Watermark menutup sampai bagian bawah artikel yang panjang
 - [ ] Konsol tidak memunculkan galat clipboard di Firefox
+
+Catatan dari pemeriksaan itu, supaya tidak diulang dari nol:
+
+- **Kedua artikel di situs terpasang pendek**, 464 px dan 559 px, sehingga batas
+  bawah 8 baris sudah menutupinya dan jalur `ResizeObserver` tidak tersentuh.
+  Untuk mengujinya, sisipkan sementara elemen setinggi 2400 px ke dalam
+  `.content-protected` lewat konsol. Hasilnya wadah 2864 px menghasilkan 25
+  baris dengan jangkauan 2920 px.
+- **Kotak petunjuk tidak muncul pada tangkapan layar** meski DOM menyatakan
+  elemennya ada di posisi yang benar. Dua tangkapan berturut-turut identik
+  piksel demi piksel, jadi kemungkinan besar Chrome menyajikan frame basi karena
+  jendelanya tidak sedang fokus. Perlu dilihat dengan mata sendiri, bukan lewat
+  otomasi.
+- **Butir "pindah ke tab lain" belum dapat dipastikan.** Saat `document.hidden`
+  bernilai `true`, teks petunjuk masih berbunyi "Arahkan kursor ke artikel",
+  padahal semestinya berganti menjadi "Klik halaman ini". Render React memang
+  dihambat pada tab tersembunyi, jadi ini belum tentu cacat, tetapi belum
+  terjawab.
+- **Perekaman konsol baru mulai saat alat dipanggil.** Galat pada saat halaman
+  dimuat bisa terlewat. Muat ulang halaman lebih dulu sebelum membaca konsol.
+- **Watermark yang teruji baru varian tamu**, yaitu teks "SASMITA.COM". Varian
+  yang menampilkan email pembaca perlu diuji dengan akun yang sudah masuk.
 
 ---
 
