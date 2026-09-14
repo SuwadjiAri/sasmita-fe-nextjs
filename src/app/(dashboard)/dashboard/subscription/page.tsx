@@ -94,9 +94,16 @@ export default function SubscriptionDashboardPage() {
     });
   };
 
+  const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || '';
+  const snapScriptUrl =
+    process.env.NEXT_PUBLIC_MIDTRANS_SNAP_URL ||
+    (clientKey.startsWith('SB-')
+      ? 'https://app.sandbox.midtrans.com/snap/snap.js'
+      : 'https://app.midtrans.com/snap/snap.js');
+
   return (
     <div>
-      <Script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || ''} strategy="lazyOnload" />
+      <Script src={snapScriptUrl} data-client-key={clientKey} strategy="lazyOnload" />
 
       <header className="mb-6">
         <p className="label-mikro">Langganan</p>
