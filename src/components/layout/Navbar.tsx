@@ -4,13 +4,14 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth-store';
 import { useEffect, useState } from 'react';
-import { Search, BookOpen, CreditCard, LayoutDashboard, LogOut, Menu, X } from 'lucide-react';
+import { Search, BookOpen, CreditCard, LayoutDashboard, LogOut, Menu, X, Users } from 'lucide-react';
 
 const menu = [
   { href: '/', label: 'Beranda', icon: null },
   { href: '/categories', label: 'Kategori', icon: BookOpen },
   { href: '/search', label: 'Cari', icon: Search },
   { href: '/subscription', label: 'Langganan', icon: CreditCard },
+  { href: '/redaksi', label: 'Redaksi', icon: Users },
 ];
 
 export default function Navbar() {

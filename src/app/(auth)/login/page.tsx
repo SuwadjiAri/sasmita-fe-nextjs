@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/stores/auth-store';
+import GoogleSignInButton from '@/components/auth/GoogleSignInButton';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -71,6 +72,15 @@ export default function LoginPage() {
           {loading ? 'Memproses...' : 'Masuk'}
         </button>
       </form>
+
+      <div className="relative my-6 text-center text-xs">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t border-tinta-200/80" />
+        </div>
+        <span className="relative bg-white px-3 text-tinta-400 font-medium">atau lanjutkan dengan</span>
+      </div>
+
+      <GoogleSignInButton text="Masuk dengan Google" onError={(msg) => setError(msg)} />
 
       <div className="mt-6 space-y-2 text-center text-sm text-tinta-500">
         <p>

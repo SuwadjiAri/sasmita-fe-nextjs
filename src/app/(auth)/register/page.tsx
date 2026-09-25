@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/stores/auth-store';
+import GoogleSignInButton from '@/components/auth/GoogleSignInButton';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -87,6 +88,15 @@ export default function RegisterPage() {
           {loading ? 'Memproses...' : 'Daftar'}
         </button>
       </form>
+
+      <div className="relative my-6 text-center text-xs">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t border-tinta-200/80" />
+        </div>
+        <span className="relative bg-white px-3 text-tinta-400 font-medium">atau daftar dengan</span>
+      </div>
+
+      <GoogleSignInButton text="Daftar dengan Google" onError={(msg) => setError(msg)} />
 
       <p className="mt-6 text-center text-sm text-tinta-500">
         Sudah punya akun?{' '}

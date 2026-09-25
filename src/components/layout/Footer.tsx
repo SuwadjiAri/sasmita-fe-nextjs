@@ -8,6 +8,7 @@ const navigasi = [
   { href: '/categories', label: 'Kategori' },
   { href: '/search', label: 'Cari Artikel' },
   { href: '/subscription', label: 'Langganan' },
+  { href: '/redaksi', label: 'Redaksi' },
 ];
 
 const kategori = [
@@ -69,7 +70,7 @@ export default function Footer() {
 
         <div className="mt-12 border-t border-white/10 pt-8">
           <p className="text-sm text-tinta-400">
-            &copy; {new Date().getFullYear()} SASMITA.COM. Project Work Universitas Pamulang.
+            &copy; {new Date().getFullYear()} SASMITA.COM. Seluruh hak cipta dilindungi.
           </p>
         </div>
       </div>

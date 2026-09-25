@@ -22,6 +22,8 @@ type Artikel = {
   contentLocked?: boolean;
   publishedAt?: string;
   viewCount: number;
+  editorId?: number;
+  editorName?: string;
 };
 
 async function getArticle(slug: string) {
@@ -34,10 +36,9 @@ async function getArticle(slug: string) {
 // Diambil terpisah karena endpoint artikel hanya memberi userId dan categoryId.
 async function getPenulis(id?: number) {
   if (!id) return null;
-  const res = await ambilJson<{ data: { id: number; name: string } }>(
-    `${API}/users/${id}`,
-    { next: { revalidate: 3600 } }
-  );
+  const res = await ambilJson<{
+    data: { id: number; name: string; bio?: string; avatar?: string; created_at?: string };
+  }>(`${API}/users/${id}`, { next: { revalidate: 3600 } });
   return res?.data || null;
 }
 
@@ -132,6 +133,13 @@ export default async function ArticleDetailPage({ params }: Props) {
                 <span className="text-tinta-300">/</span>
               </>
             )}
+            <span className="inline-flex items-center gap-1">
+              <span className="text-tinta-400">Editor:</span>
+              <span className="font-medium text-tinta-800">
+                {article.editorName || 'Redaksi SASMITA'}
+              </span>
+            </span>
+            <span className="text-tinta-300">/</span>
             {tanggal && (
               <>
                 <span>{tanggal}</span>
@@ -151,7 +159,7 @@ export default async function ArticleDetailPage({ params }: Props) {
           </div>
         )}
 
-        <ArticleContent article={article} />
+        <ArticleContent article={article} author={penulis} />
       </article>
     </div>
   );
