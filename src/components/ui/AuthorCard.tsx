@@ -73,7 +73,7 @@ export default function AuthorCard({ author }: { author: Author | null }) {
         </div>
       ) : (
         <div className="px-6 py-4 sm:px-8 text-xs text-tinta-400 italic">
-          Penulis aktif di SASMITA Portal Sastra Indonesia.
+          Penulis aktif di SMITA.ID Portal Sastra Indonesia.
         </div>
       )}
     </div>

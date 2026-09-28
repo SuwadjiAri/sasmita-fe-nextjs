@@ -46,7 +46,7 @@ export default function PremiumGate({ children }: { children: React.ReactNode })
           <h3 className="mt-5 text-2xl font-semibold text-tinta-900">Karya Premium</h3>
           <p className="mx-auto mt-3 max-w-md leading-relaxed text-tinta-600">
             Berlangganan untuk membaca karya ini secara utuh, beserta seluruh
-            karya premium lain di SASMITA.
+            karya premium lain di SMITA.ID.
           </p>
           <Link href="/subscription" className="btn-emas mt-7">
             <Lock className="h-4 w-4" />

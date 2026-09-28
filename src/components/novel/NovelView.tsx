@@ -69,8 +69,8 @@ export default function NovelView({
         // Ambil judul bab dari tag header jika ada
         const match = chunk.match(/<h[23][^>]*>([\s\S]*?)<\/h[23]>/i);
         const title = match ? match[1].replace(/<[^>]+>/g, '').trim() : `Bab ${idx + 1}`;
-        // Bab 1 biasanya gratis, bab selanjutnya mengikuti status isPremium
-        const isLocked = article.isPremium && idx > 0;
+        // Bab 1 dan Bab 2 gratis dibuka (khas KBM & GoodNovel), bab 3 ke atas terkunci jika naskah premium
+        const isLocked = article.isPremium && idx >= 2;
         return {
           index: idx,
           title: title || `Bab ${idx + 1}`,
@@ -362,18 +362,18 @@ export default function NovelView({
                       {chap.title}
                     </p>
                     <p className="text-[11px] text-tinta-500 mt-0.5">
-                      {chap.isLocked ? '⭐ Bab Premium' : '🔓 Bab Bebas'}
+                      {chap.isLocked ? '⭐ Bab Berlangganan' : '🔓 Bab Gratis'}
                     </p>
                   </div>
                 </div>
 
                 {chap.isLocked ? (
-                  <span className="text-xs bg-yellow-100 text-yellow-800 p-1.5 rounded-lg flex items-center" title="Bab Premium">
-                    <Lock className="w-3.5 h-3.5" />
+                  <span className="text-xs bg-emas-100 text-emas-800 px-2.5 py-1 rounded-full font-semibold flex items-center gap-1 shadow-sm" title="Bab Berlangganan (Premium)">
+                    <Lock className="w-3 h-3" /> Berbayar
                   </span>
                 ) : (
-                  <span className="text-xs text-green-700 bg-green-50 px-2 py-0.5 rounded-full font-medium">
-                    Buka
+                  <span className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2.5 py-1 rounded-full font-semibold">
+                    Gratis
                   </span>
                 )}
               </button>
@@ -487,11 +487,22 @@ export default function NovelView({
               <h2 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight">
                 {currentChapter.title}
               </h2>
-              {chapters.length > 1 && (
-                <p className="text-xs opacity-60 mt-2">
-                  Bab {currentChapterIdx + 1} dari {chapters.length} Bab
-                </p>
-              )}
+              <div className="flex items-center justify-center gap-2 mt-2">
+                {chapters.length > 1 && (
+                  <span className="text-xs opacity-60">
+                    Bab {currentChapterIdx + 1} dari {chapters.length} Bab
+                  </span>
+                )}
+                {currentChapter.isLocked ? (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emas-500/20 text-emas-700 dark:text-emas-300 border border-emas-500/30">
+                    <Lock className="w-3 h-3" /> Bab Berbayar
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+                    Bab Bebas / Gratis
+                  </span>
+                )}
+              </div>
             </div>
 
             {/* Isi Bacaan */}
