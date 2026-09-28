@@ -19,21 +19,24 @@ export default function AuthLayout({
         />
 
         <div className="relative flex w-full flex-col justify-between p-14 text-white">
-          <Link href="/" className="transition-opacity hover:opacity-90">
+          <Link href="/" className="inline-flex items-center gap-3 transition-opacity hover:opacity-90">
             <img
-              src="/logo-sasmita.png"
-              alt="SASMITA.com"
-              width={1048}
-              height={225}
-              className="h-10 w-auto brightness-0 invert"
+              src="/logo-smita.png"
+              alt="Smita.id"
+              width={48}
+              height={48}
+              className="h-12 w-12 rounded-full object-contain shadow-md"
             />
+            <span className="font-serif text-2xl font-bold tracking-tight text-white">
+              Smita<span className="text-emas-400">.id</span>
+            </span>
           </Link>
 
           <div className="max-w-md">
             <p className="label-mikro text-emas-300">Platform Literasi Digital</p>
             <p className="mt-5 font-serif text-2xl leading-snug">
-              Ruang terbit untuk puisi, cerpen, esai, novel, resensi, dan artikel
-              akademik mahasiswa.
+              Ruang terbit untuk opini, esai, cerpen, puisi, resensi, dan serial
+              novel sastra.
             </p>
           </div>
 
@@ -47,14 +50,17 @@ export default function AuthLayout({
       <div className="flex flex-1 items-center justify-center bg-kertas px-4 py-12">
         <div className="w-full max-w-md">
           <div className="mb-8 text-center lg:hidden">
-            <Link href="/" className="inline-block">
+            <Link href="/" className="inline-flex items-center gap-2.5">
               <img
-                src="/logo-sasmita.png"
-                alt="SASMITA.com"
-                width={1048}
-                height={225}
-                className="h-9 w-auto"
+                src="/logo-smita.png"
+                alt="Smita.id"
+                width={40}
+                height={40}
+                className="h-10 w-10 rounded-full object-contain shadow-sm"
               />
+              <span className="font-serif text-2xl font-bold tracking-tight text-tinta-950">
+                Smita<span className="text-emas-700">.id</span>
+              </span>
             </Link>
           </div>
           {children}

@@ -4,20 +4,22 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth-store';
 import { useEffect, useState } from 'react';
-import { Search, BookOpen, CreditCard, LayoutDashboard, LogOut, Menu, X, Users } from 'lucide-react';
+import { Search, BookOpen, CreditCard, LayoutDashboard, LogOut, Menu, X, Users, ChevronDown } from 'lucide-react';
 
-const menu = [
-  { href: '/', label: 'Beranda', icon: null },
-  { href: '/categories', label: 'Kategori', icon: BookOpen },
-  { href: '/search', label: 'Cari', icon: Search },
-  { href: '/subscription', label: 'Langganan', icon: CreditCard },
-  { href: '/redaksi', label: 'Redaksi', icon: Users },
+const rubrikKategori = [
+  { slug: 'opini', name: 'Opini', desc: 'Opini kritis & wacana sastra', badge: 'Wacana' },
+  { slug: 'esai', name: 'Esai', desc: 'Esai sastra & telaah budaya', badge: 'Telaah' },
+  { slug: 'cerpen', name: 'Cerpen', desc: 'Cerita pendek sastra pilihan', badge: 'Fiksi' },
+  { slug: 'puisi', name: 'Puisi', desc: 'Karya puisi & bait sajak', badge: 'Puitika' },
+  { slug: 'resensi', name: 'Resensi', desc: 'Ulasan buku & kritik karya', badge: 'Kritik' },
+  { slug: 'novel', name: 'Novel', desc: 'Serial novel & karya bersambung', badge: 'Serial' },
 ];
 
 export default function Navbar() {
   const { user, logout, loadUser } = useAuthStore();
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [rubrikMobileOpen, setRubrikMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -30,6 +32,8 @@ export default function Navbar() {
   const aktif = (href: string) =>
     href === '/' ? pathname === '/' : pathname.startsWith(href);
 
+  const isRubrikAktif = pathname.startsWith('/categories');
+
   return (
     <nav
       className={`sticky top-0 z-50 bg-tinta-950 transition-shadow duration-300 ${
@@ -38,36 +42,119 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
-          <Link href="/" className="flex items-center">
+          {/* Logo Smita.id */}
+          <Link href="/" className="flex items-center gap-2.5 group">
             <img
-              src="/logo-sasmita.png"
-              alt="SASMITA.com"
-              width={1048}
-              height={225}
-              className="h-8 w-auto brightness-0 invert"
+              src="/logo-smita.png"
+              alt="Smita.id"
+              width={40}
+              height={40}
+              className="h-10 w-10 rounded-full object-contain shadow-md transition-transform group-hover:scale-105"
             />
+            <span className="font-serif text-xl font-bold tracking-tight text-white hidden sm:inline-block">
+              Smita<span className="text-emas-400">.id</span>
+            </span>
           </Link>
 
           {/* Menu layar lebar */}
           <div className="hidden md:flex items-center gap-1">
-            {menu.map((item) => (
+            <Link
+              href="/"
+              className={`relative flex items-center gap-1.5 px-3 py-2 text-sm transition-colors ${
+                aktif('/') ? 'text-white' : 'text-tinta-300 hover:text-white'
+              }`}
+            >
+              Beranda
+              {aktif('/') && <span className="absolute inset-x-3 -bottom-px h-px bg-emas-400" />}
+            </Link>
+
+            {/* Menu Rubrik dengan Hover Dropdown */}
+            <div className="relative group">
               <Link
-                key={item.href}
-                href={item.href}
+                href="/categories"
                 className={`relative flex items-center gap-1.5 px-3 py-2 text-sm transition-colors ${
-                  aktif(item.href)
-                    ? 'text-white'
-                    : 'text-tinta-300 hover:text-white'
+                  isRubrikAktif ? 'text-white' : 'text-tinta-300 hover:text-white'
                 }`}
               >
-                {item.icon ? <item.icon className="w-4 h-4" /> : null}
-                {item.label}
-                {/* Penanda halaman aktif, garis emas tipis di bawah label. */}
-                {aktif(item.href) && (
-                  <span className="absolute inset-x-3 -bottom-px h-px bg-emas-400" />
-                )}
+                <BookOpen className="w-4 h-4" />
+                <span>Rubrik</span>
+                <ChevronDown className="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180" />
+                {isRubrikAktif && <span className="absolute inset-x-3 -bottom-px h-px bg-emas-400" />}
               </Link>
-            ))}
+
+              {/* Hover Dropdown Panel */}
+              <div className="absolute left-0 top-full pt-2 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50">
+                <div className="w-80 rounded-2xl border border-white/10 bg-tinta-950/95 p-3 shadow-2xl backdrop-blur-xl">
+                  <div className="px-3 py-2 border-b border-white/10 mb-2">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-emas-400">
+                      Pilihan Rubrik & Kategori Sastra
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-1 gap-1">
+                    {rubrikKategori.map((cat) => (
+                      <Link
+                        key={cat.slug}
+                        href={`/categories/${cat.slug}`}
+                        className={`flex items-center justify-between px-3 py-2.5 rounded-xl transition-all ${
+                          pathname === `/categories/${cat.slug}`
+                            ? 'bg-emas-700/20 text-white'
+                            : 'text-tinta-200 hover:bg-white/5 hover:text-white'
+                        }`}
+                      >
+                        <div>
+                          <p className="text-sm font-medium leading-none">{cat.name}</p>
+                          <p className="text-xs text-tinta-400 mt-1">{cat.desc}</p>
+                        </div>
+                        <span className="text-[10px] uppercase font-semibold px-2 py-0.5 rounded-full bg-white/10 text-emas-300">
+                          {cat.badge}
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                  <div className="mt-2 pt-2 border-t border-white/10 px-2 text-center">
+                    <Link
+                      href="/categories"
+                      className="text-xs text-emas-400 hover:text-emas-300 transition-colors font-medium inline-flex items-center gap-1"
+                    >
+                      Lihat Semua Rubrik &rarr;
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <Link
+              href="/search"
+              className={`relative flex items-center gap-1.5 px-3 py-2 text-sm transition-colors ${
+                aktif('/search') ? 'text-white' : 'text-tinta-300 hover:text-white'
+              }`}
+            >
+              <Search className="w-4 h-4" />
+              Cari
+              {aktif('/search') && <span className="absolute inset-x-3 -bottom-px h-px bg-emas-400" />}
+            </Link>
+
+            <Link
+              href="/subscription"
+              className={`relative flex items-center gap-1.5 px-3 py-2 text-sm transition-colors ${
+                aktif('/subscription') ? 'text-white' : 'text-tinta-300 hover:text-white'
+              }`}
+            >
+              <CreditCard className="w-4 h-4" />
+              Langganan
+              {aktif('/subscription') && <span className="absolute inset-x-3 -bottom-px h-px bg-emas-400" />}
+            </Link>
+
+            <Link
+              href="/redaksi"
+              className={`relative flex items-center gap-1.5 px-3 py-2 text-sm transition-colors ${
+                aktif('/redaksi') ? 'text-white' : 'text-tinta-300 hover:text-white'
+              }`}
+            >
+              <Users className="w-4 h-4" />
+              Redaksi
+              {aktif('/redaksi') && <span className="absolute inset-x-3 -bottom-px h-px bg-emas-400" />}
+            </Link>
 
             <span className="w-px h-5 bg-white/15 mx-3" />
 
@@ -116,21 +203,87 @@ export default function Navbar() {
         {/* Menu layar sempit */}
         {menuOpen && (
           <div className="md:hidden pb-4 space-y-1 animate-fade-in">
-            {menu.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setMenuOpen(false)}
-                className={`flex items-center gap-2 rounded-lg px-4 py-2.5 transition-colors ${
-                  aktif(item.href)
-                    ? 'bg-white/10 text-white'
-                    : 'text-tinta-300 hover:bg-white/5 hover:text-white'
+            <Link
+              href="/"
+              onClick={() => setMenuOpen(false)}
+              className={`flex items-center gap-2 rounded-lg px-4 py-2.5 transition-colors ${
+                aktif('/') ? 'bg-white/10 text-white' : 'text-tinta-300 hover:bg-white/5 hover:text-white'
+              }`}
+            >
+              Beranda
+            </Link>
+
+            {/* Rubrik accordion mobile */}
+            <div>
+              <button
+                onClick={() => setRubrikMobileOpen(!rubrikMobileOpen)}
+                className={`flex w-full items-center justify-between rounded-lg px-4 py-2.5 transition-colors ${
+                  isRubrikAktif ? 'bg-white/10 text-white' : 'text-tinta-300 hover:bg-white/5 hover:text-white'
                 }`}
               >
-                {item.icon ? <item.icon className="w-4 h-4" /> : null}
-                {item.label}
-              </Link>
-            ))}
+                <span className="flex items-center gap-2">
+                  <BookOpen className="w-4 h-4" />
+                  Rubrik Sastra
+                </span>
+                <ChevronDown className={`w-4 h-4 transition-transform ${rubrikMobileOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {rubrikMobileOpen && (
+                <div className="pl-6 pr-2 py-2 space-y-1 bg-white/[0.03] rounded-lg mt-1">
+                  {rubrikKategori.map((cat) => (
+                    <Link
+                      key={cat.slug}
+                      href={`/categories/${cat.slug}`}
+                      onClick={() => setMenuOpen(false)}
+                      className="flex items-center justify-between py-2 px-3 text-sm rounded-lg text-tinta-300 hover:text-white hover:bg-white/5"
+                    >
+                      <span>{cat.name}</span>
+                      <span className="text-[10px] text-tinta-400">{cat.badge}</span>
+                    </Link>
+                  ))}
+                  <Link
+                    href="/categories"
+                    onClick={() => setMenuOpen(false)}
+                    className="block py-2 px-3 text-xs text-emas-400 hover:underline"
+                  >
+                    Semua Kategori &rarr;
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            <Link
+              href="/search"
+              onClick={() => setMenuOpen(false)}
+              className={`flex items-center gap-2 rounded-lg px-4 py-2.5 transition-colors ${
+                aktif('/search') ? 'bg-white/10 text-white' : 'text-tinta-300 hover:bg-white/5 hover:text-white'
+              }`}
+            >
+              <Search className="w-4 h-4" />
+              Cari
+            </Link>
+
+            <Link
+              href="/subscription"
+              onClick={() => setMenuOpen(false)}
+              className={`flex items-center gap-2 rounded-lg px-4 py-2.5 transition-colors ${
+                aktif('/subscription') ? 'bg-white/10 text-white' : 'text-tinta-300 hover:bg-white/5 hover:text-white'
+              }`}
+            >
+              <CreditCard className="w-4 h-4" />
+              Langganan
+            </Link>
+
+            <Link
+              href="/redaksi"
+              onClick={() => setMenuOpen(false)}
+              className={`flex items-center gap-2 rounded-lg px-4 py-2.5 transition-colors ${
+                aktif('/redaksi') ? 'bg-white/10 text-white' : 'text-tinta-300 hover:bg-white/5 hover:text-white'
+              }`}
+            >
+              <Users className="w-4 h-4" />
+              Redaksi
+            </Link>
 
             <hr className="border-white/10 my-2" />
 

@@ -14,13 +14,18 @@ export default function DevelopmentScreen() {
       />
 
       <div className="relative z-10 mx-auto max-w-lg">
-        <img
-          src="/logo-sasmita.png"
-          alt="SASMITA.com"
-          width={1048}
-          height={225}
-          className="mx-auto mb-10 h-10 w-auto brightness-0 invert"
-        />
+        <div className="mx-auto mb-10 flex items-center justify-center gap-3">
+          <img
+            src="/logo-smita.png"
+            alt="Smita.id"
+            width={52}
+            height={52}
+            className="h-14 w-14 rounded-full object-contain shadow-xl"
+          />
+          <span className="font-serif text-3xl font-bold tracking-tight text-white">
+            Smita<span className="text-emas-400">.id</span>
+          </span>
+        </div>
 
         <span className="mb-8 inline-flex h-16 w-16 items-center justify-center rounded-xl border border-white/15 bg-white/[0.06]">
           <Wrench className="h-8 w-8 text-emas-300" />
@@ -34,7 +39,7 @@ export default function DevelopmentScreen() {
       </div>
 
       <p className="absolute inset-x-0 bottom-6 z-10 text-sm text-tinta-500">
-        &copy; {new Date().getFullYear()} SASMITA.COM
+        &copy; {new Date().getFullYear()} SMITA.ID. Seluruh hak cipta dilindungi.
       </p>
     </div>
   );

@@ -9,6 +9,7 @@ import EmptyState from '@/components/ui/EmptyState';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import Pagination from '@/components/ui/Pagination';
 import { useToast } from '@/components/ui/Toast';
+import { useAuthStore } from '@/stores/auth-store';
 
 interface Article {
   id: number;
@@ -30,6 +31,7 @@ const statusConfig: Record<string, { label: string; color: string; bg: string; i
 };
 
 export default function MyArticlesPage() {
+  const { user } = useAuthStore();
   const toast = useToast();
   const confirm = useConfirm();
   const [articles, setArticles] = useState<Article[]>([]);
@@ -39,6 +41,22 @@ export default function MyArticlesPage() {
   const [perPage, setPerPage] = useState(10);
   const [meta, setMeta] = useState({ total: 0, page: 1, per_page: 10, last_page: 1 });
   const [statusFilter, setStatusFilter] = useState('all');
+
+  const handleTogglePremium = async (id: number) => {
+    try {
+      const res = await api.put(`/redaksi/articles/${id}/toggle-premium`, {});
+      const newStatus = res.data.data?.isPremium;
+      setArticles((prev) =>
+        prev.map((a) => (a.id === id ? { ...a, isPremium: newStatus } : a))
+      );
+      toast.show(
+        `Karya berhasil diubah menjadi ${newStatus ? 'PREMIUM (Berbayar)' : 'GRATIS'}`,
+        'success'
+      );
+    } catch {
+      toast.show('Gagal mengubah status premium karya', 'error');
+    }
+  };
 
   const loadArticles = (p: number = 1, pp: number = 10) => {
     setLoading(true);
@@ -162,10 +180,25 @@ export default function MyArticlesPage() {
                         <span className={`inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium ${status.bg} ${status.color}`}>
                           {status.label}
                         </span>
-                        {article.isPremium ? (
-                          <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-yellow-100 text-yellow-700">Premium</span>
+                        {(user?.is_redaksi || user?.is_admin) ? (
+                          <button
+                            type="button"
+                            onClick={() => handleTogglePremium(article.id)}
+                            title="Klik untuk mengubah status akses karya (Gratis / Premium)"
+                            className={`text-xs px-2.5 py-1 rounded-full font-medium transition-all cursor-pointer ${
+                              article.isPremium
+                                ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
+                                : 'bg-tinta-100 text-tinta-700 hover:bg-tinta-200'
+                            }`}
+                          >
+                            {article.isPremium ? '⭐ Premium' : '🔓 Gratis'}
+                          </button>
                         ) : (
-                          <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-tinta-50 text-tinta-600">Gratis</span>
+                          article.isPremium ? (
+                            <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-yellow-100 text-yellow-700">Premium</span>
+                          ) : (
+                            <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-tinta-50 text-tinta-600">Gratis</span>
+                          )
                         )}
                         <span className="text-xs text-tinta-400">
                           {new Date(article.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}

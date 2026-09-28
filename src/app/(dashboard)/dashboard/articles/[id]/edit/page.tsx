@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
 import TiptapEditor from '@/components/ui/TiptapEditor';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import { useAuthStore } from '@/stores/auth-store';
 
 interface Category {
   id: number;
@@ -14,6 +15,7 @@ interface Category {
 export default function EditArticlePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
+  const { user } = useAuthStore();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [excerpt, setExcerpt] = useState('');
@@ -52,7 +54,16 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
     setLoading(true);
 
     try {
-      await api.put(`/articles/${id}`, { title, content, excerpt, category_id: parseInt(categoryId), is_premium: isPremium });
+      const payload: Record<string, unknown> = {
+        title,
+        content,
+        excerpt,
+        category_id: parseInt(categoryId),
+      };
+      if (user?.is_redaksi || user?.is_admin) {
+        payload.is_premium = isPremium;
+      }
+      await api.put(`/articles/${id}`, payload);
       if (tags.trim()) {
         const tagList = tags.split(',').map(t => t.trim()).filter(Boolean);
         await api.post(`/articles/${id}/tags`, { tags: tagList });
@@ -88,13 +99,20 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
           <label className="block text-sm font-medium text-tinta-700 mb-1">Tag</label>
           <input type="text" value={tags} onChange={(e) => setTags(e.target.value)} className="kolom-isian" placeholder="Pisahkan dengan koma: romantis, budaya, modern" />
         </div>
-        <div className="flex items-center gap-3 bg-yellow-50 border border-yellow-200 rounded-xl p-4">
-          <input type="checkbox" id="premium" checked={isPremium} onChange={(e) => setIsPremium(e.target.checked)} className="w-4 h-4 text-emas-700 rounded focus:ring-emas-600" />
-          <label htmlFor="premium" className="text-sm">
-            <span className="font-medium text-tinta-900">Artikel Premium</span>
-            <span className="text-tinta-500 ml-1">- Hanya bisa dibaca oleh subscriber</span>
-          </label>
-        </div>
+        {(user?.is_redaksi || user?.is_admin) ? (
+          <div className="flex items-center gap-3 bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+            <input type="checkbox" id="premium" checked={isPremium} onChange={(e) => setIsPremium(e.target.checked)} className="w-4 h-4 text-emas-700 rounded focus:ring-emas-600" />
+            <label htmlFor="premium" className="text-sm">
+              <span className="font-medium text-tinta-900">Karya Premium</span>
+              <span className="text-tinta-500 ml-1">- Akses khusus subscriber/pelanggan</span>
+            </label>
+          </div>
+        ) : (
+          <div className="rounded-xl border border-tinta-200/70 bg-tinta-50 p-4 text-xs text-tinta-600 flex items-start gap-2.5">
+            <span className="text-base leading-none">ℹ️</span>
+            <span><strong>Status Akses Karya:</strong> Penetapan naskah sebagai karya gratis atau premium ditentukan sepenuhnya oleh Tim Redaktur saat kurasi naskah.</span>
+          </div>
+        )}
         <div>
           <label className="block text-sm font-medium text-tinta-700 mb-1">Ringkasan</label>
           <textarea value={excerpt} onChange={(e) => setExcerpt(e.target.value)} rows={2} className="kolom-isian" />

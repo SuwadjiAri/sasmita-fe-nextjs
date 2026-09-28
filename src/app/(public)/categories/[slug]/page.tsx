@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { BookOpen, ArrowLeft } from 'lucide-react';
 import ArticleCard, { type ArtikelKartu } from '@/components/ui/ArticleCard';
+import BookCard from '@/components/ui/BookCard';
 import { ambilJson } from '@/lib/server-fetch';
 
 interface Props {
@@ -85,6 +86,25 @@ export default async function CategoryDetailPage({ params }: Props) {
             <Link href="/dashboard/articles/create" className="btn-utama mt-6">
               Tulis karya pertama
             </Link>
+          </div>
+        ) : category.slug === 'novel' ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
+            {articles.map((article, idx) => (
+              <BookCard
+                key={article.id}
+                book={{
+                  id: article.id,
+                  title: article.title,
+                  slug: article.slug,
+                  excerpt: article.excerpt,
+                  coverImage: article.coverImage,
+                  isPremium: article.isPremium,
+                  publishedAt: article.publishedAt,
+                  categoryName: category.name,
+                }}
+                rank={idx + 1}
+              />
+            ))}
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-6 stagger-children md:grid-cols-2 lg:grid-cols-3">

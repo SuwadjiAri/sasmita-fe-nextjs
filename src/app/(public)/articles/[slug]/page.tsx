@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Eye, Lock } from 'lucide-react';
 import ArticleContent from './ArticleContent';
+import NovelView from '@/components/novel/NovelView';
 import { ambilJson } from '@/lib/server-fetch';
 
 interface Props {
@@ -15,6 +16,7 @@ type Artikel = {
   userId: number;
   categoryId: number;
   title: string;
+  slug?: string;
   content: string;
   excerpt?: string;
   coverImage?: string;
@@ -83,6 +85,15 @@ export default async function ArticleDetailPage({ params }: Props) {
     getPenulis(article.userId),
     getKategori(article.categoryId),
   ]);
+
+  // Jika naskah adalah karya kategori Novel, tampilkan tampilan khas novel (KBM / GoodNovel style)
+  if (kategori?.slug === 'novel') {
+    return (
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <NovelView article={article} author={penulis} kategoriName={kategori.name} />
+      </div>
+    );
+  }
 
   const tanggal = article.publishedAt
     ? new Date(article.publishedAt).toLocaleDateString('id-ID', {

@@ -84,13 +84,18 @@ export default function DashboardLayout({
   if (!user) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-tinta-950">
-        <img
-          src="/logo-sasmita.png"
-          alt="SASMITA.com"
-          width={1048}
-          height={225}
-          className="mb-8 h-9 w-auto brightness-0 invert"
-        />
+        <div className="mb-8 flex items-center gap-3">
+          <img
+            src="/logo-smita.png"
+            alt="Smita.id"
+            width={48}
+            height={48}
+            className="h-12 w-12 rounded-full object-contain shadow-lg"
+          />
+          <span className="font-serif text-2xl font-bold tracking-tight text-white">
+            Smita<span className="text-emas-400">.id</span>
+          </span>
+        </div>
         <div className="flex items-center gap-3">
           <div className="h-5 w-5 animate-spin rounded-full border-2 border-white/20 border-t-emas-400" />
           <p className="text-sm text-tinta-400">Memuat dashboard...</p>
@@ -109,14 +114,17 @@ export default function DashboardLayout({
   const sidebarContent = (mobile: boolean) => (
     <>
       <div className={`p-5 ${mobile ? 'border-b border-tinta-200/70' : 'border-b border-white/10'}`}>
-        <Link href="/" className="inline-flex items-center">
+        <Link href="/" className="inline-flex items-center gap-2.5">
           <img
-            src="/logo-sasmita.png"
-            alt="SASMITA.com"
-            width={1048}
-            height={225}
-            className={`h-7 w-auto ${mobile ? '' : 'brightness-0 invert'}`}
+            src="/logo-smita.png"
+            alt="Smita.id"
+            width={36}
+            height={36}
+            className="h-8 w-8 rounded-full object-contain"
           />
+          <span className={`font-serif text-lg font-bold tracking-tight ${mobile ? 'text-tinta-950' : 'text-white'}`}>
+            Smita<span className={mobile ? 'text-emas-700' : 'text-emas-400'}>.id</span>
+          </span>
         </Link>
       </div>
 
@@ -249,8 +257,11 @@ export default function DashboardLayout({
     <div className="flex min-h-screen bg-kertas">
       {/* Kepala layar sempit */}
       <div className="fixed inset-x-0 top-0 z-40 flex h-14 items-center justify-between border-b border-tinta-200/70 bg-white px-4 md:hidden">
-        <Link href="/" className="inline-flex items-center">
-          <img src="/logo-sasmita.png" alt="SASMITA.com" width={1048} height={225} className="h-7 w-auto" />
+        <Link href="/" className="inline-flex items-center gap-2">
+          <img src="/logo-smita.png" alt="Smita.id" width={32} height={32} className="h-7 w-7 rounded-full object-contain" />
+          <span className="font-serif text-base font-bold tracking-tight text-tinta-950">
+            Smita<span className="text-emas-700">.id</span>
+          </span>
         </Link>
 
         <div className="flex items-center gap-2">

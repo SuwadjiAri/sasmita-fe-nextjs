@@ -25,6 +25,7 @@ export default function ReviewsPage() {
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [reviewNotes, setReviewNotes] = useState<Record<number, string>>({});
+  const [reviewPremium, setReviewPremium] = useState<Record<number, boolean>>({});
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [meta, setMeta] = useState({ total: 0, page: 1, per_page: 10, last_page: 1 });
@@ -44,12 +45,16 @@ export default function ReviewsPage() {
 
   const handleReview = async (articleId: number, status: string) => {
     try {
+      const isPrem = reviewPremium[articleId] ?? false;
       await api.post(`/redaksi/reviews/${articleId}`, {
         status,
         notes: reviewNotes[articleId] || '',
+        is_premium: isPrem,
       });
       setArticles((prev) => prev.filter((a) => a.id !== articleId));
-      const msg = status === 'approved' ? 'Artikel disetujui' : status === 'revision_needed' ? 'Revisi diminta' : 'Artikel ditolak';
+      const msg = status === 'approved'
+        ? `Karya disetujui sebagai karya ${isPrem ? 'PREMIUM (Berbayar)' : 'GRATIS'}`
+        : status === 'revision_needed' ? 'Revisi diminta' : 'Karya ditolak';
       toast.show(msg, status === 'approved' ? 'success' : 'info');
     } catch {
       toast.show('Gagal menyimpan review', 'error');
@@ -120,6 +125,36 @@ export default function ReviewsPage() {
                   rows={2}
                   className="w-full px-4 py-2 border border-tinta-200 rounded-lg text-sm focus:ring-2 focus:ring-emas-600 focus:border-transparent mb-3 resize-none"
                 />
+                <div className="mb-4 rounded-xl border border-emas-200/80 bg-emas-50/50 p-4">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-emas-800 mb-2.5">
+                    Keputusan Hak Akses Konten (Ditentukan oleh Redaktur):
+                  </p>
+                  <div className="flex flex-wrap gap-4">
+                    <label className="flex items-center gap-2 cursor-pointer text-sm">
+                      <input
+                        type="radio"
+                        name={`premium-${article.id}`}
+                        checked={!(reviewPremium[article.id] ?? article.isPremium)}
+                        onChange={() => setReviewPremium({ ...reviewPremium, [article.id]: false })}
+                        className="text-emas-700 focus:ring-emas-600"
+                      />
+                      <span className="font-medium text-tinta-800">Karya Terbuka (Gratis untuk Semua Pembaca)</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer text-sm">
+                      <input
+                        type="radio"
+                        name={`premium-${article.id}`}
+                        checked={Boolean(reviewPremium[article.id] ?? article.isPremium)}
+                        onChange={() => setReviewPremium({ ...reviewPremium, [article.id]: true })}
+                        className="text-emas-700 focus:ring-emas-600"
+                      />
+                      <span className="font-semibold text-emas-800 flex items-center gap-1">
+                        ⭐ Karya Premium (Khusus Pembaca Berlangganan)
+                      </span>
+                    </label>
+                  </div>
+                </div>
+
                 <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => handleReview(article.id, 'approved')}

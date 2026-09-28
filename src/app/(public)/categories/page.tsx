@@ -16,7 +16,7 @@ async function getCategories() {
   );
 }
 
-export const metadata = { title: 'Kategori' };
+export const metadata = { title: 'Rubrik & Kategori Sastra' };
 
 export default async function CategoriesPage() {
   const categories = (await getCategories())?.data || [];
@@ -25,11 +25,11 @@ export default async function CategoriesPage() {
     <div>
       <header className="border-b border-tinta-200/70 bg-white">
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-          <p className="label-mikro">Rubrik</p>
-          <h1 className="mt-3 text-4xl font-semibold text-tinta-900">Jelajahi Kategori</h1>
+          <p className="label-mikro">Rubrik Sastra</p>
+          <h1 className="mt-3 text-4xl font-serif font-bold text-tinta-900">Rubrik & Kategori Sastra</h1>
           <p className="mt-4 max-w-2xl leading-relaxed text-tinta-600">
-            Karya dikelompokkan menurut bentuknya. Pilih salah satu rubrik untuk
-            membaca naskah yang terbit di dalamnya.
+            Karya sastra dikelompokkan menurut bentuknya: Opini, Esai, Cerpen, Puisi, Resensi, dan Novel.
+            Pilih salah satu rubrik untuk membaca naskah kurasi redaksi SMITA.ID.
           </p>
         </div>
       </header>
