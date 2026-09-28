@@ -2,8 +2,8 @@ import { Metadata } from 'next';
 import { Mail, MapPin, Award, BookOpen, ShieldCheck, Users, Feather } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Susunan Dewan Redaksi | SASMITA.COM',
-  description: 'Susunan Dewan Redaksi dan Pengelola Media Sastra SASMITA.COM Universitas Pamulang.',
+  title: 'Susunan Dewan Redaksi | SMITA.ID',
+  description: 'Susunan Dewan Redaksi dan Pengelola Media Sastra SMITA.ID Universitas Pamulang.',
 };
 
 export default function RedaksiPage() {
@@ -17,7 +17,7 @@ export default function RedaksiPage() {
             Susunan Dewan Redaksi
           </h1>
           <p className="mx-auto mt-4 max-w-2xl font-serif text-lg leading-relaxed text-tinta-600">
-            SASMITA.COM diterbitkan sebagai wadah kurasi, apresiasi, dan publikasi karya sastra
+            SMITA.ID diterbitkan sebagai wadah kurasi, apresiasi, dan publikasi karya sastra
             terkurasi di bawah naungan Program Studi Sastra Indonesia Universitas Pamulang.
           </p>
         </div>

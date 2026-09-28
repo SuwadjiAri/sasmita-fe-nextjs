@@ -23,11 +23,11 @@ const lora = Lora({
 
 export const metadata: Metadata = {
   title: {
-    default: "SASMITA.COM, Platform Literasi Digital",
-    template: "%s | SASMITA.COM",
+    default: "SMITA.ID, Platform Literasi Digital Sastra",
+    template: "%s | SMITA.ID",
   },
   description:
-    "Platform Literasi Digital Karya Sastra dan Akademik Mahasiswa, Prodi Sastra Indonesia, Universitas Pamulang",
+    "Platform Literasi Digital Karya Sastra, Prodi Sastra Indonesia, Universitas Pamulang",
 };
 
 export default function RootLayout({

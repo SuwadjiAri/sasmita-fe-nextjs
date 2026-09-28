@@ -33,7 +33,7 @@ export default function LoginPage() {
   return (
     <div className="kartu p-8">
       <h1 className="text-2xl font-semibold text-tinta-900">Selamat datang kembali</h1>
-      <p className="mt-1.5 text-tinta-500">Masuk ke akun SASMITA.COM Anda.</p>
+      <p className="mt-1.5 text-tinta-500">Masuk ke akun SMITA.ID Anda.</p>
 
       {error && (
         <p role="alert" className="mt-6 rounded-lg bg-red-50 px-3.5 py-3 text-sm text-red-700">

@@ -13,7 +13,7 @@ const JARAK_BARIS_WATERMARK = 120;
 
 // Ditulis ke clipboard setelah PrintScreen. Bukan pencegahan, lihat docs bagian 8.
 const TEKS_PENGGANTI_CLIPBOARD =
-  'Isi artikel SASMITA.COM dilindungi hak cipta. Tangkapan layar tidak disertakan.';
+  'Isi artikel SMITA.ID dilindungi hak cipta. Tangkapan layar tidak disertakan.';
 
 // Tombol yang menandakan pembaca sedang menggulir dengan papan ketik.
 const TOMBOL_BACA = new Set([
@@ -150,7 +150,7 @@ export default function ContentProtection({ children }: { children: React.ReactN
   }, []);
 
   const kabur = alasan.size > 0;
-  const watermarkText = user?.email || 'SASMITA.COM';
+  const watermarkText = user?.email ? `${user.email} • SMITA.ID` : 'SMITA.ID';
   const barisWatermark = Math.max(
     8,
     Math.ceil(tinggiWadah / JARAK_BARIS_WATERMARK) + 1,
