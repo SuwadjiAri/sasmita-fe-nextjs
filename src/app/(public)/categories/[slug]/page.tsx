@@ -8,13 +8,16 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+const API = process.env.NEXT_PUBLIC_API_URL || 'https://smita.id/api';
 
 type Kategori = { id: number; name: string; slug: string; description?: string };
 
 async function getCategoryArticles(slug: string) {
   const kategoriRes = await ambilJson<{ data: Kategori[] }>(`${API}/categories`, {
-    next: { revalidate: 3600 },
+    cache: 'no-store',
   });
 
   const category = kategoriRes?.data?.find((c) => c.slug === slug) || null;
@@ -22,7 +25,7 @@ async function getCategoryArticles(slug: string) {
 
   const artikelRes = await ambilJson<{ data: ArtikelKartu[] }>(
     `${API}/articles?category_id=${category.id}`,
-    { next: { revalidate: 60 } }
+    { cache: 'no-store' }
   );
 
   return { category, articles: artikelRes?.data || [] };

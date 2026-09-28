@@ -2,6 +2,9 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { ambilJson } from '@/lib/server-fetch';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 type Kategori = {
   id: number;
   name: string;
@@ -9,10 +12,12 @@ type Kategori = {
   description?: string;
 };
 
+const API = process.env.NEXT_PUBLIC_API_URL || 'https://smita.id/api';
+
 async function getCategories() {
   return ambilJson<{ data: Kategori[] }>(
-    `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/categories`,
-    { next: { revalidate: 3600 } }
+    `${API}/categories`,
+    { cache: 'no-store' }
   );
 }
 

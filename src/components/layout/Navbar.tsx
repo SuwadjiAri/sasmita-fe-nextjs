@@ -6,7 +6,14 @@ import { useAuthStore } from '@/stores/auth-store';
 import { useEffect, useState } from 'react';
 import { Search, BookOpen, CreditCard, LayoutDashboard, LogOut, Menu, X, Users, ChevronDown } from 'lucide-react';
 
-const rubrikKategori = [
+type RubrikItem = {
+  slug: string;
+  name: string;
+  desc: string;
+  badge: string;
+};
+
+const rubrikDefault: RubrikItem[] = [
   { slug: 'opini', name: 'Opini', desc: 'Opini kritis & wacana sastra', badge: 'Wacana' },
   { slug: 'esai', name: 'Esai', desc: 'Esai sastra & telaah budaya', badge: 'Telaah' },
   { slug: 'cerpen', name: 'Cerpen', desc: 'Cerita pendek sastra pilihan', badge: 'Fiksi' },
@@ -15,12 +22,25 @@ const rubrikKategori = [
   { slug: 'novel', name: 'Novel', desc: 'Serial novel & karya bersambung', badge: 'Serial' },
 ];
 
+function tentukanBadge(slug: string, name: string): string {
+  const map: Record<string, string> = {
+    opini: 'Wacana',
+    esai: 'Telaah',
+    cerpen: 'Fiksi',
+    puisi: 'Puitika',
+    resensi: 'Kritik',
+    novel: 'Serial',
+  };
+  return map[slug.toLowerCase()] || (name.length > 7 ? name.slice(0, 6) : name);
+}
+
 export default function Navbar() {
   const { user, logout, loadUser } = useAuthStore();
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [rubrikMobileOpen, setRubrikMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [rubrikList, setRubrikList] = useState<RubrikItem[]>(rubrikDefault);
 
   useEffect(() => {
     loadUser();
@@ -28,6 +48,31 @@ export default function Navbar() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, [loadUser]);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetch('/api/categories', { cache: 'no-store' })
+      .then((res) => {
+        if (!res.ok) throw new Error('Network error');
+        return res.json();
+      })
+      .then((json) => {
+        if (isMounted && json?.data && Array.isArray(json.data) && json.data.length > 0) {
+          const items: RubrikItem[] = json.data.map((cat: { slug: string; name: string; description?: string }) => ({
+            slug: cat.slug,
+            name: cat.name,
+            desc: cat.description || `Rubrik & karya ${cat.name.toLowerCase()}`,
+            badge: tentukanBadge(cat.slug, cat.name),
+          }));
+          setRubrikList(items);
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const aktif = (href: string) =>
     href === '/' ? pathname === '/' : pathname.startsWith(href);
@@ -91,7 +136,7 @@ export default function Navbar() {
                     </p>
                   </div>
                   <div className="grid grid-cols-1 gap-1">
-                    {rubrikKategori.map((cat) => (
+                    {rubrikList.map((cat) => (
                       <Link
                         key={cat.slug}
                         href={`/categories/${cat.slug}`}
@@ -230,7 +275,7 @@ export default function Navbar() {
 
               {rubrikMobileOpen && (
                 <div className="pl-6 pr-2 py-2 space-y-1 bg-white/[0.03] rounded-lg mt-1">
-                  {rubrikKategori.map((cat) => (
+                  {rubrikList.map((cat) => (
                     <Link
                       key={cat.slug}
                       href={`/categories/${cat.slug}`}

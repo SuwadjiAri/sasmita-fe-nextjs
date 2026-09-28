@@ -91,7 +91,7 @@ export default function SearchPage() {
           <p className="label-mikro text-emas-300">Pencarian</p>
           <h1 className="mt-3 text-3xl font-semibold text-white md:text-4xl">Cari Karya</h1>
           <p className="mt-3 text-tinta-300">
-            Telusuri puisi, cerpen, esai, novel, resensi, dan artikel akademik.
+            Telusuri opini, esai, cerpen, puisi, resensi, dan novel.
           </p>
 
           <form onSubmit={handleSearch} className="mt-8 flex flex-col gap-3 sm:flex-row">

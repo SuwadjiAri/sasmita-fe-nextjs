@@ -4,7 +4,10 @@ import ArticleCard, { type ArtikelKartu } from '@/components/ui/ArticleCard';
 import BookCard from '@/components/ui/BookCard';
 import { ambilJson } from '@/lib/server-fetch';
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+const API = process.env.NEXT_PUBLIC_API_URL || 'https://smita.id/api';
 
 type Artikel = ArtikelKartu & {
   categoryId: number;
@@ -22,13 +25,13 @@ type Kategori = {
 
 async function getArticles() {
   return ambilJson<{ data: Artikel[] }>(`${API}/articles?per_page=12`, {
-    next: { revalidate: 60 },
+    cache: 'no-store',
   });
 }
 
 async function getCategories() {
   return ambilJson<{ data: Kategori[] }>(`${API}/categories`, {
-    next: { revalidate: 3600 },
+    cache: 'no-store',
   });
 }
 

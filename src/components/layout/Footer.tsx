@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import AdSlot from '@/components/ui/AdSlot';
 
+import { useEffect, useState } from 'react';
+
 const navigasi = [
   { href: '/', label: 'Beranda' },
   { href: '/categories', label: 'Rubrik' },
@@ -11,7 +13,7 @@ const navigasi = [
   { href: '/redaksi', label: 'Redaksi' },
 ];
 
-const kategori = [
+const kategoriDefault = [
   { slug: 'opini', label: 'Opini' },
   { slug: 'esai', label: 'Esai' },
   { slug: 'cerpen', label: 'Cerpen' },
@@ -21,6 +23,31 @@ const kategori = [
 ];
 
 export default function Footer() {
+  const [kategoriList, setKategoriList] = useState(kategoriDefault);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetch('/api/categories', { cache: 'no-store' })
+      .then((res) => {
+        if (!res.ok) throw new Error('Network error');
+        return res.json();
+      })
+      .then((json) => {
+        if (isMounted && json?.data && Array.isArray(json.data) && json.data.length > 0) {
+          setKategoriList(
+            json.data.map((cat: { slug: string; name: string }) => ({
+              slug: cat.slug,
+              label: cat.name,
+            }))
+          );
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
   return (
     <footer className="mt-auto bg-tinta-950 text-tinta-300">
       <AdSlot position="footer" />
@@ -63,7 +90,7 @@ export default function Footer() {
           <div>
             <h2 className="label-mikro text-tinta-400">Rubrik Sastra</h2>
             <ul className="mt-4 space-y-3 text-sm">
-              {kategori.map((item) => (
+              {kategoriList.map((item) => (
                 <li key={item.slug}>
                   <Link href={`/categories/${item.slug}`} className="transition-colors hover:text-white">
                     {item.label}
