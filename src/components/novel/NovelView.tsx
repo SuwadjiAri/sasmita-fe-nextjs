@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { BookOpen, Bookmark, Share2, Eye, Clock, Lock, ChevronLeft, ChevronRight, ListOrdered, BookCheck, Type, Sun, Moon, Coffee, FileText } from 'lucide-react';
 import BookmarkButton from '@/components/ui/BookmarkButton';
@@ -20,6 +20,8 @@ interface Article {
   excerpt?: string;
   coverImage?: string;
   pdfFile?: string;
+  serialStatus?: 'ongoing' | 'completed';
+  serial_status?: 'ongoing' | 'completed';
   isPremium: boolean;
   publishedAt?: string;
   viewCount: number;
@@ -120,9 +122,28 @@ export default function NovelView({
       })
     : '';
 
+  const [savedChapterIdx, setSavedChapterIdx] = useState<number | null>(null);
+  const storageKey = `sasmita_novel_progress_${article.slug || article.id}`;
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved !== null) {
+        const parsed = parseInt(saved, 10);
+        if (!isNaN(parsed) && parsed >= 0 && parsed < chapters.length) {
+          setSavedChapterIdx(parsed);
+        }
+      }
+    } catch {}
+  }, [storageKey, chapters.length]);
+
   const scrollToReader = (chapterIndex = 0) => {
     setCurrentChapterIdx(chapterIndex);
     setActiveTab('baca');
+    try {
+      localStorage.setItem(storageKey, String(chapterIndex));
+      setSavedChapterIdx(chapterIndex);
+    } catch {}
     const el = document.getElementById('novel-reader-area');
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
@@ -187,6 +208,15 @@ export default function NovelView({
                 <span className="px-3 py-1 rounded-full text-xs font-medium bg-emas-400/20 text-emas-300 border border-emas-400/30">
                   {kategoriName}
                 </span>
+                {(article.serialStatus === 'ongoing' || article.serial_status === 'ongoing') ? (
+                  <span className="px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                    Sedang Berjalan (Ongoing)
+                  </span>
+                ) : (
+                  <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                    Tamat
+                  </span>
+                )}
                 <span className="px-3 py-1 rounded-full text-xs font-medium bg-white/10 text-tinta-200">
                   {chapters.length > 1 ? `${chapters.length} Bab Serial` : 'Naskah Lengkap'}
                 </span>
@@ -247,13 +277,31 @@ export default function NovelView({
 
             {/* Bilah Tombol Aksi KBM/GoodNovel */}
             <div className="pt-4 flex flex-wrap items-center gap-3">
-              <button
-                onClick={() => scrollToReader(0)}
-                className="btn-emas px-7 py-3 text-base font-semibold shadow-lg shadow-emas-900/40 hover:scale-[1.02] transition-transform flex items-center gap-2"
-              >
-                <BookOpen className="w-5 h-5" />
-                Mulai Membaca
-              </button>
+              {savedChapterIdx !== null && savedChapterIdx > 0 ? (
+                <>
+                  <button
+                    onClick={() => scrollToReader(savedChapterIdx)}
+                    className="btn-emas px-7 py-3 text-base font-semibold shadow-lg shadow-emas-900/40 hover:scale-[1.02] transition-transform flex items-center gap-2"
+                  >
+                    <BookOpen className="w-5 h-5" />
+                    Lanjutkan Bab {savedChapterIdx + 1}
+                  </button>
+                  <button
+                    onClick={() => scrollToReader(0)}
+                    className="btn border border-white/20 text-white hover:bg-white/10 px-4 py-3 text-sm flex items-center gap-1.5"
+                  >
+                    Bab 1
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => scrollToReader(0)}
+                  className="btn-emas px-7 py-3 text-base font-semibold shadow-lg shadow-emas-900/40 hover:scale-[1.02] transition-transform flex items-center gap-2"
+                >
+                  <BookOpen className="w-5 h-5" />
+                  Mulai Membaca
+                </button>
+              )}
 
               <button
                 onClick={() => {
@@ -574,7 +622,11 @@ export default function NovelView({
       {/* ── 5. KARTU PROFIL PENULIS & KOLOM KOMENTAR ── */}
       <div className="max-w-4xl mx-auto space-y-10 pt-6">
         <AuthorCard author={author} />
-        <CommentSection articleId={article.id} />
+        <CommentSection
+          articleId={article.id}
+          chapterIndex={chapters.length > 1 ? currentChapterIdx + 1 : undefined}
+          chapterTitle={chapters.length > 1 ? currentChapter.title : undefined}
+        />
       </div>
     </div>
   );

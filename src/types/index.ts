@@ -20,6 +20,8 @@ export interface Article {
   coverImage?: string;
   pdfFile?: string;
   status: 'draft' | 'pending' | 'revision' | 'published' | 'archived';
+  serialStatus?: 'ongoing' | 'completed';
+  serial_status?: 'ongoing' | 'completed';
   isPremium: boolean;
   publishedAt?: string;
   viewCount: number;
@@ -38,8 +40,12 @@ export interface Comment {
   id: number;
   articleId: number;
   userId: number;
+  userName?: string;
+  userAvatar?: string;
   content: string;
   createdAt?: string;
+  chapterIndex?: number | null;
+  chapter_index?: number | null;
 }
 
 export interface Tag {

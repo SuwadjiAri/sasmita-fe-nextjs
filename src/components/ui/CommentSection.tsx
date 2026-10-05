@@ -14,21 +14,45 @@ interface Comment {
   content: string;
   userName?: string;
   createdAt: string;
+  chapterIndex?: number | null;
+  chapter_index?: number | null;
 }
 
-export default function CommentSection({ articleId }: { articleId: number }) {
+export default function CommentSection({
+  articleId,
+  chapterIndex,
+  chapterTitle,
+}: {
+  articleId: number;
+  chapterIndex?: number | null;
+  chapterTitle?: string;
+}) {
   const { user } = useAuthStore();
   const toast = useToast();
   const confirmDialog = useConfirm();
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(false);
+  const [filterScope, setFilterScope] = useState<'chapter' | 'all'>(
+    chapterIndex ? 'chapter' : 'all'
+  );
 
   useEffect(() => {
-    api.get(`/articles/${articleId}/comments`)
+    if (chapterIndex) {
+      setFilterScope('chapter');
+    }
+  }, [chapterIndex]);
+
+  useEffect(() => {
+    const url =
+      filterScope === 'chapter' && chapterIndex
+        ? `/articles/${articleId}/comments?chapter_index=${chapterIndex}`
+        : `/articles/${articleId}/comments`;
+
+    api.get(url)
       .then((res) => setComments(res.data.data || []))
       .catch(() => {});
-  }, [articleId]);
+  }, [articleId, filterScope, chapterIndex]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +60,11 @@ export default function CommentSection({ articleId }: { articleId: number }) {
 
     setLoading(true);
     try {
-      const res = await api.post(`/articles/${articleId}/comments`, { content: newComment });
+      const payload: { content: string; chapter_index?: number } = { content: newComment };
+      if (filterScope === 'chapter' && chapterIndex) {
+        payload.chapter_index = chapterIndex;
+      }
+      const res = await api.post(`/articles/${articleId}/comments`, payload);
       setComments((prev) => [res.data.data, ...prev]);
       setNewComment('');
       toast.show('Komentar berhasil dikirim', 'success');
@@ -63,10 +91,39 @@ export default function CommentSection({ articleId }: { articleId: number }) {
 
   return (
     <div className="mt-12 border-t border-tinta-200 pt-8">
-      <h2 className="mb-6 flex items-center gap-2 text-xl font-semibold text-tinta-900">
-        <MessageCircle className="h-5 w-5 text-tinta-400" />
-        Komentar ({comments.length})
-      </h2>
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+        <h2 className="flex items-center gap-2 text-xl font-semibold text-tinta-900">
+          <MessageCircle className="h-5 w-5 text-tinta-400" />
+          Diskusi & Komentar ({comments.length})
+        </h2>
+
+        {chapterIndex ? (
+          <div className="flex items-center gap-1.5 bg-tinta-100 p-1 rounded-xl text-xs font-medium">
+            <button
+              type="button"
+              onClick={() => setFilterScope('chapter')}
+              className={`px-3 py-1.5 rounded-lg transition-all ${
+                filterScope === 'chapter'
+                  ? 'bg-white text-tinta-950 shadow-sm font-semibold'
+                  : 'text-tinta-600 hover:text-tinta-900'
+              }`}
+            >
+              Bab Ini ({chapterTitle || `Bab ${chapterIndex}`})
+            </button>
+            <button
+              type="button"
+              onClick={() => setFilterScope('all')}
+              className={`px-3 py-1.5 rounded-lg transition-all ${
+                filterScope === 'all'
+                  ? 'bg-white text-tinta-950 shadow-sm font-semibold'
+                  : 'text-tinta-600 hover:text-tinta-900'
+              }`}
+            >
+              Semua Bab
+            </button>
+          </div>
+        ) : null}
+      </div>
 
       {/* Formulir komentar, atau ajakan masuk bila belum ada sesi. */}
       {!user ? (
@@ -129,6 +186,11 @@ export default function CommentSection({ articleId }: { articleId: number }) {
                   <p className="text-sm font-semibold text-tinta-800">
                     {comment.userName || 'Anonim'}
                   </p>
+                  {(comment.chapterIndex || comment.chapter_index) ? (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emas-100 text-emas-800 border border-emas-200">
+                      Bab {comment.chapterIndex || comment.chapter_index}
+                    </span>
+                  ) : null}
                   <span className="inline-flex items-center gap-1 text-xs text-tinta-400">
                     <Clock className="h-3 w-3" />
                     {comment.createdAt && new Date(comment.createdAt).getFullYear() > 1970

@@ -15,6 +15,8 @@ export interface BookCardProps {
   publishedAt?: string;
   viewCount?: number;
   categoryName?: string;
+  serialStatus?: 'ongoing' | 'completed';
+  serial_status?: 'ongoing' | 'completed';
 }
 
 export default function BookCard({
@@ -24,6 +26,8 @@ export default function BookCard({
   book: BookCardProps;
   rank?: number;
 }) {
+  const serial = book.serialStatus || book.serial_status;
+
   return (
     <Link
       href={`/articles/${book.slug}`}
@@ -67,7 +71,7 @@ export default function BookCard({
         <div className="absolute left-0 inset-y-0 w-2.5 bg-gradient-to-r from-black/40 via-white/10 to-transparent pointer-events-none" />
 
         {/* Premium / Gratis pill */}
-        <div className="absolute top-2 right-2">
+        <div className="absolute top-2 right-2 flex flex-col items-end gap-1">
           {book.isPremium ? (
             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emas-500 text-tinta-950 shadow">
               <Lock className="w-2.5 h-2.5" /> Premium
@@ -78,6 +82,21 @@ export default function BookCard({
             </span>
           )}
         </div>
+
+        {/* Status Serial Ongoing / Tamat */}
+        {serial === 'ongoing' ? (
+          <div className="absolute bottom-2 left-2">
+            <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-600 text-white shadow-md">
+              Bersambung
+            </span>
+          </div>
+        ) : serial === 'completed' ? (
+          <div className="absolute bottom-2 left-2">
+            <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-700 text-white shadow-md">
+              Tamat
+            </span>
+          </div>
+        ) : null}
       </div>
 
       {/* Book Info */}

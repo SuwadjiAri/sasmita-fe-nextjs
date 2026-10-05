@@ -21,6 +21,8 @@ type Artikel = {
   excerpt?: string;
   coverImage?: string;
   pdfFile?: string;
+  serialStatus?: 'ongoing' | 'completed';
+  serial_status?: 'ongoing' | 'completed';
   isPremium: boolean;
   contentLocked?: boolean;
   publishedAt?: string;

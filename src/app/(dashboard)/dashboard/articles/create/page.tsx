@@ -24,6 +24,7 @@ export default function CreateArticlePage() {
   const [categoryId, setCategoryId] = useState('');
   const [coverImage, setCoverImage] = useState('');
   const [pdfFile, setPdfFile] = useState('');
+  const [serialStatus, setSerialStatus] = useState<'ongoing' | 'completed'>('completed');
   const [uploadingPdf, setUploadingPdf] = useState(false);
   const [tags, setTags] = useState('');
   const [isPremium, setIsPremium] = useState(false);
@@ -41,6 +42,13 @@ export default function CreateArticlePage() {
   const isOpiniOrEsai = ['opini', 'esai'].includes(selectedCat?.slug || '') ||
     selectedCat?.name.toLowerCase().includes('opini') ||
     selectedCat?.name.toLowerCase().includes('esai');
+
+  const handleInsertChapter = () => {
+    const existingChapters = (content.match(/<h[23][^>]*>(?:Bab|Bagian|\d+)[^<]*<\/h[23]>/gi) || []).length;
+    const nextNum = existingChapters + 1;
+    const template = `<h2>Bab ${nextNum}: Judul Bab</h2><p>Tuliskan naskah bab ${nextNum} di sini...</p>`;
+    setContent((prev) => (prev ? `${prev}<hr/>${template}` : template));
+  };
 
   const handleUploadCover = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -95,6 +103,7 @@ export default function CreateArticlePage() {
         category_id: parseInt(categoryId),
         cover_image: coverImage || undefined,
         pdf_file: pdfFile || undefined,
+        serial_status: isNovel ? serialStatus : 'completed',
         is_premium: (user?.is_redaksi || user?.is_admin) ? isPremium : false,
       });
 
@@ -151,6 +160,41 @@ export default function CreateArticlePage() {
             ))}
           </select>
         </div>
+
+        {isNovel && (
+          <div className="rounded-xl border border-emas-300 bg-emas-50/60 p-4 space-y-2">
+            <label className="block text-sm font-semibold text-tinta-900">Status Serial Novel</label>
+            <p className="text-xs text-tinta-600 mb-2">
+              Tentukan apakah novel masih aktif menulis bab baru atau naskah sudah tamat sepenuhnya.
+            </p>
+            <div className="flex flex-wrap items-center gap-6">
+              <label className="flex items-center gap-2 text-sm cursor-pointer">
+                <input
+                  type="radio"
+                  name="serialStatus"
+                  value="ongoing"
+                  checked={serialStatus === 'ongoing'}
+                  onChange={() => setSerialStatus('ongoing')}
+                  className="text-emas-600 focus:ring-emas-500"
+                />
+                <span className="font-semibold text-tinta-900">Masih Berjalan (Ongoing)</span>
+                <span className="text-xs text-tinta-500">- Bab bertambah berkala</span>
+              </label>
+              <label className="flex items-center gap-2 text-sm cursor-pointer">
+                <input
+                  type="radio"
+                  name="serialStatus"
+                  value="completed"
+                  checked={serialStatus === 'completed'}
+                  onChange={() => setSerialStatus('completed')}
+                  className="text-emas-600 focus:ring-emas-500"
+                />
+                <span className="font-semibold text-tinta-900">Tamat (Completed)</span>
+                <span className="text-xs text-tinta-500">- Seluruh bab sudah lengkap</span>
+              </label>
+            </div>
+          </div>
+        )}
 
         <div className="rounded-xl border border-tinta-200/80 bg-white p-4 space-y-3">
           <div>
@@ -321,9 +365,33 @@ export default function CreateArticlePage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-tinta-700 mb-1">
-            {isNovel ? 'Isi Naskah Novel (Gunakan Heading Bab 1, Bab 2, dst.)' : 'Konten Naskah'}
-          </label>
+          <div className="flex items-center justify-between mb-1">
+            <label className="block text-sm font-medium text-tinta-700">
+              {isNovel ? 'Isi Naskah Serial Novel' : 'Konten Naskah'}
+            </label>
+            {isNovel && (
+              <span className="text-xs font-mono text-tinta-500">
+                {content.replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length} kata (~1.000 kata/bab ideal)
+              </span>
+            )}
+          </div>
+
+          {isNovel && (
+            <div className="flex flex-wrap items-center justify-between gap-2 p-3 bg-amber-50/70 border border-amber-200/80 rounded-xl text-xs text-amber-950 mb-3">
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-amber-800">📖 Panduan Serial:</span>
+                <span>Gunakan format &ldquo;Bab 1: Judul&rdquo; agar sistem otomatis membagi naskah per episode pembaca.</span>
+              </div>
+              <button
+                type="button"
+                onClick={handleInsertChapter}
+                className="px-3 py-1.5 bg-emas-700 hover:bg-emas-800 text-white rounded-lg font-semibold shadow-sm transition-colors flex items-center gap-1"
+              >
+                <span>➕ Sisipkan Bab Baru</span>
+              </button>
+            </div>
+          )}
+
           <TiptapEditor content={content} onChange={setContent} />
         </div>
 
