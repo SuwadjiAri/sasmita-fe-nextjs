@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { BookOpen, Bookmark, Share2, Eye, Clock, Lock, ChevronLeft, ChevronRight, ListOrdered, BookCheck, Type, Sun, Moon, Coffee } from 'lucide-react';
+import { BookOpen, Bookmark, Share2, Eye, Clock, Lock, ChevronLeft, ChevronRight, ListOrdered, BookCheck, Type, Sun, Moon, Coffee, FileText } from 'lucide-react';
 import BookmarkButton from '@/components/ui/BookmarkButton';
 import ShareButtons from '@/components/ui/ShareButtons';
 import AuthorCard from '@/components/ui/AuthorCard';
@@ -19,6 +19,7 @@ interface Article {
   content: string;
   excerpt?: string;
   coverImage?: string;
+  pdfFile?: string;
   isPremium: boolean;
   publishedAt?: string;
   viewCount: number;
@@ -265,6 +266,18 @@ export default function NovelView({
                 <ListOrdered className="w-4 h-4" />
                 Daftar Bab ({chapters.length})
               </button>
+
+              {article.pdfFile && (
+                <a
+                  href={`${API}${article.pdfFile}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn border border-emas-400/40 text-emas-300 hover:bg-white/10 px-5 py-3 text-sm flex items-center gap-2"
+                >
+                  <FileText className="w-4 h-4" />
+                  Naskah PDF
+                </a>
+              )}
 
               <div className="flex items-center gap-2 ml-auto">
                 <BookmarkButton articleId={article.id} />

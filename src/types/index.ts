@@ -18,6 +18,7 @@ export interface Article {
   content: string;
   excerpt?: string;
   coverImage?: string;
+  pdfFile?: string;
   status: 'draft' | 'pending' | 'revision' | 'published' | 'archived';
   isPremium: boolean;
   publishedAt?: string;

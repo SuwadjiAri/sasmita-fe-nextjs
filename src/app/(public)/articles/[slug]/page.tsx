@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Eye, Lock } from 'lucide-react';
+import { Eye, Lock, FileText, Download } from 'lucide-react';
 import ArticleContent from './ArticleContent';
 import NovelView from '@/components/novel/NovelView';
 import { ambilJson } from '@/lib/server-fetch';
@@ -20,6 +20,7 @@ type Artikel = {
   content: string;
   excerpt?: string;
   coverImage?: string;
+  pdfFile?: string;
   isPremium: boolean;
   contentLocked?: boolean;
   publishedAt?: string;
@@ -167,6 +168,29 @@ export default async function ArticleDetailPage({ params }: Props) {
         {article.coverImage && (
           <div className="mx-auto mb-10 max-w-3xl overflow-hidden rounded-xl bg-tinta-100">
             <img src={`${API}${article.coverImage}`} alt="" className="w-full object-cover" />
+          </div>
+        )}
+
+        {article.pdfFile && (
+          <div className="mx-auto mb-10 max-w-3xl rounded-xl border border-emas-200/80 bg-gradient-to-r from-emas-50/80 via-white to-emas-50/50 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
+            <div className="flex items-center gap-3.5">
+              <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg bg-emas-600 text-white shadow-sm">
+                <FileText className="h-6 w-6" />
+              </div>
+              <div>
+                <h4 className="text-sm font-semibold text-tinta-900">Naskah Dokumen Lengkap (PDF)</h4>
+                <p className="text-xs text-tinta-600">Naskah lengkap karya ini tersedia dalam format PDF untuk dibaca atau diunduh.</p>
+              </div>
+            </div>
+            <a
+              href={`${API}${article.pdfFile}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-utama text-xs py-2 px-4 whitespace-nowrap inline-flex items-center gap-2 self-start sm:self-center shadow-sm"
+            >
+              <Download className="h-4 w-4" />
+              Buka / Unduh PDF
+            </a>
           </div>
         )}
 
