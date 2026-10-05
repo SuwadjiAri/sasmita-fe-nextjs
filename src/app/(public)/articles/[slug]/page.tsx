@@ -196,7 +196,12 @@ export default async function ArticleDetailPage({ params }: Props) {
           </div>
         )}
 
-        <ArticleContent article={article} author={penulis} />
+        <ArticleContent
+          article={article}
+          author={penulis}
+          kategoriSlug={kategori?.slug}
+          kategoriName={kategori?.name}
+        />
       </article>
     </div>
   );

@@ -29,10 +29,20 @@ interface Author {
 export default function ArticleContent({
   article,
   author = null,
+  kategoriSlug = '',
+  kategoriName = '',
 }: {
   article: Article;
   author?: Author | null;
+  kategoriSlug?: string;
+  kategoriName?: string;
 }) {
+  const isOpiniOrEsai =
+    ['opini', 'esai', 'resensi'].includes(kategoriSlug.toLowerCase()) ||
+    kategoriName.toLowerCase().includes('opini') ||
+    kategoriName.toLowerCase().includes('esai') ||
+    kategoriName.toLowerCase().includes('resensi');
+
   const contentBlock = (
     <div
       className="prose max-w-none"
@@ -67,6 +77,20 @@ export default function ArticleContent({
             contentBlock
           )}
         </ContentProtection>
+
+        {/* Kotak Disclaimer Redaksi Khas Media Opini / Kopi TIMES */}
+        {isOpiniOrEsai && (
+          <div className="mt-8 rounded-2xl border border-amber-200/80 bg-gradient-to-r from-amber-50/70 via-tinta-50/40 to-amber-50/50 p-4 sm:p-5 text-xs text-tinta-700 leading-relaxed shadow-xs">
+            <div className="flex items-start gap-2.5">
+              <span className="font-bold text-amber-800 uppercase tracking-wider text-[11px] shrink-0 mt-0.5">
+                Disclaimer:
+              </span>
+              <p className="italic text-tinta-600">
+                Isi dan gagasan dalam tulisan ini sepenuhnya merupakan pandangan pribadi penulis dan menjadi tanggung jawab penulis bersangkutan, serta tidak mencerminkan kebijakan atau sikap resmi Redaksi Portal SASMITA.
+              </p>
+            </div>
+          </div>
+        )}
 
         <AdSlot position="in_article" />
 
