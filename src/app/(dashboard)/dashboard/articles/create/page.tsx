@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { ImageIcon, FileText, Trash2, ExternalLink } from 'lucide-react';
 import api from '@/lib/api';
 import TiptapEditor from '@/components/ui/TiptapEditor';
-import { useAuthStore } from '@/stores/auth-store';
 
 const API = process.env.NEXT_PUBLIC_API_URL || '';
 
@@ -17,7 +16,6 @@ interface Category {
 
 export default function CreateArticlePage() {
   const router = useRouter();
-  const { user } = useAuthStore();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [excerpt, setExcerpt] = useState('');
@@ -27,7 +25,6 @@ export default function CreateArticlePage() {
   const [serialStatus, setSerialStatus] = useState<'ongoing' | 'completed'>('completed');
   const [uploadingPdf, setUploadingPdf] = useState(false);
   const [tags, setTags] = useState('');
-  const [isPremium, setIsPremium] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -104,7 +101,6 @@ export default function CreateArticlePage() {
         cover_image: coverImage || undefined,
         pdf_file: pdfFile || undefined,
         serial_status: isNovel ? serialStatus : 'completed',
-        is_premium: (user?.is_redaksi || user?.is_admin) ? isPremium : false,
       });
 
       const articleId = res.data.data?.id;
@@ -314,29 +310,12 @@ export default function CreateArticlePage() {
           </div>
         </div>
 
-        {(user?.is_redaksi || user?.is_admin) ? (
-          <div className="flex items-center gap-3 bg-yellow-50 border border-yellow-200 rounded-xl p-4">
-            <input
-              type="checkbox"
-              id="premium"
-              checked={isPremium}
-              onChange={(e) => setIsPremium(e.target.checked)}
-              className="w-4 h-4 text-emas-700 rounded focus:ring-emas-600"
-            />
-            <label htmlFor="premium" className="text-sm">
-              <span className="font-medium text-tinta-900">Karya Premium</span>
-              <span className="text-tinta-500 ml-1">- Akses khusus subscriber/pelanggan</span>
-            </label>
-          </div>
-        ) : (
-          <div className="rounded-xl border border-tinta-200/70 bg-tinta-50 p-4 text-xs text-tinta-600 flex items-start gap-2.5">
-            <span className="text-base leading-none">ℹ️</span>
-            <span>
-              <strong>Status Akses Karya:</strong> Penetapan naskah sebagai karya gratis atau premium
-              (berbayar) ditentukan sepenuhnya oleh Tim Redaksi saat proses kurasi dan publikasi.
-            </span>
-          </div>
-        )}
+        <div className="rounded-xl border border-tinta-200/70 bg-tinta-50 p-4 text-xs text-tinta-600 flex items-start gap-2.5">
+          <span className="text-base leading-none">ℹ️</span>
+          <span>
+            <strong>Status Akses Karya:</strong> Penetapan naskah sebagai karya terbuka (gratis) atau premium (akses khusus pelanggan) ditentukan sepenuhnya oleh Tim Redaksi melalui proses kurasi di halaman review (<span className="font-semibold text-emas-800">/dashboard/reviews</span>).
+          </span>
+        </div>
 
         <div>
           <label className="block text-sm font-medium text-tinta-700 mb-1">Tag</label>
