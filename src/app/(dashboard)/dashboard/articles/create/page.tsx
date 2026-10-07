@@ -22,6 +22,7 @@ export default function CreateArticlePage() {
   const [categoryId, setCategoryId] = useState('');
   const [coverImage, setCoverImage] = useState('');
   const [pdfFile, setPdfFile] = useState('');
+  const [pdfNotice, setPdfNotice] = useState('');
   const [serialStatus, setSerialStatus] = useState<'ongoing' | 'completed'>('completed');
   const [uploadingPdf, setUploadingPdf] = useState(false);
   const [tags, setTags] = useState('');
@@ -72,6 +73,8 @@ export default function CreateArticlePage() {
     if (!file) return;
 
     setUploadingPdf(true);
+    setPdfNotice('');
+    setError('');
     const formData = new FormData();
     formData.append('file', file);
 
@@ -79,9 +82,25 @@ export default function CreateArticlePage() {
       const res = await api.post('/upload/pdf', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      setPdfFile(res.data.data.path);
+      const data = res.data.data;
+      setPdfFile(data.path);
+
+      if (data.extracted_html) {
+        setContent((prev) => (prev ? `${prev}<hr/>${data.extracted_html}` : data.extracted_html));
+      } else if (data.extracted_text) {
+        const fallbackHtml = `<p>${data.extracted_text.replace(/\n+/g, '</p><p>')}</p>`;
+        setContent((prev) => (prev ? `${prev}<hr/>${fallbackHtml}` : fallbackHtml));
+      }
+
+      if (!title && data.suggested_title) {
+        setTitle(data.suggested_title);
+      }
+
+      const wordCount = data.word_count || 0;
+      const pageCount = data.page_count || 0;
+      setPdfNotice(`Naskah berhasil diekstrak (${pageCount} hal, ${wordCount.toLocaleString('id-ID')} kata) dan dimasukkan ke editor.`);
     } catch {
-      setError('Gagal upload file PDF');
+      setError('Gagal membaca dan mengunggah dokumen PDF');
     } finally {
       setUploadingPdf(false);
     }
@@ -251,62 +270,67 @@ export default function CreateArticlePage() {
           </div>
         </div>
 
-        <div className="rounded-xl border border-tinta-200/80 bg-white p-4 space-y-3">
+        <div className="rounded-xl border border-emas-200/90 bg-gradient-to-r from-amber-50/60 via-white to-amber-50/30 p-4 space-y-3">
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-tinta-800 mb-1">
-              <FileText className="h-4 w-4 text-emas-600" />
-              <span>
-                {isOpiniOrEsai
-                  ? 'Unggah Naskah Lengkap PDF (opsional untuk Esai / Opini / Akademik)'
-                  : isNovel
-                  ? 'Unggah Manuskrip PDF Novel (opsional)'
-                  : 'Unggah Naskah PDF (opsional)'}
-              </span>
+            <label className="flex items-center gap-2 text-sm font-semibold text-tinta-900 mb-1">
+              <FileText className="h-4 w-4 text-emas-700" />
+              <span>Impor Naskah dari Berkas PDF (Otomatis Isi Editor)</span>
             </label>
-            <p className="text-xs text-tinta-500 mb-2">
-              {isOpiniOrEsai
-                ? 'Lampirkan berkas dokumen naskah lengkap atau jurnal ilmiah format PDF untuk dapat dibaca/diunduh pembaca.'
-                : isNovel
-                ? 'Novel dibaca per bab melalui editor di bawah. Unggah PDF hanya jika ingin menyertakan salinan manuskrip cetak.'
-                : 'Lampirkan salinan dokumen naskah format PDF.'}
+            <p className="text-xs text-tinta-600 mb-3">
+              Punya naskah atau draf karya dalam format PDF? Unggah berkas di sini untuk mengekstrak isi dokumen langsung ke editor naskah tanpa perlu mengetik ulang.
             </p>
 
             {pdfFile ? (
-              <div className="flex items-center justify-between p-3 bg-tinta-50 rounded-lg border border-tinta-200/70">
-                <div className="flex items-center gap-2.5 overflow-hidden">
-                  <FileText className="h-5 w-5 text-emas-700 flex-shrink-0" />
-                  <div className="overflow-hidden">
-                    <p className="text-xs font-medium text-green-700">✓ Dokumen PDF terlampir</p>
-                    <p className="text-[11px] text-tinta-500 truncate max-w-xs">{pdfFile.split('/').pop()}</p>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-emas-200/80 shadow-sm">
+                  <div className="flex items-center gap-2.5 overflow-hidden">
+                    <FileText className="h-5 w-5 text-emas-700 flex-shrink-0" />
+                    <div className="overflow-hidden">
+                      <p className="text-xs font-semibold text-green-700">✓ Naskah Berhasil Diimpor</p>
+                      <p className="text-[11px] text-tinta-500 truncate max-w-xs">{pdfFile.split('/').pop()}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 flex-shrink-0">
+                    <a
+                      href={`${API}${pdfFile}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-emas-700 hover:text-emas-800 font-medium inline-flex items-center gap-1"
+                    >
+                      <ExternalLink className="h-3.5 w-3.5" /> Berkas Sumber
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPdfFile('');
+                        setPdfNotice('');
+                      }}
+                      className="text-xs text-red-600 hover:text-red-700 font-medium inline-flex items-center gap-1"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" /> Ganti Berkas
+                    </button>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 flex-shrink-0">
-                  <a
-                    href={`${API}${pdfFile}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs text-emas-700 hover:text-emas-800 font-medium inline-flex items-center gap-1"
-                  >
-                    <ExternalLink className="h-3.5 w-3.5" /> Buka
-                  </a>
-                  <button
-                    type="button"
-                    onClick={() => setPdfFile('')}
-                    className="text-xs text-red-600 hover:text-red-700 font-medium inline-flex items-center gap-1"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" /> Hapus
-                  </button>
-                </div>
+                {pdfNotice && (
+                  <p className="text-xs text-green-700 bg-green-50/80 border border-green-200/70 rounded-lg p-2.5">
+                    {pdfNotice}
+                  </p>
+                )}
               </div>
             ) : (
               <input
                 type="file"
                 accept=".pdf"
                 onChange={handleUploadPdf}
-                className="w-full text-sm text-tinta-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-emas-50 file:text-emas-800 hover:file:bg-emas-100"
+                disabled={uploadingPdf}
+                className="w-full text-sm text-tinta-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-emas-100 file:text-emas-900 hover:file:bg-emas-200 cursor-pointer"
               />
             )}
-            {uploadingPdf && <p className="text-xs text-tinta-500 mt-1">Mengunggah dokumen PDF...</p>}
+            {uploadingPdf && (
+              <p className="text-xs text-emas-700 font-medium mt-1 animate-pulse">
+                Sedang mengunggah dan mengekstrak isi dokumen PDF ke editor...
+              </p>
+            )}
           </div>
         </div>
 
