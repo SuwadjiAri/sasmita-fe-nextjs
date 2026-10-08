@@ -95,11 +95,12 @@ export default function SubscriptionDashboardPage() {
   };
 
   const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || '';
+  const isProduction = process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION === 'true';
   const snapScriptUrl =
     process.env.NEXT_PUBLIC_MIDTRANS_SNAP_URL ||
-    (clientKey.startsWith('SB-')
-      ? 'https://app.sandbox.midtrans.com/snap/snap.js'
-      : 'https://app.midtrans.com/snap/snap.js');
+    (isProduction
+      ? 'https://app.midtrans.com/snap/snap.js'
+      : 'https://app.sandbox.midtrans.com/snap/snap.js');
 
   return (
     <div>
