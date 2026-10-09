@@ -4,7 +4,11 @@ export async function ambilJson<T>(
   init?: RequestInit & { next?: { revalidate?: number } },
 ): Promise<T | null> {
   try {
-    const res = await fetch(url, init);
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://smita.id';
+    const targetUrl = url.startsWith('http://') || url.startsWith('https://')
+      ? url
+      : `${siteUrl.replace(/\/$/, '')}${url.startsWith('/') ? '' : '/'}${url}`;
+    const res = await fetch(targetUrl, init);
     if (!res.ok) return null;
     return (await res.json()) as T;
   } catch {
