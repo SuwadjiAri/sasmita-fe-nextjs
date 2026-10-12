@@ -67,11 +67,17 @@ export default function Footer() {
                 Smita<span className="text-emas-400">.id</span>
               </span>
             </Link>
-            <p className="mt-5 max-w-md text-sm leading-relaxed text-tinta-400">
-              Platform literasi digital karya sastra mahasiswa dan umum,
-              Program Studi Sastra Indonesia, Universitas Pamulang. Menghimpun
-              opini, esai, cerpen, puisi, resensi, dan serial novel.
-            </p>
+            <div className="mt-5 max-w-md space-y-3 text-sm leading-relaxed text-tinta-400">
+              <p>
+                <span className="block font-semibold text-white">Ruang Bersuara untuk Literasi</span>
+                Platform literasi digital yang mewadahi opini publik, esai, dan karya sastra sebagai ruang bersuara generasi cakap-tulis.
+              </p>
+              <p className="text-xs leading-relaxed text-tinta-400">
+                <span className="block font-semibold text-tinta-300">Sarana Media Informasi dan Sastra</span>
+                Jl Raya Puspitek Buaran No 46 Kecamatan Serpong<br />
+                Kota Tangerang Selatan - Banten Kode Pos 15316
+              </p>
+            </div>
           </div>
 
           <div>
