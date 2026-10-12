@@ -125,12 +125,10 @@ export default function RedaksiPage() {
             </div>
             <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 text-sm text-tinta-300">
               <div>
-                <p className="font-semibold text-white">Kantor Redaksi SASMITA</p>
+                <p className="font-semibold text-white">Sarana Media Informasi dan Sastra</p>
                 <p className="mt-1 leading-relaxed">
-                  Program Studi Sastra Indonesia, Fakultas Sastra<br />
-                  Universitas Pamulang, Kampus 1<br />
-                  Jl. Surya Kencana No. 1, Pamulang Barat<br />
-                  Tangerang Selatan, Banten 15417
+                  Jl Raya Puspitek Buaran No 46 Kecamatan Serpong<br />
+                  Kota Tangerang Selatan - Banten Kode Pos 15316
                 </p>
               </div>
               <div className="space-y-2">
