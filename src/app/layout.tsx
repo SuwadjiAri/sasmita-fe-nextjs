@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     template: "%s | SMITA.ID",
   },
   description:
-    "Platform Literasi Digital Karya Sastra, Prodi Sastra Indonesia, Universitas Pamulang",
+    "Ruang Bersuara untuk Literasi - Platform literasi digital yang mewadahi opini publik, esai, dan karya sastra sebagai ruang bersuara generasi cakap-tulis.",
 };
 
 export default function RootLayout({

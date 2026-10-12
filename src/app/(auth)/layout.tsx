@@ -41,7 +41,7 @@ export default function AuthLayout({
           </div>
 
           <p className="text-sm text-tinta-400">
-            Program Studi Sastra Indonesia, Universitas Pamulang
+            Sarana Media Informasi dan Sastra
           </p>
         </div>
       </div>
