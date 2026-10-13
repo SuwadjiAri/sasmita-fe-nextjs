@@ -12,6 +12,8 @@ import {
 } from 'lucide-react';
 import api from '@/lib/api';
 
+const API = process.env.NEXT_PUBLIC_API_URL || '';
+
 const memberMenus = [
   { href: '/dashboard', label: 'Ringkasan', icon: LayoutDashboard },
   { href: '/dashboard/articles', label: 'Karya Saya', icon: FileText },
@@ -26,6 +28,7 @@ const redaksiMenus = [
 ];
 
 const adminMenus = [
+  { href: '/dashboard/admin/articles', label: 'Kelola Konten', icon: FileText },
   { href: '/dashboard/admin/users', label: 'Kelola Pengguna', icon: Users },
   { href: '/dashboard/admin/editorial', label: 'Kelola Redaksi', icon: Award },
   { href: '/dashboard/admin/categories', label: 'Kelola Kategori', icon: FolderOpen },
@@ -139,13 +142,21 @@ export default function DashboardLayout({
               : userMenuOpen ? 'bg-white/10' : 'hover:bg-white/5'
           }`}
         >
-          <span
-            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg font-serif text-base font-semibold ${
-              mobile ? 'bg-tinta-900 text-emas-300' : 'bg-white/10 text-emas-300'
-            }`}
-          >
-            {user.name.charAt(0).toUpperCase()}
-          </span>
+          {user.avatar ? (
+            <img
+              src={user.avatar.startsWith('http') || user.avatar.startsWith('blob:') ? user.avatar : `${API}${user.avatar}`}
+              alt={user.name}
+              className="h-10 w-10 shrink-0 rounded-lg object-cover border border-emas-400/50"
+            />
+          ) : (
+            <span
+              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg font-serif text-base font-semibold ${
+                mobile ? 'bg-tinta-900 text-emas-300' : 'bg-white/10 text-emas-300'
+              }`}
+            >
+              {user.name.charAt(0).toUpperCase()}
+            </span>
+          )}
 
           <div className="min-w-0 flex-1 text-left">
             <p className={`truncate text-sm font-semibold ${mobile ? 'text-tinta-900' : 'text-white'}`}>

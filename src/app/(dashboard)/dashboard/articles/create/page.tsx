@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ImageIcon, FileText, Trash2, ExternalLink } from 'lucide-react';
 import api from '@/lib/api';
 import TiptapEditor from '@/components/ui/TiptapEditor';
+import ImageCropperModal from '@/components/ui/ImageCropperModal';
 
 const API = process.env.NEXT_PUBLIC_API_URL || '';
 
@@ -30,6 +31,8 @@ export default function CreateArticlePage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [uploadingCover, setUploadingCover] = useState(false);
+  const [cropModalOpen, setCropModalOpen] = useState(false);
+  const [cropRawImage, setCropRawImage] = useState('');
 
   useEffect(() => {
     api.get('/categories').then((res) => setCategories(res.data.data || [])).catch(() => {});
@@ -48,13 +51,20 @@ export default function CreateArticlePage() {
     setContent((prev) => (prev ? `${prev}<hr/>${template}` : template));
   };
 
-  const handleUploadCover = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSelectCover = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    const tempUrl = URL.createObjectURL(file);
+    setCropRawImage(tempUrl);
+    setCropModalOpen(true);
+    e.target.value = '';
+  };
 
+  const handleCropComplete = async (blob: Blob) => {
     setUploadingCover(true);
+    setError('');
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('file', blob, `cover-${Date.now()}.jpg`);
 
     try {
       const res = await api.post('/upload/image', formData, {
@@ -62,7 +72,7 @@ export default function CreateArticlePage() {
       });
       setCoverImage(res.data.data.path);
     } catch {
-      setError('Gagal upload gambar sampul');
+      setError('Gagal mengunggah gambar sampul hasil krop');
     } finally {
       setUploadingCover(false);
     }
@@ -109,6 +119,12 @@ export default function CreateArticlePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    if (isNovel && !coverImage) {
+      setError('Karya novel wajib menyertakan gambar sampul / cover buku (rasio 4:5)');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -216,28 +232,25 @@ export default function CreateArticlePage() {
             <label className="flex items-center gap-2 text-sm font-medium text-tinta-800 mb-1">
               <ImageIcon className="h-4 w-4 text-emas-600" />
               <span>
-                {isNovel
-                  ? 'Sampul Novel / Cover Buku'
-                  : isOpiniOrEsai
-                  ? 'Gambar Sampul / Banner Opini & Esai (opsional)'
-                  : 'Gambar Sampul / Cover Image (opsional)'}
+                {isNovel ? 'Sampul Novel / Cover Buku' : 'Gambar Sampul Konten'}
               </span>
+              {isNovel ? (
+                <span className="rounded bg-red-100 px-2 py-0.5 text-[11px] font-bold text-red-700">
+                  * Wajib (Rasio 4:5)
+                </span>
+              ) : (
+                <span className="text-xs text-tinta-500 font-normal">
+                  (Opsional • Rasio 4:5)
+                </span>
+              )}
             </label>
             <p className="text-xs text-tinta-500 mb-2">
-              {isNovel
-                ? 'Disarankan gambar potret (rasio 3:4) untuk rak buku & pembaca novel ala smita.id.'
-                : isOpiniOrEsai
-                ? 'Gambar lanskap/horizontal sebagai ilustrasi tajuk artikel opini atau esai.'
-                : 'Gambar sampul pembuka naskah karya.'}
+              Gambar sampul dipotong rapi dengan rasio 4:5 untuk visualisasi tajuk dan rak bacaan.
             </p>
 
             {coverImage ? (
               <div className="flex items-start gap-4 p-3 bg-tinta-50 rounded-lg border border-tinta-200/70">
-                <div
-                  className={`overflow-hidden rounded-md border border-tinta-200 bg-white ${
-                    isNovel ? 'aspect-[3/4] w-24' : 'aspect-[16/9] w-32'
-                  }`}
-                >
+                <div className="overflow-hidden rounded-md border border-tinta-200 bg-white aspect-[4/5] w-28 shrink-0">
                   <img
                     src={`${API}${coverImage}`}
                     alt="Preview Sampul"
@@ -246,27 +259,38 @@ export default function CreateArticlePage() {
                 </div>
                 <div className="flex-1 space-y-1.5">
                   <p className="text-xs font-medium text-green-700 flex items-center gap-1.5">
-                    <span>✓</span> Sampul berhasil diunggah
+                    <span>✓</span> Sampul berhasil diunggah (Rasio 4:5)
                   </p>
                   <p className="text-[11px] text-tinta-500 break-all">{coverImage}</p>
-                  <button
-                    type="button"
-                    onClick={() => setCoverImage('')}
-                    className="text-xs text-red-600 hover:text-red-700 font-medium inline-flex items-center gap-1 pt-1"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" /> Hapus Sampul
-                  </button>
+                  <div className="flex items-center gap-3 pt-1">
+                    <label className="text-xs text-emas-700 hover:text-emas-800 font-medium cursor-pointer">
+                      Ganti Sampul
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleSelectCover}
+                        className="hidden"
+                      />
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setCoverImage('')}
+                      className="text-xs text-red-600 hover:text-red-700 font-medium inline-flex items-center gap-1"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" /> Hapus Sampul
+                    </button>
+                  </div>
                 </div>
               </div>
             ) : (
               <input
                 type="file"
                 accept="image/*"
-                onChange={handleUploadCover}
+                onChange={handleSelectCover}
                 className="w-full text-sm text-tinta-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-emas-50 file:text-emas-800 hover:file:bg-emas-100"
               />
             )}
-            {uploadingCover && <p className="text-xs text-tinta-500 mt-1">Mengunggah gambar sampul...</p>}
+            {uploadingCover && <p className="text-xs text-tinta-500 mt-1">Mengunggah gambar sampul hasil krop...</p>}
           </div>
         </div>
 
@@ -415,6 +439,16 @@ export default function CreateArticlePage() {
           </button>
         </div>
       </form>
+
+      <ImageCropperModal
+        isOpen={cropModalOpen}
+        onClose={() => setCropModalOpen(false)}
+        imageSrc={cropRawImage}
+        aspectRatio={4 / 5}
+        aspectRatioLabel="4:5"
+        title={isNovel ? 'Krop Sampul Novel (Rasio 4:5)' : 'Krop Gambar Sampul Konten (Rasio 4:5)'}
+        onCropComplete={handleCropComplete}
+      />
     </div>
   );
 }
