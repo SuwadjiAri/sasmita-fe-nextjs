@@ -11,6 +11,8 @@ const navigasi = [
   { href: '/search', label: 'Cari Karya' },
   { href: '/subscription', label: 'Langganan' },
   { href: '/redaksi', label: 'Redaksi' },
+  { href: '/privacy', label: 'Kebijakan Privasi' },
+  { href: '/terms', label: 'Syarat & Ketentuan' },
 ];
 
 const kategoriDefault = [
@@ -107,10 +109,18 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 border-t border-white/10 pt-8">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 sm:flex-row">
           <p className="text-sm text-tinta-400">
             &copy; {new Date().getFullYear()} SMITA.ID. Seluruh hak cipta dilindungi.
           </p>
+          <div className="flex flex-wrap items-center gap-6 text-xs text-tinta-400">
+            <Link href="/privacy" className="transition-colors hover:text-white">
+              Kebijakan Privasi
+            </Link>
+            <Link href="/terms" className="transition-colors hover:text-white">
+              Syarat & Ketentuan
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
