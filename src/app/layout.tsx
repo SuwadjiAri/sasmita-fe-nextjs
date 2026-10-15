@@ -44,6 +44,15 @@ export default function RootLayout({
       lang="id"
       className={`${geistSans.variable} ${geistMono.variable} ${lora.variable} h-full antialiased`}
     >
+      <head>
+        {adsenseId && (
+          <script
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseId}`}
+            crossOrigin="anonymous"
+          />
+        )}
+      </head>
       {/* Mode pengembangan ditangani src/middleware.ts, bukan di sini. */}
       <body className="min-h-full flex flex-col">
         {gaId && (
@@ -61,13 +70,6 @@ export default function RootLayout({
               `}
             </Script>
           </>
-        )}
-        {adsenseId && (
-          <Script
-            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseId}`}
-            crossOrigin="anonymous"
-            strategy="afterInteractive"
-          />
         )}
         {children}
         <Toast />

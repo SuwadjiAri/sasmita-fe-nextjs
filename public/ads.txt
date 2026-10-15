@@ -1,3 +1,1 @@
-# SMITA.ID Authorized Digital Ads Sellers (ads.txt)
-# Format: google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
-# Nomor penayang resmi akan disematkan setelah verifikasi AdSense oleh pengelola.
+google.com, pub-8962668513496660, DIRECT, f08c47fec0942fa0
