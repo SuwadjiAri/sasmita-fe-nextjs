@@ -105,6 +105,14 @@ export default function CreateArticlePage() {
       if (!title && data.suggested_title) {
         setTitle(data.suggested_title);
       }
+      if (!excerpt && data.suggested_excerpt) {
+        setExcerpt(data.suggested_excerpt);
+      } else if (!excerpt && data.extracted_text) {
+        setExcerpt(data.extracted_text.replace(/\s+/g, ' ').trim().slice(0, 250));
+      }
+      if (!tags && data.suggested_tags) {
+        setTags(data.suggested_tags);
+      }
 
       const wordCount = data.word_count || 0;
       const pageCount = data.page_count || 0;

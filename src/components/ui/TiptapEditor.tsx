@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
@@ -32,6 +33,13 @@ export default function TiptapEditor({ content, onChange, placeholder = 'Mulai m
       },
     },
   });
+
+  useEffect(() => {
+    if (!editor) return;
+    if (!editor.isFocused && editor.getHTML() !== content) {
+      editor.commands.setContent(content || '', { emitUpdate: false });
+    }
+  }, [content, editor]);
 
   if (!editor) return null;
 
