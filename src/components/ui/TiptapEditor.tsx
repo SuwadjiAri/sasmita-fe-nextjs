@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
@@ -17,15 +17,37 @@ interface Props {
 }
 
 export default function TiptapEditor({ content, onChange, placeholder = 'Mulai menulis...' }: Props) {
+  const [stats, setStats] = useState(() => {
+    if (!content) return { chars: 0, words: 0 };
+    const plain = content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    return {
+      chars: plain.length,
+      words: plain ? plain.split(' ').length : 0,
+    };
+  });
+
+  const updateStats = (ed: any) => {
+    if (!ed) return;
+    const text = ed.getText() || '';
+    const chars = text.length;
+    const words = text.split(/\s+/).filter(Boolean).length;
+    setStats({ chars, words });
+  };
+
   const editor = useEditor({
     immediatelyRender: false,
+    shouldRerenderOnTransaction: true,
     extensions: [
       StarterKit,
       Placeholder.configure({ placeholder }),
     ],
     content,
+    onCreate: ({ editor }) => {
+      updateStats(editor);
+    },
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
+      updateStats(editor);
     },
     editorProps: {
       attributes: {
@@ -36,8 +58,9 @@ export default function TiptapEditor({ content, onChange, placeholder = 'Mulai m
 
   useEffect(() => {
     if (!editor) return;
-    if (!editor.isFocused && editor.getHTML() !== content) {
-      editor.commands.setContent(content || '', { emitUpdate: false });
+    if (editor.getHTML() !== content) {
+      editor.commands.setContent(content || '');
+      updateStats(editor);
     }
   }, [content, editor]);
 
@@ -175,9 +198,9 @@ export default function TiptapEditor({ content, onChange, placeholder = 'Mulai m
       <EditorContent editor={editor} />
 
       {/* Footer - word count */}
-      <div className="px-4 py-2 border-t border-tinta-200/70 bg-tinta-50/50 text-xs text-tinta-400 flex justify-between">
-        <span>{editor.storage.characterCount?.characters?.() ?? editor.getText().length} karakter</span>
-        <span>{editor.storage.characterCount?.words?.() ?? editor.getText().split(/\s+/).filter(Boolean).length} kata</span>
+      <div className="px-4 py-2 border-t border-tinta-200/70 bg-tinta-50/50 text-xs text-tinta-500 font-medium flex justify-between">
+        <span>{stats.chars.toLocaleString('id-ID')} karakter</span>
+        <span>{stats.words.toLocaleString('id-ID')} kata</span>
       </div>
     </div>
   );
