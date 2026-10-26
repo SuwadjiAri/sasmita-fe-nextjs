@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, createContext, useContext } from 'react';
+import { useAuthStore } from '@/stores/auth-store';
 
 interface Ad {
   id: number;
@@ -15,27 +16,37 @@ interface Ad {
 const AdsContext = createContext<Ad[] | null>(null);
 
 export function AdsProvider({ children }: { children: React.ReactNode }) {
+  const { user } = useAuthStore();
   const [ads, setAds] = useState<Ad[]>([]);
 
   useEffect(() => {
+    // Pengguna berbayar tidak memerlukan data iklan
+    if (user?.is_subscribed) return;
+
     fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/ads/active`)
       .then(res => res.ok ? res.json() : null)
       .then(data => {
         if (data?.data) setAds(data.data);
       })
       .catch(() => {});
-  }, []);
+  }, [user?.is_subscribed]);
 
   return <AdsContext.Provider value={ads}>{children}</AdsContext.Provider>;
 }
 
 export default function AdSlot({ position }: { position: string }) {
+  const { user } = useAuthStore();
   const contextAds = useContext(AdsContext);
   const [fallbackAd, setFallbackAd] = useState<Ad | null>(null);
 
+  // Akun berbayar (subscriber) dibebaskan dari seluruh iklan internal
+  if (user?.is_subscribed) {
+    return null;
+  }
+
   // Fallback: fetch sendiri jika tidak dibungkus AdsProvider
   useEffect(() => {
-    if (contextAds !== null) return;
+    if (contextAds !== null || user?.is_subscribed) return;
     fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/ads/active`)
       .then(res => res.ok ? res.json() : null)
       .then(data => {
@@ -45,7 +56,7 @@ export default function AdSlot({ position }: { position: string }) {
         }
       })
       .catch(() => {});
-  }, [position, contextAds]);
+  }, [position, contextAds, user?.is_subscribed]);
 
   const ad = contextAds ? contextAds.find(a => a.position === position) : fallbackAd;
 

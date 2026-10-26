@@ -6,6 +6,8 @@ export interface User {
   avatar?: string;
   is_redaksi: boolean;
   is_admin: boolean;
+  is_active?: boolean;
+  is_subscribed?: boolean;
   created_at?: string;
 }
 

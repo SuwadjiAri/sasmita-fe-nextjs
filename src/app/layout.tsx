@@ -4,6 +4,7 @@ import "./globals.css";
 import Script from "next/script";
 import Toast from "@/components/ui/Toast";
 import ConfirmModal from "@/components/ui/ConfirmModal";
+import GoogleAdSense from "@/components/ads/GoogleAdSense";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,17 +45,9 @@ export default function RootLayout({
       lang="id"
       className={`${geistSans.variable} ${geistMono.variable} ${lora.variable} h-full antialiased`}
     >
-      <head>
-        {adsenseId && (
-          <script
-            async
-            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseId}`}
-            crossOrigin="anonymous"
-          />
-        )}
-      </head>
       {/* Mode pengembangan ditangani src/middleware.ts, bukan di sini. */}
       <body className="min-h-full flex flex-col">
+        <GoogleAdSense clientId={adsenseId} />
         {gaId && (
           <>
             <Script

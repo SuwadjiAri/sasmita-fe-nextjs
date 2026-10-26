@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import {
   LayoutDashboard, FileText, Bookmark, CreditCard, BarChart3,
   Bell, ClipboardCheck, Users, FolderOpen, Megaphone,
-  LogOut, Menu, X, ChevronDown, Settings, Award
+  LogOut, Menu, X, ChevronDown, Settings, Award, DollarSign
 } from 'lucide-react';
 import api from '@/lib/api';
 
@@ -31,6 +31,7 @@ const adminMenus = [
   { href: '/dashboard/admin/articles', label: 'Kelola Konten', icon: FileText },
   { href: '/dashboard/admin/users', label: 'Kelola Pengguna', icon: Users },
   { href: '/dashboard/admin/editorial', label: 'Kelola Redaksi', icon: Award },
+  { href: '/dashboard/admin/finance', label: 'Laporan Keuangan', icon: DollarSign },
   { href: '/dashboard/admin/categories', label: 'Kelola Kategori', icon: FolderOpen },
   { href: '/dashboard/admin/plans', label: 'Kelola Paket', icon: CreditCard },
   { href: '/dashboard/admin/ads', label: 'Kelola Iklan', icon: Megaphone },
