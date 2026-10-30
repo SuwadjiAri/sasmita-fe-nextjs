@@ -104,7 +104,7 @@ export default function AdminUsersPage() {
 
   const toggleAdmin = async (userId: number, email: string, current: boolean) => {
     if (isMasterAdmin(email)) {
-      toast.show('Akun newssasmita@gmail.com adalah administrator utama dan tidak dapat diubah.', 'info');
+      toast.show(`Akun ${email} adalah administrator utama dan tidak dapat diubah.`, 'info');
       return;
     }
 
@@ -123,7 +123,7 @@ export default function AdminUsersPage() {
 
   const toggleActiveStatus = async (userId: number, email: string, current: boolean) => {
     if (isMasterAdmin(email)) {
-      toast.show('Akun newssasmita@gmail.com adalah administrator utama dan tidak dapat dinonaktifkan.', 'info');
+      toast.show(`Akun ${email} adalah administrator utama dan tidak dapat dinonaktifkan.`, 'info');
       return;
     }
 
@@ -390,7 +390,7 @@ export default function AdminUsersPage() {
                     {/* Toggle Admin */}
                     {master ? (
                       <span
-                        title="Akun newssasmita@gmail.com adalah administrator utama dan tidak dapat dicabut hak adminnya"
+                        title="Akun administrator utama institusi terproteksi dan tidak dapat dicabut hak adminnya"
                         className="lencana bg-amber-50 text-amber-800 border border-amber-200 cursor-not-allowed text-xs opacity-90"
                       >
                         <Crown className="h-3 w-3 text-amber-600" />

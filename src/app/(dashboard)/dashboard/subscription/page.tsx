@@ -33,7 +33,7 @@ declare global {
 const benefits = [
   'Akses seluruh karya premium',
   'Membaca tanpa batas',
-  'Mendukung penulis SASMITA',
+  'Mendukung penulis SMITA.ID',
 ];
 
 export default function SubscriptionDashboardPage() {

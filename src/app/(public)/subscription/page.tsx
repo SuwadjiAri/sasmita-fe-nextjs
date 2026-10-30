@@ -22,7 +22,7 @@ export const metadata = { title: 'Langganan' };
 const manfaat = [
   'Akses seluruh karya premium',
   'Membaca tanpa batas',
-  'Mendukung penulis SASMITA',
+  'Mendukung penulis SMITA.ID',
 ];
 
 export default async function SubscriptionPage() {
@@ -38,7 +38,7 @@ export default async function SubscriptionPage() {
           <p className="label-mikro">Langganan</p>
           <h1 className="mt-3 text-4xl font-semibold text-tinta-900">Pilih Paket Langganan</h1>
           <p className="mx-auto mt-4 max-w-xl leading-relaxed text-tinta-600">
-            Sebagian besar karya di SASMITA dapat dibaca gratis. Berlangganan
+            Sebagian besar karya di SMITA.ID dapat dibaca gratis. Berlangganan
             membuka karya yang ditandai premium oleh penulisnya.
           </p>
         </div>

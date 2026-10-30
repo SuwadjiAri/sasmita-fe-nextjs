@@ -123,11 +123,12 @@ export default function NovelView({
     : '';
 
   const [savedChapterIdx, setSavedChapterIdx] = useState<number | null>(null);
-  const storageKey = `sasmita_novel_progress_${article.slug || article.id}`;
+  const storageKey = `smita_novel_progress_${article.slug || article.id}`;
+  const legacyStorageKey = `sasmita_novel_progress_${article.slug || article.id}`;
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem(storageKey);
+      const saved = localStorage.getItem(storageKey) || localStorage.getItem(legacyStorageKey);
       if (saved !== null) {
         const parsed = parseInt(saved, 10);
         if (!isNaN(parsed) && parsed >= 0 && parsed < chapters.length) {
@@ -135,7 +136,7 @@ export default function NovelView({
         }
       }
     } catch {}
-  }, [storageKey, chapters.length]);
+  }, [storageKey, legacyStorageKey, chapters.length]);
 
   const scrollToReader = (chapterIndex = 0) => {
     setCurrentChapterIdx(chapterIndex);

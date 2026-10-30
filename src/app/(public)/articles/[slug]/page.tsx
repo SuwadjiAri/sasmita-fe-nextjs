@@ -150,7 +150,7 @@ export default async function ArticleDetailPage({ params }: Props) {
             <span className="inline-flex items-center gap-1">
               <span className="text-tinta-400">Editor:</span>
               <span className="font-medium text-tinta-800">
-                {article.editorName || 'Redaksi SASMITA'}
+                {article.editorName || 'Redaksi SMITA.ID'}
               </span>
             </span>
             <span className="text-tinta-300">/</span>

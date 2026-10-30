@@ -86,7 +86,7 @@ export default function ArticleContent({
                 Disclaimer:
               </span>
               <p className="italic text-tinta-600">
-                Isi dan gagasan dalam tulisan ini sepenuhnya merupakan pandangan pribadi penulis dan menjadi tanggung jawab penulis bersangkutan, serta tidak mencerminkan kebijakan atau sikap resmi Redaksi Portal SASMITA.
+                Isi dan gagasan dalam tulisan ini sepenuhnya merupakan pandangan pribadi penulis dan menjadi tanggung jawab penulis bersangkutan, serta tidak mencerminkan kebijakan atau sikap resmi Redaksi Portal SMITA.ID.
               </p>
             </div>
           </div>

@@ -39,7 +39,7 @@ export default function DashboardPage() {
         <h1 className="mt-2 text-2xl font-semibold text-tinta-900">
           Selamat datang, {user?.name?.split(' ')[0]}
         </h1>
-        <p className="mt-1 text-tinta-500">Berikut ringkasan aktivitas Anda di SASMITA.</p>
+        <p className="mt-1 text-tinta-500">Berikut ringkasan aktivitas Anda di SMITA.ID.</p>
       </header>
 
       {stats ? (
