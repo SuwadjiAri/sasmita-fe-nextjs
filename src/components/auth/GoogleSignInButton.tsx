@@ -49,7 +49,9 @@ export default function GoogleSignInButton({
   const [loading, setLoading] = useState(false);
   const buttonRef = useRef<HTMLDivElement>(null);
 
-  const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
+  const clientId =
+    process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ||
+    '833468072171-h8415ls0fb2oe1b4vmq3aqt1f5t0j11i.apps.googleusercontent.com';
 
   const handleCredentialResponse = async (response: { credential: string }) => {
     try {
