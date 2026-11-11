@@ -49,9 +49,21 @@ export default function GoogleSignInButton({
   const [loading, setLoading] = useState(false);
   const buttonRef = useRef<HTMLDivElement>(null);
 
+  // Deteksi Client ID cerdas multi-environment (Staging vs Produksi)
+  const isDevOrStaging =
+    typeof window !== 'undefined' &&
+    (window.location.hostname.includes('devsasmita') ||
+      window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1');
+
+  const defaultStagingClientId =
+    '610977734429-sk65qbgo0dup2pg76g6uovlsv1ud1fpi.apps.googleusercontent.com';
+  const defaultProdClientId =
+    '833468072171-h8415ls0fb2oe1b4vmq3aqt1f5t0j11i.apps.googleusercontent.com';
+
   const clientId =
     process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ||
-    '833468072171-h8415ls0fb2oe1b4vmq3aqt1f5t0j11i.apps.googleusercontent.com';
+    (isDevOrStaging ? defaultStagingClientId : defaultProdClientId);
 
   const handleCredentialResponse = async (response: { credential: string }) => {
     try {
