@@ -2,7 +2,8 @@
 
 import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
-import { ImageIcon, FileText, Trash2, ExternalLink } from 'lucide-react';
+import Link from 'next/link';
+import { ImageIcon, FileText, Trash2, ExternalLink, ArrowLeft, ShieldCheck } from 'lucide-react';
 import api from '@/lib/api';
 import TiptapEditor from '@/components/ui/TiptapEditor';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
@@ -37,6 +38,17 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
   const [uploadingPdf, setUploadingPdf] = useState(false);
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const [cropRawImage, setCropRawImage] = useState('');
+  const [authorName, setAuthorName] = useState('');
+  const [fromReview, setFromReview] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const sp = new URLSearchParams(window.location.search);
+      if (sp.get('from') === 'review') {
+        setFromReview(true);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     Promise.all([
@@ -63,6 +75,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
           setCoverImage(article.coverImage || article.cover_image || '');
           setPdfFile(article.pdfFile || article.pdf_file || '');
           setSerialStatus(article.serialStatus || article.serial_status || 'completed');
+          setAuthorName(article.authorName || article.user?.name || '');
         }
         const existingTags = (tagRes.data.data || []).map((t: { name: string }) => t.name);
         setTags(existingTags.join(', '));
@@ -185,7 +198,11 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
         const tagList = tags.split(',').map((t) => t.trim()).filter(Boolean);
         await api.post(`/articles/${id}/tags`, { tags: tagList });
       }
-      router.push('/dashboard/articles');
+      if (fromReview) {
+        router.push('/dashboard/reviews');
+      } else {
+        router.push('/dashboard/articles');
+      }
     } catch (err: unknown) {
       const message =
         (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
@@ -200,7 +217,33 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
 
   return (
     <div className="max-w-3xl">
-      <h1 className="text-2xl font-semibold text-tinta-900 mb-6">Edit Naskah Karya</h1>
+      <div className="mb-6">
+        {fromReview && (
+          <Link
+            href="/dashboard/reviews"
+            className="inline-flex items-center gap-1.5 text-xs text-tinta-600 hover:text-tinta-900 mb-2 font-medium"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            Kembali ke Kurasi Naskah
+          </Link>
+        )}
+        <h1 className="text-2xl font-semibold text-tinta-900">
+          {fromReview ? 'Sunting Konten Naskah' : 'Edit Naskah Karya'}
+        </h1>
+        {authorName && (
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-sm text-tinta-600">
+              Penulis: <strong className="text-tinta-900">{authorName}</strong>
+            </span>
+            {fromReview && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-blue-100 text-blue-800">
+                <ShieldCheck className="w-3 h-3" />
+                Mode Editor
+              </span>
+            )}
+          </div>
+        )}
+      </div>
 
       {error && (
         <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg mb-4">{error}</div>
@@ -476,11 +519,17 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
             disabled={loading}
             className="bg-emas-700 text-white px-6 py-2 rounded-lg font-medium hover:bg-emas-800 disabled:opacity-50"
           >
-            {loading ? 'Menyimpan...' : 'Simpan Perubahan'}
+            {loading ? 'Menyimpan...' : fromReview ? 'Simpan Hasil Suntingan' : 'Simpan Perubahan'}
           </button>
           <button
             type="button"
-            onClick={() => router.back()}
+            onClick={() => {
+              if (fromReview) {
+                router.push('/dashboard/reviews');
+              } else {
+                router.back();
+              }
+            }}
             className="px-6 py-2 border border-tinta-300 rounded-lg text-tinta-700 hover:bg-tinta-50"
           >
             Batal

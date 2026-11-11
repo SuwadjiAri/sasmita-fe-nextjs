@@ -24,7 +24,7 @@ const memberMenus = [
 ];
 
 const redaksiMenus = [
-  { href: '/dashboard/reviews', label: 'Tinjau Naskah', icon: ClipboardCheck },
+  { href: '/dashboard/reviews', label: 'Kurasi & Sunting Naskah', icon: ClipboardCheck },
 ];
 
 const adminMenus = [
@@ -111,7 +111,7 @@ export default function DashboardLayout({
 
   const allMenus = [
     { section: 'Menu', items: memberMenus },
-    ...(user.is_redaksi ? [{ section: 'Redaksi', items: redaksiMenus }] : []),
+    ...(user.is_redaksi ? [{ section: 'Editor & Redaksi', items: redaksiMenus }] : []),
     ...(user.is_admin ? [{ section: 'Admin', items: adminMenus }] : []),
   ];
 

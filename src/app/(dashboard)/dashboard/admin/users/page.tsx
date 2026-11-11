@@ -93,10 +93,10 @@ export default function AdminUsersPage() {
     try {
       await api.put(`/admin/users/${userId}/role`, { is_redaksi: !current });
       setUsers((prev) => prev.map((u) => (u.id === userId ? { ...u, isRedaksi: !current } : u)));
-      toast.show(current ? 'Hak akses redaksi dicabut' : 'Hak akses redaksi berhasil diberikan', 'success');
+      toast.show(current ? 'Hak akses editor / redaksi dicabut' : 'Hak akses editor / redaksi berhasil diberikan', 'success');
       loadUsers(page, perPage, roleFilter, statusFilter, search);
     } catch {
-      toast.show('Gagal memperbarui peran redaksi', 'error');
+      toast.show('Gagal memperbarui peran editor / redaksi', 'error');
     } finally {
       setActionLoadingId(null);
     }
@@ -183,7 +183,7 @@ export default function AdminUsersPage() {
             <Shield className="h-5 w-5" />
           </span>
           <div>
-            <p className="text-xs text-tinta-400 font-medium">Dewan Redaksi</p>
+            <p className="text-xs text-tinta-400 font-medium">Editor & Redaksi</p>
             <p className="text-xl font-bold text-green-900">{counts.redaksi}</p>
           </div>
         </div>
@@ -232,7 +232,7 @@ export default function AdminUsersPage() {
                   : 'text-tinta-500 hover:text-tinta-900'
               }`}
             >
-              Dewan Redaksi ({counts.redaksi})
+              Editor & Redaksi ({counts.redaksi})
             </button>
             <button
               onClick={() => { setRoleFilter('admin'); setPage(1); }}
@@ -357,7 +357,7 @@ export default function AdminUsersPage() {
                         {user.isRedaksi && (
                           <span className="lencana bg-green-100 text-green-800 text-[10px]">
                             <Shield className="h-3 w-3" />
-                            Redaksi
+                            Editor / Redaksi
                           </span>
                         )}
                         {!user.isAdmin && !user.isRedaksi && (
@@ -376,7 +376,7 @@ export default function AdminUsersPage() {
                     <button
                       onClick={() => toggleRedaksi(user.id, user.isRedaksi)}
                       disabled={isLoading}
-                      aria-label={user.isRedaksi ? 'Cabut hak redaksi' : 'Berikan hak redaksi'}
+                      aria-label={user.isRedaksi ? 'Cabut hak editor dan redaksi' : 'Berikan hak editor dan redaksi'}
                       className={`lencana transition-colors cursor-pointer text-xs ${
                         user.isRedaksi
                           ? 'bg-green-100 text-green-800 hover:bg-green-200'
@@ -384,7 +384,7 @@ export default function AdminUsersPage() {
                       }`}
                     >
                       <Shield className="h-3 w-3" />
-                      {user.isRedaksi ? 'Redaksi (Aktif)' : '+ Redaksi'}
+                      {user.isRedaksi ? 'Editor (Aktif)' : '+ Jadikan Editor'}
                     </button>
 
                     {/* Toggle Admin */}

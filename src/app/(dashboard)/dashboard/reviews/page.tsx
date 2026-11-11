@@ -1,11 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import api from '@/lib/api';
 import { useToast } from '@/components/ui/Toast';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import EmptyState from '@/components/ui/EmptyState';
-import { ChevronDown, ChevronUp, Eye } from 'lucide-react';
+import { ChevronDown, ChevronUp, Eye, Edit3 } from 'lucide-react';
 import Pagination from '@/components/ui/Pagination';
 
 interface Article {
@@ -67,7 +68,7 @@ export default function ReviewsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-tinta-900 mb-6">Review Artikel</h1>
+      <h1 className="text-2xl font-semibold text-tinta-900 mb-6">Kurasi & Sunting Naskah</h1>
 
       {loading ? (
         <LoadingSpinner message="Memuat review..." />
@@ -95,20 +96,42 @@ export default function ReviewsPage() {
                       <p className="text-sm text-tinta-600 mt-2 italic">&ldquo;{article.excerpt}&rdquo;</p>
                     )}
                   </div>
-                  <button
-                    onClick={() => toggleExpand(article.id)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-emas-700 bg-emas-50 rounded-lg hover:bg-emas-100 transition-colors"
-                  >
-                    <Eye className="w-4 h-4" />
-                    {expandedId === article.id ? 'Tutup' : 'Baca'}
-                    {expandedId === article.id ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <Link
+                      href={`/dashboard/articles/${article.id}/edit?from=review`}
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
+                      title="Buka naskah di editor lengkap untuk memperbaiki konten, ejaan, judul, atau sinopsis"
+                    >
+                      <Edit3 className="w-4 h-4" />
+                      Sunting Konten
+                    </Link>
+                    <button
+                      onClick={() => toggleExpand(article.id)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-emas-700 bg-emas-50 rounded-lg hover:bg-emas-100 transition-colors"
+                    >
+                      <Eye className="w-4 h-4" />
+                      {expandedId === article.id ? 'Tutup' : 'Baca'}
+                      {expandedId === article.id ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                    </button>
+                  </div>
                 </div>
               </div>
 
               {/* Content preview */}
               {expandedId === article.id && (
                 <div className="border-t border-tinta-200/70 bg-tinta-50 px-5 py-4">
+                  <div className="flex items-center justify-between mb-3 pb-2 border-b border-tinta-200/60">
+                    <span className="text-xs font-semibold text-tinta-600 uppercase tracking-wider">
+                      Pratinjau Isi Naskah
+                    </span>
+                    <Link
+                      href={`/dashboard/articles/${article.id}/edit?from=review`}
+                      className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-700 hover:text-blue-900 bg-blue-100/70 px-2.5 py-1 rounded-md transition-colors"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" />
+                      Buka di Editor Lengkap (TipTap) untuk Koreksi Teks
+                    </Link>
+                  </div>
                   <div
                     className="prose prose-sm max-w-none max-h-[400px] overflow-y-auto"
                     dangerouslySetInnerHTML={{ __html: article.content }}
