@@ -5,6 +5,7 @@ import Script from "next/script";
 import Toast from "@/components/ui/Toast";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import GoogleAdSense from "@/components/ads/GoogleAdSense";
+import InspectProtection from "@/components/ui/InspectProtection";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -67,6 +68,7 @@ export default function RootLayout({
         {children}
         <Toast />
         <ConfirmModal />
+        <InspectProtection />
       </body>
     </html>
   );
